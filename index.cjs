@@ -54,7 +54,12 @@ app.use(express.static("public"));
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: '*', // Allow all origins for diagnostics
+  origin: [
+    'https://homeops-web.web.app',
+    'https://homeops-web.firebaseapp.com',
+    'http://localhost:3000',
+    'http://localhost:5000'
+  ],
   credentials: true
 }));
 
