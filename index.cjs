@@ -559,6 +559,15 @@ app.get("/api/firebase-config", (req, res) => {
   res.json(firebaseConfig);
 });
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "healthy", 
+    timestamp: new Date().toISOString(),
+    version: "DEPLOYMENT VERSION 9 - LUXON REMOVED"
+  });
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
