@@ -1,3 +1,4 @@
+console.log("🚀 DEPLOYMENT VERSION 8 - LUXON REMOVED - " + new Date().toISOString());
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -5,7 +6,7 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const admin = require("firebase-admin");
 const path = require("path");
 const fs = require("fs");
-const { DateTime } = require("luxon");
+// const { DateTime } = require("luxon"); // Temporarily removed for deployment
 const chrono = require("chrono-node");
 
 // Add CORS support
@@ -169,7 +170,7 @@ Your response must be a conversational paragraph that captures the unique tone a
 **Final check:** Does my response sound like a generic AI assistant? If it does, you have failed. Rewrite it to be in-character.
 
 Never mention the names of any real people, authors, or public figures.
-Today's date is: ${DateTime.now().setZone("America/New_York").toISODate()}.
+Today's date is: ${getCurrentDate()}.
 
 After crafting your in-character reply, extract any new calendar events found ONLY in the user's most recent message.
 
@@ -238,7 +239,7 @@ Respond with ONLY a single, valid JSON object in this format.
       const batch = db.batch();
       
       // Get the current time in the target timezone to use as a reference for parsing
-      const referenceDate = DateTime.now().setZone("America/New_York").toJSDate();
+      const referenceDate = new Date();
 
       events.forEach(event => {
         if (event.title && event.when) {
@@ -247,7 +248,7 @@ Respond with ONLY a single, valid JSON object in this format.
 
           if (parsedStart) {
             // Convert to the required ISO 8601 format with timezone
-            const startISO = DateTime.fromJSDate(parsedStart).setZone("America/New_York").toISO();
+            const startISO = new Date(parsedStart).toISOString();
 
             const eventRef = db.collection("events").doc();
             const eventWithId = { 
@@ -291,7 +292,7 @@ app.post("/api/events", async (req, res) => {
       if (!parsedStart) {
         return res.status(400).json({ error: "Could not parse 'when' into a date." });
       }
-      event.start = DateTime.fromJSDate(parsedStart).setZone("America/New_York").toISO();
+      event.start = new Date(parsedStart).toISOString();
     }
 
     const docRef = await db.collection("events").add({
@@ -569,6 +570,12 @@ async function startServer() {
     console.error("❌ Server failed to start:", err);
     process.exit(1);
   }
+}
+
+// Simple date function to replace luxon
+function getCurrentDate() {
+  const now = new Date();
+  return now.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
 }
 
 startServer();

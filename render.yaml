@@ -3,7 +3,8 @@ services:
     name: homeops-backend
     env: node
     buildCommand: npm install
-    startCommand: node index.cjs
+    startCommand: npm start
+    branch: extractor-stable-version
     envVars:
       - key: NODE_ENV
         value: production
