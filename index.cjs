@@ -14,35 +14,25 @@ const chrono = require("chrono-node");
 // Add CORS support
 const cors = require("cors");
 
-// Use service account key from file for reliable initialization
+// Initialize Firebase from environment variables
 try {
-  const serviceAccount = JSON.parse(fs.readFileSync(path.join(__dirname, "homeops-sa-key.json"), "utf8"));
+  const base64 = process.env.FIREBASE_CREDENTIALS;
+  if (!base64) {
+    throw new Error("FIREBASE_CREDENTIALS environment variable is not set.");
+  }
+  const decoded = Buffer.from(base64, "base64").toString("utf-8");
+  const firebaseCredentials = JSON.parse(decoded);
 
   if (!admin.apps.length) {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(firebaseCredentials),
     });
-    console.log("✅ Firebase initialized successfully via service account file.");
+    console.log("✅ Firebase initialized successfully via environment variable.");
   }
 } catch (err) {
-  console.error("❌ Firebase init failed:", err.message);
-  // Attempt to use environment variable as a fallback (for Render, etc.)
-  try {
-    const base64 = process.env.FIREBASE_CREDENTIALS;
-    if (!base64) throw new Error("FIREBASE_CREDENTIALS env var not set.");
-    const decoded = Buffer.from(base64, "base64").toString("utf-8");
-    const firebaseCredentials = JSON.parse(decoded);
-
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert(firebaseCredentials),
-      });
-      console.log("✅ Firebase initialized successfully via environment variable.");
-    }
-  } catch (fallbackErr) {
-    console.error("❌ Firebase fallback init also failed:", fallbackErr.message);
-    process.exit(1); // Exit if no valid credential source found
-  }
+  console.error("❌ Firebase initialization failed:", err.message);
+  console.error("Please ensure your .env file is correctly configured with a base64-encoded FIREBASE_CREDENTIALS value.");
+  process.exit(1); // Exit if initialization fails
 }
 
 const db = admin.firestore();
