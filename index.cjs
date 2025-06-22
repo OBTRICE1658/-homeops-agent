@@ -58,7 +58,8 @@ app.use(cors({
     'https://homeops-web.web.app',
     'https://homeops-web.firebaseapp.com',
     'http://localhost:3000',
-    'http://localhost:5000'
+    'http://localhost:5000',
+    'https://homeops-agent.onrender.com'
   ],
   credentials: true
 }));
