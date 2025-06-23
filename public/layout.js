@@ -31,7 +31,26 @@ document.addEventListener("DOMContentLoaded", () => {
       // Handle calendar rendering and refreshing
       if (viewId === "calendar") {
         if (!window.calendarRendered) {
-          renderCalendar(); // Initialize on first view
+          // Wait for userId to be set before initializing calendar
+          if (window.userId) {
+            console.log("🟢 userId available, initializing calendar");
+            renderCalendar();
+          } else {
+            console.log("⏳ userId not set yet, waiting...");
+            // Check again in 500ms
+            setTimeout(() => {
+              if (window.userId && !window.calendarRendered) {
+                console.log("🟢 userId now available, initializing calendar");
+                renderCalendar();
+              } else if (!window.userId) {
+                console.error("❌ userId still not set after delay");
+                const calendarEl = document.getElementById("calendar");
+                if (calendarEl) {
+                  calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ User not authenticated. Please log in again.</div>';
+                }
+              }
+            }, 500);
+          }
         } else if (window.calendar) {
           console.log("🔄 Calendar view activated, refetching events.");
           window.calendar.refetchEvents(); // Refetch on subsequent views
@@ -40,6 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.activateView = activateView;
+
+    // Global function to initialize calendar when userId is available
+    window.initializeCalendarIfReady = function() {
+      if (window.userId && !window.calendarRendered) {
+        console.log("🟢 initializeCalendarIfReady called, userId available");
+        renderCalendar();
+      } else if (!window.userId) {
+        console.log("⏳ initializeCalendarIfReady called, but userId not set yet");
+      } else {
+        console.log("ℹ️ initializeCalendarIfReady called, calendar already rendered");
+      }
+    };
 
     function handleNavClick(button) {
       const viewId = button.getAttribute("data-view");
@@ -67,12 +98,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function renderCalendar() {
+      console.log("🔄 renderCalendar called");
+      console.log("🔄 window.userId:", window.userId);
+      console.log("🔄 window.calendarRendered:", window.calendarRendered);
+      
       const calendarEl = document.getElementById("calendar");
       if (!calendarEl || typeof FullCalendar === "undefined") {
         console.error("Calendar element or FullCalendar library not found.");
+        if (calendarEl) {
+          calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ Calendar failed to load. Please check your internet connection and that FullCalendar CSS/JS are included.</div>';
+        }
         return;
       }
-
+      if (!window.userId) {
+        console.error("❌ window.userId is not set when trying to render calendar");
+        calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ User not authenticated. Please log in again.</div>';
+        return;
+      }
+      console.log("✅ Proceeding with calendar initialization");
       window.calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: "dayGridMonth",
         height: "auto",
@@ -81,9 +124,36 @@ document.addEventListener("DOMContentLoaded", () => {
           center: "title",
           right: "dayGridMonth,timeGridWeek,timeGridDay"
         },
-        events: `/api/get-events?user_id=${window.userId}`,
+        events: function(fetchInfo, successCallback, failureCallback) {
+          const url = `/api/get-events?user_id=${window.userId}`;
+          console.log("🟢 FullCalendar fetching events from:", url);
+          console.log("🟢 Current window.userId:", window.userId);
+          fetch(url)
+            .then(response => {
+              console.log("🟢 Response status:", response.status);
+              console.log("🟢 Response ok:", response.ok);
+              return response.json();
+            })
+            .then(events => {
+              console.log("🟢 Events fetched for calendar:", events);
+              console.log("🟢 Events type:", typeof events);
+              console.log("🟢 Events length:", Array.isArray(events) ? events.length : 'not an array');
+              if (!Array.isArray(events) || events.length === 0) {
+                console.log("⚠️ No events found, showing warning");
+                calendarEl.innerHTML = '<div style="color:orange;text-align:center;padding:2em;">⚠️ No events found for your account.</div>';
+                successCallback([]);
+                return;
+              }
+              console.log("✅ Calling successCallback with events");
+              successCallback(events);
+            })
+            .catch(err => {
+              console.error("❌ Error fetching events:", err);
+              calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ Failed to fetch events from server.</div>';
+              failureCallback(err);
+            });
+        }
       });
-
       window.calendar.render();
       window.calendarRendered = true;
       console.log("✅ Calendar initialized");
@@ -186,6 +256,22 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error('Re-frame Error:', error);
         } finally {
           reframeBtn.disabled = false;
+        }
+      });
+    }
+
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          window.userId = user.uid;
+          console.log('✅ window.userId set:', window.userId);
+          // If calendar was rendered before userId, destroy and re-create it
+          if (window.calendarRendered && window.calendar) {
+            window.calendar.destroy();
+            window.calendarRendered = false;
+            renderCalendar();
+            console.log('🔄 Calendar re-initialized after userId set');
+          }
         }
       });
     }

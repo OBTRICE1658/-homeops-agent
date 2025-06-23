@@ -318,6 +318,7 @@ app.post("/api/save-event", async (req, res) => {
 app.get("/api/get-events", async (req, res) => {
   const { user_id } = req.query;
   
+  console.log("📅 /api/get-events called for user_id:", user_id);
   if (!user_id) {
     return res.status(400).json({ error: "User ID is required." });
   }
@@ -331,7 +332,7 @@ app.get("/api/get-events", async (req, res) => {
       id: doc.id,
       ...doc.data()
     }));
-    
+    console.log(`📅 Found ${events.length} events for user_id ${user_id}`);
     res.json(events);
   } catch (err) {
     console.error("❌ Failed to fetch events:", err.message);

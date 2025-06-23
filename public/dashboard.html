@@ -251,66 +251,39 @@
 
 <!-- ✅ FullCalendar Global Build — works without import or modules -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+<!-- FullCalendar Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.9/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.9/index.global.min.js"></script>
 
-<!-- Firebase -->
+<!-- Firebase (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
 
-<!-- Firebase configuration and auth logic -->
+<!-- Firebase config and initialization (from config.js) -->
+<script src="config.js"></script>
+
+<!-- Auth logic -->
 <script>
-// Initialize Firebase by fetching config from server
-async function initializeFirebase() {
-  try {
-    const response = await fetch('/api/firebase-config');
-    if (!response.ok) {
-      throw new Error('Failed to fetch Firebase config');
-    }
-    const firebaseConfig = await response.json();
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    return firebase.auth();
-  } catch (error) {
-    console.error('Failed to initialize Firebase:', error);
-    throw error;
-  }
-}
-
-// Initialize Firebase and set up auth
-let auth;
-initializeFirebase().then(authInstance => {
-  auth = authInstance;
-  
-  // Check authentication state
-  auth.onAuthStateChanged((user) => {
-    if (!user) {
-      // User is not signed in, redirect to login
-      window.location.href = '/';
+// Use the compat Firebase instance from config.js
+const auth = firebase.auth();
+auth.onAuthStateChanged((user) => {
+  if (!user) {
+    window.location.href = '/';
+  } else {
+    document.getElementById('userEmail').textContent = user.email;
+    if (typeof initializeChat === 'function') {
+      initializeChat(user);
     } else {
-      // User is signed in, display email
-      document.getElementById('userEmail').textContent = user.email;
-
-      // ✅ Initialize the chat module now that we have a user
-      if (typeof initializeChat === 'function') {
-        initializeChat(user);
-      } else {
-        console.error("Critical Error: initializeChat function not found. Check that chat.js is loaded.");
-      }
+      console.error("Critical Error: initializeChat function not found. Check that chat.js is loaded.");
     }
-  });
-
-  // Handle logout
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    try {
-      await auth.signOut();
-      // Redirect will happen automatically via onAuthStateChanged
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  });
-}).catch(error => {
-  console.error('Firebase initialization failed:', error);
-  document.body.innerHTML = '<div style="text-align: center; padding: 50px;"><h2>Service Unavailable</h2><p>Unable to initialize authentication service.</p></div>';
+  }
+});
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    await auth.signOut();
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
 });
 </script>
 

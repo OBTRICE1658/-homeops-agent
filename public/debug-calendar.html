@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendar Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { margin: 5px; padding: 10px; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Calendar Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h3>1. Check User Authentication</h3>
+        <button onclick="checkAuth()">Check Auth Status</button>
+        <div id="auth-status"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>2. Test Save Event</h3>
+        <button onclick="testSaveEvent()">Save Test Event</button>
+        <div id="save-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>3. Test Get Events</h3>
+        <button onclick="testGetEvents()">Get Events</button>
+        <div id="get-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>4. Manual API Test</h3>
+        <input type="text" id="user-id-input" placeholder="Enter user ID" style="width: 300px;">
+        <button onclick="manualGetEvents()">Get Events for User ID</button>
+        <div id="manual-result"></div>
+    </div>
+
+    <script>
+        // Check authentication status
+        async function checkAuth() {
+            const statusDiv = document.getElementById('auth-status');
+            statusDiv.innerHTML = '<span class="info">Checking...</span>';
+            
+            try {
+                // Check if Firebase is loaded
+                if (typeof firebase === 'undefined') {
+                    statusDiv.innerHTML = '<span class="error">❌ Firebase not loaded</span>';
+                    return;
+                }
+
+                // Check auth state
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    statusDiv.innerHTML = `
+                        <span class="success">✅ User authenticated</span><br>
+                        <strong>User ID:</strong> ${user.uid}<br>
+                        <strong>Email:</strong> ${user.email}<br>
+                        <strong>window.userId:</strong> ${window.userId || 'NOT SET'}
+                    `;
+                } else {
+                    statusDiv.innerHTML = '<span class="error">❌ No user authenticated</span>';
+                }
+            } catch (err) {
+                statusDiv.innerHTML = `<span class="error">❌ Auth check failed: ${err.message}</span>`;
+            }
+        }
+
+        // Test saving an event
+        async function testSaveEvent() {
+            const resultDiv = document.getElementById('save-result');
+            resultDiv.innerHTML = '<span class="info">Saving test event...</span>';
+            
+            try {
+                const userId = window.userId || firebase.auth().currentUser?.uid;
+                if (!userId) {
+                    resultDiv.innerHTML = '<span class="error">❌ No user ID available</span>';
+                    return;
+                }
+
+                const testEvent = {
+                    event: {
+                        title: "Test Event - " + new Date().toLocaleString(),
+                        when: "tomorrow at 2pm",
+                        allDay: false
+                    },
+                    user_id: userId
+                };
+
+                console.log('Saving event:', testEvent);
+                
+                const response = await fetch('/api/save-event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testEvent)
+                });
+
+                const result = await response.json();
+                console.log('Save response:', result);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ Event saved successfully</span><br>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <span class="error">❌ Save failed</span><br>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">❌ Save error: ${err.message}</span>`;
+            }
+        }
+
+        // Test getting events
+        async function testGetEvents() {
+            const resultDiv = document.getElementById('get-result');
+            resultDiv.innerHTML = '<span class="info">Getting events...</span>';
+            
+            try {
+                const userId = window.userId || firebase.auth().currentUser?.uid;
+                if (!userId) {
+                    resultDiv.innerHTML = '<span class="error">❌ No user ID available</span>';
+                    return;
+                }
+
+                console.log('Getting events for user:', userId);
+                
+                const response = await fetch(`/api/get-events?user_id=${userId}`);
+                const events = await response.json();
+                console.log('Get events response:', events);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ Events retrieved (${events.length} found)</span><br>
+                        <pre>${JSON.stringify(events, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <span class="error">❌ Get events failed</span><br>
+                        <pre>${JSON.stringify(events, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">❌ Get events error: ${err.message}</span>`;
+            }
+        }
+
+        // Manual API test
+        async function manualGetEvents() {
+            const resultDiv = document.getElementById('manual-result');
+            const userId = document.getElementById('user-id-input').value.trim();
+            
+            if (!userId) {
+                resultDiv.innerHTML = '<span class="error">❌ Please enter a user ID</span>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<span class="info">Getting events for manual user ID...</span>';
+            
+            try {
+                console.log('Manual get events for user:', userId);
+                
+                const response = await fetch(`/api/get-events?user_id=${userId}`);
+                const events = await response.json();
+                console.log('Manual get events response:', events);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ Events retrieved (${events.length} found)</span><br>
+                        <pre>${JSON.stringify(events, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <span class="error">❌ Get events failed</span><br>
+                        <pre>${JSON.stringify(events, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">❌ Get events error: ${err.message}</span>`;
+            }
+        }
+
+        // Auto-check auth on load
+        window.addEventListener('load', () => {
+            setTimeout(checkAuth, 1000);
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="/config.js"></script>
+</body>
+</html> 

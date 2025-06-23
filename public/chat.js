@@ -5,6 +5,15 @@ function initializeChat(user) {
     return;
   }
 
+  // Set global userId for calendar and other components
+  window.userId = userId;
+  console.log("✅ window.userId set globally:", window.userId);
+
+  // Initialize calendar if it's ready
+  if (typeof window.initializeCalendarIfReady === 'function') {
+    window.initializeCalendarIfReady();
+  }
+
   // Prevent re-initialization
   if (window.chatInitialized) {
     console.warn("Chat already initialized.");
@@ -80,6 +89,11 @@ function initializeChat(user) {
           } catch (saveError) {
             console.error(`❌ Failed to save event ${event.title}:`, saveError);
           }
+        }
+        // Refresh calendar if it's already rendered
+        if (window.calendar && window.calendarRendered) {
+          console.log("🔄 Refreshing calendar to show new events");
+          window.calendar.refetchEvents();
         }
         // The calendar will now refresh automatically when you switch to that view.
       } else {
