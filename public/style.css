@@ -8,10 +8,33 @@
 /* Layout Containers */
 body {
   font-family: system-ui, sans-serif;
-  background: #f5f6fa;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%) no-repeat center center fixed;
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   color: #222;
   min-height: 100vh;
   display: flex;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: none;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
+  background-image: url('data:image/svg+xml;utf8,<svg width="100%25" height="100%25" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="grad1" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" style="stop-color:%234A90E2;stop-opacity:0.6" /><stop offset="100%25" style="stop-color:%234A90E2;stop-opacity:0.1" /></radialGradient></defs><ellipse cx="800" cy="150" rx="300" ry="180" fill="url(%23grad1)"/><ellipse cx="300" cy="650" rx="250" ry="120" fill="url(%23grad1)"/><ellipse cx="600" cy="400" rx="400" ry="220" fill="url(%23grad1)"/><circle cx="1000" cy="600" r="150" fill="url(%23grad1)"/><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/></svg>');
 }
 
 body.dark {
@@ -22,6 +45,8 @@ body.dark {
 .app-container {
   display: flex;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 /* Sidebar */
@@ -97,6 +122,13 @@ body.dark {
 .main-content {
   flex: 1;
   padding: 2rem;
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
 }
 
 .view-header {
@@ -128,6 +160,13 @@ body.dark {
 
 .view {
   display: none;
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
 }
 
 .view.active {
@@ -137,40 +176,69 @@ body.dark {
 /* Top Bar */
 .top-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 2rem;
-  background-color: white;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.92);
   border-bottom: 1px solid #ddd;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 8px rgba(31, 38, 135, 0.08);
   margin-bottom: 1rem;
   position: sticky;
   top: 0;
   z-index: 10;
+  min-height: 56px;
 }
 
 .top-bar-left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.top-bar-inner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.top-bar-logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
-  border-radius: 8px; /* Match sidebar logo */
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .brand-name {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.user-email {
+  font-size: 0.95rem;
+  color: #666;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  background: #ff3742;
 }
 
 /* Center the chat view */
@@ -664,7 +732,65 @@ body.dark {
 
 /* --- Desktop First Styles --- */
 .bottom-nav {
-  display: none; /* Hidden by default on desktop */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 64px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: 0 -4px 24px rgba(31, 38, 135, 0.10);
+  z-index: 1000;
+  border-top: 1px solid #e0e0e0;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.bottom-nav button .lucide, .bottom-nav button i {
+  font-size: 2rem;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 2px;
+}
+
+.bottom-nav button.active, .bottom-nav button:focus {
+  background: rgba(102, 126, 234, 0.12);
+  color: #667eea;
+}
+
+@media (max-width: 600px) {
+  .bottom-nav {
+    height: 64px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .bottom-nav button {
+    font-size: 1.1rem;
+    padding: 0.5rem 0.5rem;
+  }
+  .bottom-nav button .lucide, .bottom-nav button i {
+    font-size: 1.7rem;
+    width: 28px;
+    height: 28px;
+  }
 }
 
 /* --- Mobile Overrides --- */
@@ -703,30 +829,41 @@ body.dark {
     width: 100vw;
     overflow: hidden;
     position: relative;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border-radius: 0;
+    box-shadow: none;
   }
   .top-bar {
-    padding: 12px 16px;
-    font-size: 16px;
-    background: white;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 998;
-    flex-shrink: 0;
-    width: 100vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.5rem 0.5rem;
+    min-height: 64px;
+    gap: 4px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  }
+  .top-bar-left {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .brand-name {
+    font-size: 1.1rem;
+    max-width: 90vw;
   }
   .user-menu {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
+    justify-content: flex-end;
+    margin-left: 0;
+    width: 100%;
+  }
+  .user-email {
+    max-width: 60vw;
   }
   .logout-btn {
-    padding: 8px 12px;
-    font-size: 1rem;
+    padding: 8px 10px;
+    font-size: 0.95rem;
   }
   .view {
     flex: 1 1 auto;
@@ -738,7 +875,10 @@ body.dark {
     min-height: 0;
     width: 100vw;
     box-sizing: border-box;
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border-radius: 0;
   }
   .view.active {
     display: flex;
@@ -770,7 +910,9 @@ body.dark {
     margin-bottom: 0;
     border-radius: 0;
     border: none;
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.60);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
     padding: 16px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -781,8 +923,10 @@ body.dark {
     display: flex;
     gap: 8px;
     padding: 12px 16px;
-    background: white;
-    border-top: 1px solid #eee;
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    border-top: 1px solid rgba(255,255,255,0.3);
     flex-shrink: 0;
     width: 100vw;
     box-sizing: border-box;
@@ -796,9 +940,11 @@ body.dark {
     flex: 1;
     font-size: 16px;
     padding: 12px 16px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 24px;
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     outline: none;
   }
   .chat-form input:focus {
@@ -830,12 +976,14 @@ body.dark {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
-    border-top: 1px solid #eee;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    border-top: 1px solid rgba(255,255,255,0.3);
     justify-content: space-around;
     padding: 8px 0 4px 0;
     z-index: 1002;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -4px 24px rgba(31, 38, 135, 0.10);
     width: 100vw;
     min-height: 56px;
   }
@@ -865,50 +1013,49 @@ body.dark {
     background: rgba(74, 144, 226, 0.1);
   }
   .bottom-nav button:hover {
-    color: var(--primary-blue, #4A90E2);
     background: rgba(74, 144, 226, 0.05);
   }
   .bottom-nav button:active {
     transform: scale(0.95);
   }
   .dashboard-grid, .home-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 16px;
-    width: 100%;
-    box-sizing: border-box;
+    padding: 16px;
   }
   .dashboard-card, .home-module {
-    width: 100%;
-    box-sizing: border-box;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    border-radius: 12px;
     padding: 16px;
   }
   #calendar {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 0;
-    box-sizing: border-box;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    border-radius: 12px;
+    padding: 16px;
   }
   .fc {
-    font-size: 14px !important;
-    width: 100% !important;
+    background: transparent;
   }
   .fc-toolbar {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 8px;
+    padding: 8px;
   }
   .fc-toolbar-title {
-    font-size: 16px !important;
-    text-align: center;
+    font-size: 16px;
   }
   .fc-button {
-    font-size: 14px !important;
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.3);
   }
 }
 
