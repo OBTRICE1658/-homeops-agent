@@ -161,7 +161,6 @@ app.post("/chat", async (req, res) => {
     // Step 1: Fetch conversation history from the 'chats' collection
     const messagesSnapshot = await db.collection("chats")
       .where("userId", "==", userId)
-      .orderBy("timestamp", "desc")
       .limit(10)
       .get();
 
