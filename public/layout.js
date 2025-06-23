@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
           center: "title",
           right: "dayGridMonth,timeGridWeek,timeGridDay"
         },
-        events: "/api/events?user_id=user_123",
+        events: `/api/get-events?user_id=${window.userId}`,
       });
 
       window.calendar.render();
@@ -99,11 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!confirm("Are you sure you want to delete ALL your calendar events? This cannot be undone.")) {
           return;
         }
+        if (!window.userId) {
+          alert("Could not clear events: User not identified.");
+          return;
+        }
         try {
-          const res = await fetch("/api/events/clear", {
+          const res = await fetch("/api/clear-events", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: "user_123" }),
+            body: JSON.stringify({ user_id: window.userId }),
           });
           const result = await res.json();
           if (result.success) {

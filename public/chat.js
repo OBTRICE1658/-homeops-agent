@@ -14,44 +14,6 @@ function initializeChat(user) {
 
   console.log("🚀 Initializing chat for user:", userId);
 
-  const calendarEl = document.getElementById("calendar");
-  let calendar;
-
-  // Function to fetch and render events
-  async function fetchAndRenderEvents() {
-    if (!calendar) return;
-    try {
-      const events = await apiCall(`/api/get-events?user_id=${userId}`);
-      calendar.removeAllEvents();
-      const calendarEvents = events.map(event => ({
-        id: event.id,
-        title: event.title,
-        start: event.start,
-        allDay: event.allDay || false
-      }));
-      calendar.addEventSource(calendarEvents);
-      console.log("✅ Calendar updated with the latest events.");
-    } catch (error) {
-      console.error("❌ Error fetching or rendering events:", error);
-    }
-  }
-
-  if (calendarEl) {
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
-      },
-      editable: true,
-      events: fetchAndRenderEvents,
-    });
-    calendar.render();
-  } else {
-    console.warn("⚠️ Calendar element not found on this page.");
-  }
-
   const chatBox = document.getElementById("chat");
   const chatForm = document.getElementById("chatForm");
   const input = document.getElementById("input");
@@ -120,7 +82,9 @@ function initializeChat(user) {
           }
         }
         console.log("🔄 Refreshing calendar display...");
-        fetchAndRenderEvents();
+        if (window.calendar) {
+          window.calendar.refetchEvents();
+        }
       } else {
         console.log("ℹ️ No calendar events detected in response");
       }

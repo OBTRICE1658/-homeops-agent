@@ -1,6 +1,32 @@
-const userId = "user_123"; // 🔐 Replace with dynamic logic later
+document.addEventListener("DOMContentLoaded", () => {
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      window.userId = user.uid; // Set the global userId
+      console.log("🔒 User authenticated, ID:", window.userId);
 
-async function fetchMessages() {
+      // Initialize all dashboard components that need the user ID
+      fetchMessages(window.userId);
+      loadCommandCenter(window.userId);
+      fetchWeeklySummary(window.userId);
+      
+      // Initialize chat and layout components that depend on the user
+      if (typeof initializeChat === "function") {
+        initializeChat(user);
+      }
+      if (typeof window.activateView === 'function') {
+        window.activateView("chat"); // Default view
+      }
+
+    } else {
+      // If no user, redirect to login
+      console.log("⛔ No user authenticated, redirecting to login.");
+      window.location.href = '/';
+    }
+  });
+});
+
+async function fetchMessages(userId) {
+  if (!userId) return;
   const res = await fetch(`/api/messages?user_id=${userId}`);
   const messages = await res.json();
   renderWidgets(messages);
@@ -38,7 +64,7 @@ function renderWidgets(messages) {
 
   document.querySelector("#weekly-score").innerHTML = `
     Your score this week: <span class="load-score ${loadScore > 70 ? "high" : loadScore > 30 ? "medium" : "good"}">${loadScore} / 100</span><br>
-    ${loadScore > 70 ? "⚠️ You're running hot. Consider a reset." : "✅ You’re pacing well."}
+    ${loadScore > 70 ? "⚠️ You're running hot. Consider a reset." : "✅ You're pacing well."}
   `;
 
   document.querySelector("#emotional-themes").innerHTML = cleaned
@@ -52,9 +78,10 @@ function renderWidgets(messages) {
     .join("<br>");
 }
 
-async function loadCommandCenter() {
+async function loadCommandCenter(userId) {
+  if (!userId) return;
   try {
-    const res = await fetch(`/api/events?user_id=${userId}`);
+    const res = await fetch(`/api/get-events?user_id=${userId}`);
     const data = await res.json();
 
     const container = document.getElementById("command-center");
@@ -87,12 +114,13 @@ async function loadCommandCenter() {
   }
 }
 
-async function fetchWeeklySummary() {
+async function fetchWeeklySummary(userId) {
+  if (!userId) return;
   try {
     const res = await fetch("/api/summary-this-week", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id })
+      body: JSON.stringify({ user_id: userId })
     });
 
     const data = await res.json();
@@ -108,10 +136,3 @@ async function fetchWeeklySummary() {
     console.error("❌ Failed to load weekly summary:", err.message);
   }
 }
-
-// Load everything on DOM ready
-window.addEventListener("DOMContentLoaded", () => {
-  fetchMessages();
-  loadCommandCenter();
-  fetchWeeklySummary();
-});
