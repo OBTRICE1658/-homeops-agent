@@ -53,8 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 500);
           }
         } else if (window.calendar) {
-          console.log("🔄 Calendar view activated, refetching events.");
-          window.calendar.refetchEvents(); // Refetch on subsequent views
+          console.log("🔄 Calendar view activated.");
         }
       }
     }
