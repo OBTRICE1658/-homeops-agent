@@ -1,19 +1,25 @@
 /* public/auth.css */
 
-body.auth-page {
-    background-color: #f0f2f5;
+body.auth-page, body {
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     font-family: 'Montserrat', sans-serif;
 }
 
 .auth-container {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+    border: 1px solid rgba(255,255,255,0.25);
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -99,9 +105,13 @@ body.auth-page {
 
 @media (max-width: 600px) {
   .auth-container {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px) saturate(1.1);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.10);
+    border: 1px solid rgba(255,255,255,0.18);
     padding: 18px;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     max-width: 100vw;
     min-height: 100vh;
     width: 100vw;
