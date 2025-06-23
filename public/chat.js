@@ -81,6 +81,7 @@ function initializeChat(user) {
             console.error(`❌ Failed to save event ${event.title}:`, saveError);
           }
         }
+        // The calendar will now refresh automatically when you switch to that view.
       } else {
         console.log("ℹ️ No calendar events detected in response");
       }
