@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
   <!-- API Configuration -->
-  <script src="config.js"></script>
+  <!-- REMOVED: <script src="config.js"></script> -->
   <style>
     .reframe-list {
       display: flex;
@@ -255,12 +255,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.9/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.9/index.global.min.js"></script>
 
-<!-- Firebase (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
-
-<!-- Firebase config and initialization (from config.js) -->
-<script src="config.js"></script>
+<!-- Firebase (compat, correct order and version) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/config.js"></script>
 
 <!-- Auth logic -->
 <script>
@@ -291,6 +290,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 <script src="layout.js"></script>
 <script src="chat.js"></script>
 <script src="/relief.js"></script>
+<script src="/homebase.js"></script>
 
 <!-- ✅ Bottom nav for mobile view -->
 <div class="bottom-nav">
@@ -299,8 +299,6 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   <button data-view="dashboard" onclick="activateView('dashboard')">📊</button>
   <button data-view="calendar" onclick="activateView('calendar')">📅</button>
 </div>
-
-<script src="/homebase.js" defer></script>
 </body>
 </html>
 
