@@ -51,8 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
           renderCalendar();
         } else if (window.calendar) {
           console.log("🔄 Calendar view activated.");
-          // Force FullCalendar to update its size/layout
+          // Force FullCalendar to re-render and update its size/layout
           setTimeout(() => {
+            if (window.calendar && typeof window.calendar.render === 'function') {
+              window.calendar.render();
+              console.log("🔄 Called calendar.render() after view switch");
+            }
             if (window.calendar && typeof window.calendar.updateSize === 'function') {
               window.calendar.updateSize();
               console.log("🔄 Called calendar.updateSize() after view switch");
