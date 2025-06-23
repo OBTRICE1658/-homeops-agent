@@ -31,27 +31,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Handle calendar rendering and refreshing
       if (viewId === "calendar") {
-        if (!window.calendarRendered) {
-          // Wait for userId to be set before initializing calendar
-          if (window.userId) {
-            console.log("🟢 userId available, initializing calendar");
-            renderCalendar();
-          } else {
-            console.log("⏳ userId not set yet, waiting...");
-            // Check again in 500ms
-            setTimeout(() => {
-              if (window.userId && !window.calendarRendered) {
-                console.log("🟢 userId now available, initializing calendar");
-                renderCalendar();
-              } else if (!window.userId) {
-                console.error("❌ userId still not set after delay");
-                const calendarEl = document.getElementById("calendar");
-                if (calendarEl) {
-                  calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ User not authenticated. Please log in again.</div>';
-                }
-              }
-            }, 500);
+        // Defensive: Only initialize if userId is set and ready
+        if (!window.userId || !window.userIdReady) {
+          console.warn("⏳ Tried to initialize calendar before userId was ready. Waiting...");
+          const calendarEl = document.getElementById("calendar");
+          if (calendarEl) {
+            calendarEl.innerHTML = '<div style="color:orange;text-align:center;padding:2em;">⏳ Loading user data... Please wait for authentication.</div>';
           }
+          // Retry after 500ms
+          setTimeout(() => {
+            if (window.userId && window.userIdReady && !window.calendarRendered) {
+              console.log("🟢 Retrying calendar initialization after userId became available");
+              renderCalendar();
+            }
+          }, 500);
+          return;
+        }
+        if (!window.calendarRendered) {
+          renderCalendar();
         } else if (window.calendar) {
           console.log("🔄 Calendar view activated.");
         }
