@@ -671,93 +671,219 @@ body.dark {
 @media screen and (max-width: 768px) {
   .app-container {
     flex-direction: column;
-    height: 100vh; /* Ensure the container takes full height */
+    height: 100vh;
+    overflow: hidden;
   }
 
   .sidebar {
-    display: none; /* Hide sidebar on mobile */
+    display: none;
   }
 
   .main-content {
-    padding: 1rem;
-  }
-
-  .bottom-nav {
-    display: flex; /* Show bottom nav on mobile */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #111827;
-    justify-content: space-around;
-    padding: 0.5rem 0;
-    z-index: 100;
-  }
-
-  .bottom-nav button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    padding: 0.5rem 1rem;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .top-bar {
-    padding: 10px 16px;
+    padding: 12px 16px;
     font-size: 16px;
     background: white;
     border-bottom: 1px solid #eee;
     position: sticky;
     top: 0;
     z-index: 998;
+    flex-shrink: 0;
   }
 
-  .main-content,
+  .top-bar-left {
+    gap: 8px;
+  }
+
+  .top-bar-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand-name {
+    font-size: 1.2rem;
+  }
+
   .view {
-    width: 100vw;
-    padding: 16px;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    flex-grow: 1; /* Allow view to take up space */
-    display: flex; /* Use flexbox for child alignment */
+    flex: 1;
+    display: none;
     flex-direction: column;
+    overflow: hidden;
+    padding: 16px;
+    padding-bottom: 80px;
   }
 
+  .view.active {
+    display: flex;
+  }
+
+  .view h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Chat View Mobile Optimization */
   #chat-view {
     height: 100%;
+    padding: 0;
   }
 
   .chat-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
     height: 100%;
     width: 100%;
-    flex-grow: 1;
+    gap: 0;
   }
 
   .chat-box {
-    flex-grow: 1; /* Allow chat box to take up available space */
-    overflow-y: auto;
+    flex: 1;
+    height: auto;
+    min-height: 0;
     margin-bottom: 0;
+    border-radius: 0;
+    border: none;
+    background: #f8f9fa;
+    padding: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .chat-form {
     display: flex;
-    flex-direction: row; /* Keep form elements in a row */
-    width: 100%;
-    gap: 6px;
-    flex-shrink: 0; /* Prevent form from shrinking */
+    gap: 8px;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
   }
 
-  .chat-form input,
-  .chat-form button {
-    width: 100%;
+  .chat-form input {
+    flex: 1;
     font-size: 16px;
-    padding: 12px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    background: #f8f9fa;
+    outline: none;
   }
 
+  .chat-form input:focus {
+    border-color: var(--primary-blue, #4A90E2);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  }
+
+  .chat-form button {
+    width: auto;
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 24px;
+    background: var(--primary-blue, #4A90E2);
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .chat-form button:hover {
+    background: #357ABD;
+    transform: translateY(-1px);
+  }
+
+  .chat-form button:active {
+    transform: translateY(0);
+  }
+
+  /* Message styling for mobile */
+  .message {
+    margin-bottom: 16px;
+    max-width: 100%;
+  }
+
+  .message-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    max-width: 85%;
+    word-wrap: break-word;
+  }
+
+  .message.user .message-bubble {
+    background: var(--primary-blue, #4A90E2);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 6px;
+  }
+
+  .message.agent .message-bubble {
+    background: white;
+    color: #333;
+    border: 1px solid #e1e5e9;
+    margin-right: auto;
+    border-bottom-left-radius: 6px;
+  }
+
+  /* Bottom Navigation */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #eee;
+    justify-content: space-around;
+    padding: 8px 0;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bottom-nav button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 60px;
+    cursor: pointer;
+  }
+
+  .bottom-nav button i {
+    width: 24px;
+    height: 24px;
+    color: inherit;
+    stroke-width: 1.5;
+  }
+
+  .bottom-nav button.active {
+    color: var(--primary-blue, #4A90E2);
+    background: rgba(74, 144, 226, 0.1);
+  }
+
+  .bottom-nav button:hover {
+    color: var(--primary-blue, #4A90E2);
+    background: rgba(74, 144, 226, 0.05);
+  }
+
+  .bottom-nav button:active {
+    transform: scale(0.95);
+  }
+
+  /* Dashboard Grid Mobile */
   .dashboard-grid {
     display: flex;
     flex-direction: column;
@@ -768,145 +894,70 @@ body.dark {
   .dashboard-card {
     width: 100%;
     box-sizing: border-box;
+    padding: 16px;
   }
 
-  .view {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    height: 100%; /* Use 100% instead of calc() */
-    padding-bottom: 80px;
-  }
-
-  .view h2 {
-    font-size: 20px;
-  }
-
+  /* Calendar Mobile */
   #calendar {
-    width: 100vw;
-    max-width: 100vw;
-    overflow-x: auto;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
   }
 
   .fc {
-    font-size: 14px;
+    font-size: 14px !important;
+    width: 100% !important;
   }
 
-  .fc-toolbar-title {
-    font-size: 16px !important;
-  }
-    /* 📆 Mobile calendar toolbar refinement */
-  .fc-header-toolbar {
-    display: flex;
+  .fc-toolbar {
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    padding: 8px 0;
   }
 
   .fc-toolbar-title {
     font-size: 16px !important;
     text-align: center;
-    margin-bottom: 4px;
   }
 
   .fc-button {
     font-size: 14px !important;
-    padding: 6px 12px !important;
+    padding: 8px 12px !important;
     border-radius: 8px !important;
-    background-color: #f9f9f9 !important;
-    color: #333 !important;
-    border: 1px solid #ccc !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
 
-  .fc-button.fc-button-active {
-    background-color: #333 !important;
-    color: white !important;
-    border-color: #333 !important;
-  }
-
-  .fc-button-group {
+  /* Home Grid Mobile */
+  .home-grid {
     display: flex;
-    gap: 6px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
   }
-/* 📅 FullCalendar mobile layout + toolbar cleanup */
 
-#calendar {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0 8px;
-  box-sizing: border-box;
-}
+  .home-module {
+    width: 100%;
+    padding: 16px;
+  }
 
-.fc {
-  font-size: 14px !important;
-  width: 100% !important;
-}
+  .module-content {
+    padding: 16px 0;
+  }
 
-.fc-scroller {
-  overflow: visible !important;
-}
+  .reframe-input {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    font-size: 16px;
+  }
 
-.fc-scrollgrid {
-  width: 100% !important;
-  min-width: unset !important;
-}
-
-.fc-daygrid-body {
-  width: 100% !important;
-}
-
-.fc-view-harness {
-  overflow-x: hidden !important;
-}
-
-.fc-toolbar {
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 0;
-}
-
-.fc-header-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-}
-
-.fc-toolbar-title {
-  font-size: 16px !important;
-  text-align: center;
-  margin-bottom: 4px;
-}
-
-.fc-button {
-  font-size: 14px !important;
-  padding: 6px 12px !important;
-  border-radius: 8px !important;
-  background-color: #f9f9f9 !important;
-  color: #333 !important;
-  border: 1px solid #ccc !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  margin: 2px;
-}
-
-.fc-button.fc-button-active {
-  background-color: #333 !important;
-  color: white !important;
-  border-color: #333 !important;
-}
-
-.fc-button-group {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-}
-
+  .reframe-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
 }
 
 /* --- Home View Grid Layout --- */

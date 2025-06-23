@@ -291,10 +291,18 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 
 <!-- ✅ Bottom nav for mobile view -->
 <div class="bottom-nav">
-  <button data-view="home" onclick="activateView('home')">🏠</button>
-  <button data-view="chat" onclick="activateView('chat')">💬</button>
-  <button data-view="dashboard" onclick="activateView('dashboard')">📊</button>
-  <button data-view="calendar" onclick="activateView('calendar')">📅</button>
+  <button data-view="home" onclick="activateView('home')" title="My Ops Center">
+    <i data-lucide="home"></i>
+  </button>
+  <button data-view="chat" onclick="activateView('chat')" title="Ask HomeOps">
+    <i data-lucide="message-square"></i>
+  </button>
+  <button data-view="dashboard" onclick="activateView('dashboard')" title="The House View">
+    <i data-lucide="bar-chart-3"></i>
+  </button>
+  <button data-view="calendar" onclick="activateView('calendar')" title="Calendar View">
+    <i data-lucide="calendar-days"></i>
+  </button>
 </div>
 </body>
 </html>

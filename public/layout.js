@@ -89,6 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
         navButtons.forEach((btn) => {
           btn.classList.toggle("active", btn.getAttribute("data-view") === viewId);
         });
+
+        // Update active class for bottom nav
+        bottomNavButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.getAttribute("data-view") === viewId);
+        });
       }
     }
 
@@ -101,6 +106,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const viewId = button.getAttribute("data-view");
         if (viewId) {
           activateView(viewId);
+          
+          // Update active class for sidebar nav
+          navButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.getAttribute("data-view") === viewId);
+          });
+
+          // Update active class for bottom nav
+          bottomNavButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.getAttribute("data-view") === viewId);
+          });
         }
       });
     });
@@ -230,6 +245,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Default to chat view on load
     activateView("chat");
     document.querySelector('.nav-item[data-view="chat"]').classList.add("active");
+    
+    // Set initial active state for bottom navigation
+    const bottomNavChatBtn = document.querySelector('.bottom-nav button[data-view="chat"]');
+    if (bottomNavChatBtn) {
+      bottomNavChatBtn.classList.add("active");
+    }
 
     if (toggleTheme) {
       toggleTheme.addEventListener("click", () => {
