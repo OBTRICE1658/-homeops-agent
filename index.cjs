@@ -10,6 +10,7 @@ const fs = require("fs");
 const chrono = require("chrono-node");
 const { OpenAI } = require("openai");
 const cors = require("cors");
+const { DateTime } = require("luxon");
 
 // Initialize Firebase from environment variables
 try {
@@ -285,9 +286,26 @@ app.post("/api/save-event", async (req, res) => {
 
   try {
     console.log("🔄 Parsing event time:", event.when);
-    // Parse the natural language "when" string
+    // Parse the natural language "when" string using America/New_York timezone
     const referenceDate = new Date();
-    const parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
+    const parsedResults = chrono.parse(event.when, referenceDate, { forwardDate: true });
+    let parsedStart;
+    if (parsedResults.length > 0) {
+      // Use luxon to convert to UTC from America/New_York
+      const tz = "America/New_York";
+      const components = parsedResults[0].start.knownValues;
+      let dt = DateTime.fromObject({
+        year: components.year || referenceDate.getFullYear(),
+        month: components.month || (referenceDate.getMonth() + 1),
+        day: components.day || referenceDate.getDate(),
+        hour: components.hour ?? 12,
+        minute: components.minute ?? 0,
+        second: 0
+      }, { zone: tz });
+      parsedStart = dt.toJSDate();
+    } else {
+      parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
+    }
 
     if (!parsedStart) {
       console.log("❌ Could not parse event time:", event.when);
