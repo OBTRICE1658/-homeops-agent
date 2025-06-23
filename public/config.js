@@ -9,7 +9,7 @@ const firebaseConfig = {
   measurementId: "G-Q4924PYF55"
 };
 
-// Initialize Firebase (compat style)
+// Initialize Firebase (compat style, only ONCE)
 firebase.initializeApp(firebaseConfig);
 
 // Backend API configuration
