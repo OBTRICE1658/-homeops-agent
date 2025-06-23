@@ -135,14 +135,29 @@ async function saveEventToFirestore(event, userId) {
 
 // --- API Endpoints ---
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  console.log("🏥 Health check requested");
+  res.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    firebase: !!db,
+    openai: !!process.env.OPENAI_API_KEY
+  });
+});
+
 // Chat endpoint
 app.post("/chat", async (req, res) => {
+  console.log("🔍 /chat endpoint called with:", { userId: req.body.userId, messageLength: req.body.message?.length });
+  
   const { userId, message } = req.body; // Use userId consistently
   if (!userId || !message) {
+    console.log("❌ Missing userId or message:", { userId: !!userId, message: !!message });
     return res.status(400).json({ error: "User ID and message are required" });
   }
 
   try {
+    console.log("📚 Step 1: Fetching conversation history...");
     // Step 1: Fetch conversation history from the 'chats' collection
     const messagesSnapshot = await db.collection("chats")
       .where("userId", "==", userId)
@@ -157,19 +172,23 @@ app.post("/chat", async (req, res) => {
         assistant: data.assistant_response
       };
     }).reverse();
+    console.log("✅ History fetched, messages count:", history.length);
 
     // Step 2: Get RAG context
+    console.log("🔍 Step 2: Getting RAG context...");
     let ragContext = "";
     try {
       const userEmbedding = await createEmbedding(message);
       const topChunks = await getTopKRelevantChunks(userEmbedding, 5);
       ragContext = topChunks.map(c => anonymizeText(c.content)).join("\n---\n");
+      console.log("✅ RAG context fetched, length:", ragContext.length);
     } catch (e) {
-      console.error("RAG context fetch failed:", e.message);
+      console.error("⚠️ RAG context fetch failed:", e.message);
       // Not fatal, can proceed without RAG context
     }
 
     // Step 3: Define the system prompt for the AI
+    console.log("🤖 Step 3: Preparing OpenAI request...");
     const systemPrompt = `
 Your one and only job is to act as a persona synthesizer. You will be given a block of text under "Relevant context". You MUST adopt the tone, style, and personality of the author of that text to answer the user's message.
 ---
@@ -200,8 +219,12 @@ Respond with ONLY a single, valid JSON object in this format:
       ]),
       { role: "user", content: message }
     ];
+    console.log("✅ Messages prepared for API, count:", messagesForApi.length);
 
     // Step 5: Call the OpenAI API
+    console.log("🚀 Step 4: Calling OpenAI API...");
+    console.log("🔑 OpenAI API Key present:", !!process.env.OPENAI_API_KEY);
+    
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: messagesForApi,
@@ -211,11 +234,13 @@ Respond with ONLY a single, valid JSON object in this format:
     });
 
     const assistant_response_text = completion.choices[0].message.content;
-    console.log("OpenAI API Response Body:", assistant_response_text);
+    console.log("✅ OpenAI response received, length:", assistant_response_text.length);
+    console.log("📄 OpenAI API Response Body:", assistant_response_text);
     
     let assistant_response_json;
     try {
       assistant_response_json = JSON.parse(assistant_response_text);
+      console.log("✅ JSON parsed successfully");
     } catch (parseError) {
       console.error("❌ Failed to parse OpenAI response JSON:", parseError);
       // Create a fallback response if parsing fails
@@ -224,22 +249,27 @@ Respond with ONLY a single, valid JSON object in this format:
 
     // Ensure 'reply' field exists
     if (!assistant_response_json.reply) {
+      console.log("⚠️ 'reply' field missing, using fallback");
       assistant_response_json.reply = "I'm sorry, I had trouble generating a proper response. Please try again.";
     }
 
     // Step 6: Save the new message to Firestore
+    console.log("💾 Step 5: Saving to Firestore...");
     await db.collection('chats').add({
       userId: userId,
       user_message: message,
       assistant_response: assistant_response_json.reply,
       timestamp: new Date()
     });
+    console.log("✅ Message saved to Firestore");
 
     // Step 7: Send the response to the client
+    console.log("📤 Step 6: Sending response to client");
     res.json(assistant_response_json);
 
   } catch (err) {
     console.error("❌ /chat endpoint failed:", err);
+    console.error("❌ Error stack:", err.stack);
     res.status(500).json({ error: "Failed to process your request." });
   }
 });
@@ -540,15 +570,6 @@ app.get("/api/firebase-config", (req, res) => {
   };
   
   res.json(firebaseConfig);
-});
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ 
-    status: "healthy", 
-    timestamp: new Date().toISOString(),
-    version: "DEPLOYMENT VERSION 10 - CLEANED UP BACKEND"
-  });
 });
 
 // Dashboard page route
