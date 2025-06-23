@@ -220,9 +220,14 @@ Respond with ONLY a single, valid JSON object in this format:
     });
 
     const gptData = await gptRes.json();
+    
+    // Detailed logging to debug OpenAI issues
+    console.log("OpenAI API Response Body:", JSON.stringify(gptData, null, 2));
+
     const content = gptData.choices?.[0]?.message?.content;
 
     if (!content) {
+      console.error("Full GPT response that caused error:", JSON.stringify(gptData, null, 2));
       throw new Error("No content from GPT response.");
     }
 
