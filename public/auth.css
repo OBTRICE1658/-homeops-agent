@@ -16,6 +16,8 @@ body.auth-page, body {
   justify-content: center;
   align-items: center;
   font-family: 'Montserrat', sans-serif;
+  padding: 20px 0;
+  box-sizing: border-box;
 }
 
 @keyframes gradientShift {
@@ -164,17 +166,25 @@ body.auth-page::before, body::before {
 }
 
 .toggle-link span {
-    color: white;
+    color: #666;
     cursor: pointer;
     font-weight: 600;
-    background-color: var(--primary-blue);
+    transition: color 0.2s ease;
 }
 
 .toggle-link span:hover {
+    color: var(--primary-blue);
     text-decoration: underline;
 }
 
 @media (max-width: 600px) {
+  body.auth-page, body {
+    padding: 10px 0;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
   .auth-container {
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(8px) saturate(1.1);
@@ -182,11 +192,11 @@ body.auth-page::before, body::before {
     box-shadow: 0 4px 16px rgba(31, 38, 135, 0.10);
     border: 1px solid rgba(255,255,255,0.18);
     padding: 18px;
-    border-radius: 0;
-    max-width: 100vw;
-    min-height: 100vh;
-    width: 100vw;
-    margin: 0;
+    border-radius: 12px;
+    max-width: 90vw;
+    width: 90vw;
+    margin: 20px auto;
+    min-height: auto;
   }
   .auth-logo {
     width: 48px;
