@@ -37,6 +37,12 @@ const toggleToSignIn = document.getElementById('toggleToSignIn');
 const signInError = document.getElementById('signInError');
 const signUpError = document.getElementById('signUpError');
 
+// Ensure Sign In is the default view on page load
+signInForm.style.display = 'block';
+signUpForm.style.display = 'none';
+toggleToSignUp.style.display = 'inline';
+toggleToSignIn.style.display = 'none';
+
 function setupFormHandlers() {
   // Toggle between sign in and sign up forms
   toggleToSignUp.addEventListener('click', () => {

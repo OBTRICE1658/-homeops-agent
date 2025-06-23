@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.calendarRendered = false;
     window.userIdReady = false; // Global flag to track if userId is ready
 
-    lucide.createIcons();
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
 
     const views = document.querySelectorAll(".view");
     const navButtons = document.querySelectorAll(".nav-item");
@@ -63,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }, 50);
         }
+      }
+
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
       }
     }
 
