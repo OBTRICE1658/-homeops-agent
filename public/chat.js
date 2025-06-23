@@ -95,14 +95,14 @@ function initializeChat(user) {
     try {
       const data = await apiCall("/chat", {
         method: "POST",
-        body: JSON.stringify({ message, user_id: userId })
+        body: JSON.stringify({ message, userId: userId })
       });
       const indicator = document.getElementById("typing-indicator-container");
       if (indicator) {
         chatBox.removeChild(indicator);
       }
-      if (data.response) {
-        addMessage("agent", data.response);
+      if (data.reply) {
+        addMessage("agent", data.reply);
       }
       if (data.events && data.events.length > 0) {
         console.log(`✅ ${data.events.length} calendar event(s) detected. Saving to calendar...`);
