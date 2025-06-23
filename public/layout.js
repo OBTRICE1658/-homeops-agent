@@ -28,9 +28,14 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("🚫 View not found:", viewId);
       }
 
-      // Handle calendar rendering
-      if (viewId === "calendar" && !window.calendarRendered) {
-        renderCalendar();
+      // Handle calendar rendering and refreshing
+      if (viewId === "calendar") {
+        if (!window.calendarRendered) {
+          renderCalendar(); // Initialize on first view
+        } else if (window.calendar) {
+          console.log("🔄 Calendar view activated, refetching events.");
+          window.calendar.refetchEvents(); // Refetch on subsequent views
+        }
       }
     }
 

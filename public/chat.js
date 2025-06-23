@@ -81,10 +81,6 @@ function initializeChat(user) {
             console.error(`❌ Failed to save event ${event.title}:`, saveError);
           }
         }
-        console.log("🔄 Refreshing calendar display...");
-        if (window.calendar) {
-          window.calendar.refetchEvents();
-        }
       } else {
         console.log("ℹ️ No calendar events detected in response");
       }
