@@ -7,7 +7,9 @@ function initializeChat(user) {
 
   // Set global userId for calendar and other components
   window.userId = userId;
+  window.userIdReady = true; // Mark userId as ready
   console.log("✅ window.userId set globally:", window.userId);
+  console.log("✅ window.userIdReady set to true");
 
   // Initialize calendar if it's ready
   if (typeof window.initializeCalendarIfReady === 'function') {

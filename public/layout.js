@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     window.calendar = null;
     window.calendarRendered = false;
+    window.userIdReady = false; // Global flag to track if userId is ready
 
     lucide.createIcons();
 
@@ -62,11 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Global function to initialize calendar when userId is available
     window.initializeCalendarIfReady = function() {
-      if (window.userId && !window.calendarRendered) {
-        console.log("🟢 initializeCalendarIfReady called, userId available");
+      if (window.userId && window.userIdReady && !window.calendarRendered) {
+        console.log("🟢 initializeCalendarIfReady called, userId ready");
         renderCalendar();
-      } else if (!window.userId) {
-        console.log("⏳ initializeCalendarIfReady called, but userId not set yet");
+      } else if (!window.userId || !window.userIdReady) {
+        console.log("⏳ initializeCalendarIfReady called, but userId not ready yet");
       } else {
         console.log("ℹ️ initializeCalendarIfReady called, calendar already rendered");
       }
@@ -100,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderCalendar() {
       console.log("🔄 renderCalendar called");
       console.log("🔄 window.userId:", window.userId);
+      console.log("🔄 window.userIdReady:", window.userIdReady);
       console.log("🔄 window.calendarRendered:", window.calendarRendered);
       
       const calendarEl = document.getElementById("calendar");
@@ -110,11 +112,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return;
       }
-      if (!window.userId) {
-        console.error("❌ window.userId is not set when trying to render calendar");
-        calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ User not authenticated. Please log in again.</div>';
+      
+      if (!window.userId || !window.userIdReady) {
+        console.error("❌ window.userId is not ready when trying to render calendar");
+        calendarEl.innerHTML = '<div style="color:orange;text-align:center;padding:2em;">⏳ Loading user data...</div>';
+        
+        // Retry in 1 second if userId becomes available
+        setTimeout(() => {
+          if (window.userId && window.userIdReady && !window.calendarRendered) {
+            console.log("🟢 Retrying calendar initialization after userId became available");
+            renderCalendar();
+          } else if (!window.userId) {
+            calendarEl.innerHTML = '<div style="color:red;text-align:center;padding:2em;">❌ User not authenticated. Please log in again.</div>';
+          }
+        }, 1000);
         return;
       }
+      
       console.log("✅ Proceeding with calendar initialization");
       window.calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: "dayGridMonth",
