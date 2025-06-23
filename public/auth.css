@@ -5,15 +5,15 @@
 }
 
 body.auth-page, body {
-    background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
-    min-height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%) no-repeat center center fixed;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
 }
 
 body.auth-page::before, body::before {
@@ -26,23 +26,24 @@ body.auth-page::before, body::before {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  opacity: 0.18;
+  opacity: 0.35;
   /* Abstract SVG with brand blue */
-  background-image: url('data:image/svg+xml;utf8,<svg width="100%25" height="100%25" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="600" cy="100" rx="220" ry="120" fill="%234A90E2" fill-opacity="0.35"/><ellipse cx="200" cy="500" rx="180" ry="90" fill="%234A90E2" fill-opacity="0.22"/><ellipse cx="400" cy="300" rx="320" ry="180" fill="%234A90E2" fill-opacity="0.10"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg width="100%25" height="100%25" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="600" cy="100" rx="220" ry="120" fill="%234A90E2" fill-opacity="0.45"/><ellipse cx="200" cy="500" rx="180" ry="90" fill="%234A90E2" fill-opacity="0.32"/><ellipse cx="400" cy="300" rx="320" ry="180" fill="%234A90E2" fill-opacity="0.18"/></svg>');
 }
 
 .auth-container {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
-    border: 1px solid rgba(255,255,255,0.25);
-    padding: 40px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
 .auth-header {
