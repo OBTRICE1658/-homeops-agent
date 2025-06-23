@@ -104,6 +104,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("🔄 window.userIdReady:", window.userIdReady);
       console.log("🔄 window.calendarRendered:", window.calendarRendered);
       
+      // Prevent duplicate initialization
+      if (window.calendarRendered && window.calendar) {
+        console.log("ℹ️ Calendar already rendered, skipping duplicate initialization");
+        return;
+      }
+      
       const calendarEl = document.getElementById("calendar");
       if (!calendarEl || typeof FullCalendar === "undefined") {
         console.error("Calendar element or FullCalendar library not found.");
@@ -279,12 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
           window.userId = user.uid;
           console.log('✅ window.userId set:', window.userId);
-          // If calendar was rendered before userId, destroy and re-create it
-          if (window.calendarRendered && window.calendar) {
-            window.calendar.destroy();
-            window.calendarRendered = false;
+          // Only initialize calendar if it hasn't been rendered yet
+          if (!window.calendarRendered) {
             renderCalendar();
-            console.log('🔄 Calendar re-initialized after userId set');
+            console.log('🔄 Calendar initialized after userId set');
           }
         }
       });
