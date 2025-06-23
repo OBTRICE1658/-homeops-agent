@@ -1,6 +1,5 @@
-console.log("🚀 DEPLOYMENT VERSION 9 - LUXON REMOVED - " + new Date().toISOString());
-console.log("🚀 DEPLOYMENT VERSION 9 - LUXON REMOVED - " + new Date().toISOString());
-console.log("🚀 DEPLOYMENT VERSION 9 - LUXON REMOVED - " + new Date().toISOString());
+console.log("🚀 DEPLOYMENT VERSION 10 - CLEANED UP BACKEND - " + new Date().toISOString());
+
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -8,10 +7,8 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const admin = require("firebase-admin");
 const path = require("path");
 const fs = require("fs");
-// const { DateTime } = require("luxon"); // Temporarily removed for deployment
 const chrono = require("chrono-node");
-
-// Add CORS support
+const { OpenAI } = require("openai");
 const cors = require("cors");
 
 // Initialize Firebase from environment variables
@@ -32,7 +29,7 @@ try {
 } catch (err) {
   console.error("❌ Firebase initialization failed:", err.message);
   console.error("Please ensure your .env file is correctly configured with a base64-encoded FIREBASE_CREDENTIALS value.");
-  process.exit(1); // Exit if initialization fails
+  process.exit(1);
 }
 
 const db = admin.firestore();
@@ -46,7 +43,6 @@ try {
   console.log("✅ Persona file loaded successfully.");
 } catch (err) {
   console.error("❌ Failed to load persona file:", err.message);
-  // Continue without it, but log the error
 }
 
 app.use(bodyParser.json());
@@ -62,6 +58,11 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+// Initialize OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // --- RAG Helper Functions ---
 async function createEmbedding(text) {
@@ -94,14 +95,11 @@ function cosineSimilarity(a, b) {
 }
 
 async function getTopKRelevantChunks(userEmbedding, k = 5) {
-  // Fetch all knowledge chunks (for small KB; for large KB, use a vector DB)
   const snapshot = await db.collection('knowledge_chunks').get();
   const chunks = snapshot.docs.map(doc => doc.data());
-  // Compute similarity
   for (const chunk of chunks) {
     chunk.sim = cosineSimilarity(userEmbedding, chunk.embedding);
   }
-  // Sort by similarity, descending
   chunks.sort((a, b) => b.sim - a.sim);
   return chunks.slice(0, k);
 }
@@ -114,8 +112,30 @@ function anonymizeText(text) {
     .replace(/Amy Schumer/gi, "the comedian")
     .replace(/Martha Beck/gi, "the author");
 }
-// --- END RAG Helper Functions ---
 
+// --- Calendar Event Management ---
+async function saveEventToFirestore(event, userId) {
+  try {
+    const eventRef = db.collection("events").doc();
+    const eventWithId = {
+      ...event,
+      id: eventRef.id,
+      user_id: userId,
+      created_at: new Date()
+    };
+    
+    await eventRef.set(eventWithId);
+    console.log("✅ Event saved to Firestore:", eventWithId.id);
+    return eventWithId;
+  } catch (error) {
+    console.error("❌ Error saving event to Firestore:", error);
+    throw error;
+  }
+}
+
+// --- API Endpoints ---
+
+// Chat endpoint - now only handles conversation, not database operations
 app.post("/chat", async (req, res) => {
   const { user_id, message } = req.body;
   if (!user_id || !message) {
@@ -123,7 +143,7 @@ app.post("/chat", async (req, res) => {
   }
 
   try {
-    // 1. Fetch the last 10 messages for context
+    // Fetch conversation history
     const messagesSnapshot = await db.collection("messages")
       .where("user_id", "==", user_id)
       .orderBy("timestamp", "desc")
@@ -132,10 +152,7 @@ app.post("/chat", async (req, res) => {
 
     const history = messagesSnapshot.docs.map(doc => doc.data()).reverse();
 
-    // 2. Construct the messages array for OpenAI
-    const messagesForApi = [];
-
-    // System prompt combining the persona and the core instructions
+    // Get RAG context
     let ragContext = "";
     try {
       const userEmbedding = await createEmbedding(message);
@@ -144,6 +161,7 @@ app.post("/chat", async (req, res) => {
     } catch (e) {
       console.error("RAG context fetch failed:", e.message);
     }
+
     const systemPrompt = `
 Your one and only job is to act as a persona synthesizer. You will be given a block of text under "Relevant context". You MUST adopt the tone, style, and personality of the author of that text to answer the user's message.
 
@@ -166,31 +184,26 @@ Today's date is: ${getCurrentDate()}.
 
 After crafting your in-character reply, extract any new calendar events found ONLY in the user's most recent message.
 
-Respond with ONLY a single, valid JSON object in this format.
+Respond with ONLY a single, valid JSON object in this format:
 
 {
-  "reply": "Your in-character, conversational reply synthesized from the knowledge base goes here.",
+  "response": "Your in-character, conversational reply synthesized from the knowledge base goes here.",
   "events": [
     { "title": "Event Title", "when": "A descriptive, natural language time like 'This coming Tuesday at 2pm' or 'August 15th at 10am'", "allDay": false }
   ]
 }
     `.trim();
 
-    messagesForApi.push({ role: "system", content: systemPrompt });
+    const messagesForApi = [
+      { role: "system", content: systemPrompt },
+      ...history.flatMap(msg => [
+        { role: "user", content: msg.message },
+        ...(msg.assistant_response ? [{ role: "assistant", content: msg.assistant_response }] : [])
+      ]),
+      { role: "user", content: message }
+    ];
 
-    // Add conversation history
-    history.forEach(msg => {
-      messagesForApi.push({ role: "user", content: msg.message });
-      if (msg.assistant_response) {
-        messagesForApi.push({ role: "assistant", content: msg.assistant_response });
-      }
-    });
-
-    // Add the current user message
-    messagesForApi.push({ role: "user", content: message });
-
-
-    // 3. Call OpenAI API
+    // Call OpenAI API
     const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -207,7 +220,6 @@ Respond with ONLY a single, valid JSON object in this format.
     });
 
     const gptData = await gptRes.json();
-    console.log("OpenAI Response Body:", JSON.stringify(gptData, null, 2));
     const content = gptData.choices?.[0]?.message?.content;
 
     if (!content) {
@@ -215,53 +227,22 @@ Respond with ONLY a single, valid JSON object in this format.
     }
 
     const parsedResponse = JSON.parse(content);
-    const { reply, events = [] } = parsedResponse;
+    const { response, events = [] } = parsedResponse;
 
-    // 4. Save new message and reply to history
+    // Save conversation to history
     await db.collection("messages").add({
       user_id,
       message,
-      assistant_response: content,
+      assistant_response: response,
       timestamp: new Date()
     });
 
-    // 5. Save events to Firestore
-    if (events.length > 0) {
-      const savedEvents = [];
-      const batch = db.batch();
-      
-      // Get the current time in the target timezone to use as a reference for parsing
-      const referenceDate = new Date();
-
-      events.forEach(event => {
-        if (event.title && event.when) {
-          // Parse the natural language "when" string
-          const parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
-
-          if (parsedStart) {
-            // Convert to the required ISO 8601 format with timezone
-            const startISO = new Date(parsedStart).toISOString();
-
-            const eventRef = db.collection("events").doc();
-            const eventWithId = { 
-              ...event, 
-              start: startISO, // Add the parsed start time
-              id: eventRef.id, 
-              user_id, 
-              created_at: new Date() 
-            };
-            delete eventWithId.when; // Clean up the original 'when' field
-            
-            batch.set(eventRef, eventWithId);
-            savedEvents.push(eventWithId);
-          }
-        }
-      });
-      await batch.commit();
-      res.json({ reply, events: savedEvents });
-    } else {
-      res.json({ reply, events: [] });
-    }
+    // Return response with events for frontend to handle
+    res.json({ 
+      response, 
+      events,
+      hasEvents: events.length > 0
+    });
 
   } catch (err) {
     console.error("❌ /chat endpoint failed:", err.message, err.stack);
@@ -269,50 +250,80 @@ Respond with ONLY a single, valid JSON object in this format.
   }
 });
 
-// ✅ Save event to Firestore (this can be used for manual additions if needed)
-app.post("/api/events", async (req, res) => {
-  const { event } = req.body;
-
-  if (!event || !event.title || (!event.start && !event.when)) {
-    return res.status(400).json({ error: "Missing event title or time." });
+// Save calendar event endpoint
+app.post("/api/save-event", async (req, res) => {
+  const { event, user_id } = req.body;
+  
+  if (!event || !event.title || !event.when || !user_id) {
+    return res.status(400).json({ error: "Missing event title, when, or user_id." });
   }
 
   try {
-    // If "when" is provided, parse it into ISO using chrono + luxon
-    if (!event.start && event.when) {
-      const parsedStart = chrono.parseDate(event.when, { timezone: "America/New_York" });
-      if (!parsedStart) {
-        return res.status(400).json({ error: "Could not parse 'when' into a date." });
-      }
-      event.start = new Date(parsedStart).toISOString();
+    // Parse the natural language "when" string
+    const referenceDate = new Date();
+    const parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
+
+    if (!parsedStart) {
+      return res.status(400).json({ error: "Could not parse the event time." });
     }
 
-    const docRef = await db.collection("events").add({
-      ...event,
-      created_at: new Date(),
-    });
+    const startISO = new Date(parsedStart).toISOString();
+    
+    const eventToSave = {
+      title: event.title,
+      start: startISO,
+      allDay: event.allDay || false,
+      user_id: user_id
+    };
 
-    res.json({ success: true, id: docRef.id });
+    const savedEvent = await saveEventToFirestore(eventToSave, user_id);
+    res.json({ success: true, event: savedEvent });
   } catch (err) {
     console.error("❌ Failed to save event:", err.message);
     res.status(500).json({ error: "Failed to save event" });
   }
 });
 
-// 🔄 Update an existing event by ID
-app.put("/api/events/:id", async (req, res) => {
+// Get events endpoint
+app.get("/api/get-events", async (req, res) => {
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ error: "User ID is required." });
+  }
+
+  try {
+    const snapshot = await db.collection("events")
+      .where("user_id", "==", user_id)
+      .orderBy("start", "asc")
+      .get();
+    
+    const events = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    res.json(events);
+  } catch (err) {
+    console.error("❌ Failed to fetch events:", err.message);
+    res.status(500).json({ error: "Failed to fetch events" });
+  }
+});
+
+// Update event endpoint
+app.put("/api/update-event/:id", async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 
-  if (!id || !updatedData || typeof updatedData !== "object") {
-    return res.status(400).json({ error: "Invalid request format" });
+  if (!id || !updatedData) {
+    return res.status(400).json({ error: "Event ID and update data are required." });
   }
 
   try {
     const eventRef = db.collection("events").doc(id);
     await eventRef.update({
       ...updatedData,
-      updated_at: new Date(),
+      updated_at: new Date()
     });
     res.json({ success: true, message: `Event ${id} updated.` });
   } catch (err) {
@@ -321,23 +332,52 @@ app.put("/api/events/:id", async (req, res) => {
   }
 });
 
-// ✅ Fetch all saved events
-app.get("/api/events", async (req, res) => {
-  const { user_id = "user_123" } = req.query;
+// Delete event endpoint
+app.delete("/api/delete-event/:id", async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: "Event ID is required." });
+  }
+
   try {
-    const snapshot = await db
-      .collection("events")
-      .where("user_id", "==", user_id)
-      .orderBy("start")
-      .get();
-    const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    res.json(events);
+    await db.collection("events").doc(id).delete();
+    res.json({ success: true, message: `Event ${id} deleted.` });
   } catch (err) {
-    console.error("❌ Failed to fetch events:", err.message);
-    res.status(500).json({ error: "Failed to fetch events" });
+    console.error(`❌ Failed to delete event ${id}:`, err.message);
+    res.status(500).json({ error: "Failed to delete event" });
   }
 });
 
+// Clear all events endpoint
+app.post("/api/clear-events", async (req, res) => {
+  const { user_id } = req.body;
+  
+  if (!user_id) {
+    return res.status(400).json({ error: "User ID is required." });
+  }
+
+  try {
+    const snapshot = await db.collection("events").where("user_id", "==", user_id).get();
+    
+    if (snapshot.empty) {
+      return res.json({ success: true, message: "No events to clear for this user." });
+    }
+
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    res.json({ success: true, message: `Deleted ${snapshot.size} events.` });
+  } catch (err) {
+    console.error("❌ Failed to clear events:", err.message);
+    res.status(500).json({ error: "Failed to clear events." });
+  }
+});
+
+// Dashboard endpoint
 app.get("/api/dashboard", async (req, res) => {
   const { user_id = "user_123" } = req.query;
 
@@ -353,8 +393,8 @@ app.get("/api/dashboard", async (req, res) => {
     const themeCounts = {};
     const taskList = [];
 
-    messages.forEach(({ message, reply }) => {
-      const text = `${message} ${reply}`.toLowerCase();
+    messages.forEach(({ message, assistant_response }) => {
+      const text = `${message} ${assistant_response}`.toLowerCase();
       ["laundry", "school", "camp", "appointment", "groceries", "pickup"].forEach(keyword => {
         if (text.includes(keyword)) {
           themeCounts[keyword] = (themeCounts[keyword] || 0) + 1;
@@ -381,6 +421,7 @@ app.get("/api/dashboard", async (req, res) => {
   }
 });
 
+// Relief protocol endpoint
 app.post("/api/relief-protocol", async (req, res) => {
   const { tasks = [], emotional_flags = [] } = req.body;
 
@@ -427,6 +468,7 @@ Output format:
   }
 });
 
+// Reframe protocol endpoint
 app.post("/api/reframe-protocol", async (req, res) => {
   const { challenge } = req.body;
 
@@ -491,51 +533,8 @@ Do not include any text outside of this JSON object.
   }
 });
 
-app.post("/api/events/clear", async (req, res) => {
-  const { user_id = "user_123" } = req.body;
-  if (!user_id) {
-    return res.status(400).json({ error: "User ID is required." });
-  }
-  try {
-    const snapshot = await db.collection("events").where("user_id", "==", user_id).get();
-    if (snapshot.empty) {
-      return res.json({ success: true, message: "No events to clear for this user." });
-    }
-
-    const batch = db.batch();
-    snapshot.docs.forEach(doc => {
-      batch.delete(doc.ref);
-    });
-
-    await batch.commit();
-    res.json({ success: true, message: `Deleted ${snapshot.size} events.` });
-  } catch (err) {
-    console.error("❌ Failed to clear events:", err.message);
-    res.status(500).json({ error: "Failed to clear events." });
-  }
-});
-
-app.get("/events", async (req, res) => {
-  const { user_id } = req.query; // Or from session, etc.
-  if (!user_id) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-  try {
-    const eventsSnapshot = await db.collection("events")
-      .where("user_id", "==", user_id)
-      .orderBy("start", "asc")
-      .get();
-    const events = eventsSnapshot.docs.map(doc => doc.data());
-    res.json(events);
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    res.status(500).json({ error: "Failed to fetch events" });
-  }
-});
-
 // Secure endpoint to provide Firebase config
 app.get("/api/firebase-config", (req, res) => {
-  // Only return the public config, not the service account credentials
   const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -554,29 +553,28 @@ app.get("/health", (req, res) => {
   res.json({ 
     status: "healthy", 
     timestamp: new Date().toISOString(),
-    version: "DEPLOYMENT VERSION 9 - LUXON REMOVED"
+    version: "DEPLOYMENT VERSION 10 - CLEANED UP BACKEND"
   });
 });
 
-app.get("*", (req, res) => {
+// Dashboard page route
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
+// Catch-all route for SPA - only serve index.html for root path
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-async function startServer() {
-  try {
-    app.listen(port, () => {
-      console.log(`✅ Server listening on port ${port}`);
-    });
-  } catch (err) {
-    console.error("❌ Server failed to start:", err);
-    process.exit(1);
-  }
-}
-
-// Simple date function to replace luxon
+// Simple date function
 function getCurrentDate() {
   const now = new Date();
-  return now.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+  return now.toISOString().split('T')[0];
 }
 
-startServer();
+// Start server
+app.listen(port, () => {
+  console.log(`✅ Server listening on port ${port}`);
+});
+

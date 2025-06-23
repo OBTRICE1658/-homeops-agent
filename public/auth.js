@@ -21,7 +21,7 @@ initializeFirebase().then(authInstance => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       // User is signed in, redirect to dashboard
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     }
   });
   

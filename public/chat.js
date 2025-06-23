@@ -34,9 +34,18 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchAndRenderEvents() {
       if (!calendar) return;
       try {
-        const events = await apiCall(`/events?user_id=${userId}`);
+        const events = await apiCall(`/api/get-events?user_id=${userId}`);
         calendar.removeAllEvents(); // Clear existing events
-        calendar.addEventSource(events); // Add new events
+        
+        // Transform events to FullCalendar format
+        const calendarEvents = events.map(event => ({
+          id: event.id,
+          title: event.title,
+          start: event.start,
+          allDay: event.allDay || false
+        }));
+        
+        calendar.addEventSource(calendarEvents); // Add new events
         console.log("✅ Calendar updated with the latest events.");
       } catch (error) {
         console.error("❌ Error fetching or rendering events:", error);
@@ -131,10 +140,25 @@ document.addEventListener("DOMContentLoaded", () => {
           addMessage("agent", data.response);
         }
 
-        // If a new calendar event was created, refresh the calendar
-        if (data.calendarEvent) {
-          console.log(`✅ Calendar event detected. Refreshing calendar...`, data.calendarEvent);
-          fetchAndRenderEvents(); // Refetch all events to update the calendar
+        if (data.events && data.events.length > 0) {
+          console.log(`✅ ${data.events.length} calendar event(s) detected. Saving to calendar...`);
+          
+          for (const event of data.events) {
+            try {
+              await apiCall("/api/save-event", {
+                method: "POST",
+                body: JSON.stringify({ 
+                  event: event, 
+                  user_id: userId 
+                })
+              });
+              console.log(`✅ Event saved: ${event.title}`);
+            } catch (saveError) {
+              console.error(`❌ Failed to save event ${event.title}:`, saveError);
+            }
+          }
+          
+          fetchAndRenderEvents();
         }
 
       } catch (err) {
@@ -148,10 +172,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Initial greeting
+    // Initial greeting - now properly timed and contextual
     setTimeout(() => {
         addMessage("agent", "Hi. I'm your personal chief of staff. What can I help you with today?");
-    }, 100);
+    }, 500); // Slightly longer delay to ensure everything is loaded
 
     function highlightCalendarEvent(eventObj) {
       if (!eventObj) return;
