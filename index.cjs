@@ -275,22 +275,27 @@ Respond with ONLY a single, valid JSON object in this format:
 
 // Save calendar event endpoint
 app.post("/api/save-event", async (req, res) => {
+  console.log("📅 /api/save-event called with:", req.body);
   const { event, user_id } = req.body;
   
   if (!event || !event.title || !event.when || !user_id) {
+    console.log("❌ Missing required fields:", { hasEvent: !!event, hasTitle: !!event?.title, hasWhen: !!event?.when, hasUserId: !!user_id });
     return res.status(400).json({ error: "Missing event title, when, or user_id." });
   }
 
   try {
+    console.log("🔄 Parsing event time:", event.when);
     // Parse the natural language "when" string
     const referenceDate = new Date();
     const parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
 
     if (!parsedStart) {
+      console.log("❌ Could not parse event time:", event.when);
       return res.status(400).json({ error: "Could not parse the event time." });
     }
 
     const startISO = new Date(parsedStart).toISOString();
+    console.log("✅ Parsed time:", { original: event.when, parsed: startISO });
     
     const eventToSave = {
       title: event.title,
@@ -299,7 +304,9 @@ app.post("/api/save-event", async (req, res) => {
       user_id: user_id
     };
 
+    console.log("💾 Saving event to Firestore:", eventToSave);
     const savedEvent = await saveEventToFirestore(eventToSave, user_id);
+    console.log("✅ Event saved successfully:", savedEvent);
     res.json({ success: true, event: savedEvent });
   } catch (err) {
     console.error("❌ Failed to save event:", err.message);

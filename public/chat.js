@@ -106,18 +106,23 @@ function initializeChat(user) {
       }
       if (data.events && data.events.length > 0) {
         console.log(`✅ ${data.events.length} calendar event(s) detected. Saving to calendar...`);
+        console.log("📅 Events to save:", data.events);
         for (const event of data.events) {
           try {
-            await apiCall("/api/save-event", {
+            console.log(`🔄 Saving event: ${event.title} at ${event.when}`);
+            const saveResponse = await apiCall("/api/save-event", {
               method: "POST",
               body: JSON.stringify({ event, user_id: userId })
             });
-            console.log(`✅ Event saved: ${event.title}`);
+            console.log(`✅ Event saved successfully:`, saveResponse);
           } catch (saveError) {
             console.error(`❌ Failed to save event ${event.title}:`, saveError);
           }
         }
+        console.log("🔄 Refreshing calendar display...");
         fetchAndRenderEvents();
+      } else {
+        console.log("ℹ️ No calendar events detected in response");
       }
     } catch (err) {
       console.error("Chat error:", err);
