@@ -325,7 +325,6 @@ app.get("/api/get-events", async (req, res) => {
   try {
     const snapshot = await db.collection("events")
       .where("user_id", "==", user_id)
-      .orderBy("start", "asc")
       .get();
     
     const events = snapshot.docs.map(doc => ({
