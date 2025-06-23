@@ -289,6 +289,13 @@ initializeFirebase().then(authInstance => {
     } else {
       // User is signed in, display email
       document.getElementById('userEmail').textContent = user.email;
+
+      // ✅ Initialize the chat module now that we have a user
+      if (typeof initializeChat === 'function') {
+        initializeChat(user);
+      } else {
+        console.error("Critical Error: initializeChat function not found. Check that chat.js is loaded.");
+      }
     }
   });
 
@@ -307,10 +314,10 @@ initializeFirebase().then(authInstance => {
 });
 </script>
 
-<!-- ✅ Your app scripts -->
-<script src="layout.js" defer></script>
-<script src="chat.js" defer></script>
-<script src="/relief.js" defer></script>
+<!-- ✅ Your app scripts (remove defer) -->
+<script src="layout.js"></script>
+<script src="chat.js"></script>
+<script src="/relief.js"></script>
 
 <!-- ✅ Bottom nav for mobile view -->
 <div class="bottom-nav">
