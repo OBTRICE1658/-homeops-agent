@@ -135,24 +135,30 @@ async function saveEventToFirestore(event, userId) {
 
 // --- API Endpoints ---
 
-// Chat endpoint - now only handles conversation, not database operations
+// Chat endpoint
 app.post("/chat", async (req, res) => {
-  const { user_id, message } = req.body;
-  if (!user_id || !message) {
+  const { userId, message } = req.body; // Use userId consistently
+  if (!userId || !message) {
     return res.status(400).json({ error: "User ID and message are required" });
   }
 
   try {
-    // Fetch conversation history
-    const messagesSnapshot = await db.collection("messages")
-      .where("user_id", "==", user_id)
+    // Step 1: Fetch conversation history from the 'chats' collection
+    const messagesSnapshot = await db.collection("chats")
+      .where("userId", "==", userId)
       .orderBy("timestamp", "desc")
       .limit(10)
       .get();
 
-    const history = messagesSnapshot.docs.map(doc => doc.data()).reverse();
+    const history = messagesSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        user: data.user_message,
+        assistant: data.assistant_response
+      };
+    }).reverse();
 
-    // Get RAG context
+    // Step 2: Get RAG context
     let ragContext = "";
     try {
       const userEmbedding = await createEmbedding(message);
@@ -160,97 +166,80 @@ app.post("/chat", async (req, res) => {
       ragContext = topChunks.map(c => anonymizeText(c.content)).join("\n---\n");
     } catch (e) {
       console.error("RAG context fetch failed:", e.message);
+      // Not fatal, can proceed without RAG context
     }
 
+    // Step 3: Define the system prompt for the AI
     const systemPrompt = `
 Your one and only job is to act as a persona synthesizer. You will be given a block of text under "Relevant context". You MUST adopt the tone, style, and personality of the author of that text to answer the user's message.
-
 ---
 Relevant context from the knowledge base:
 ${ragContext}
 ---
-
 Your task is to synthesize a response that is 100% in-character with the context provided.
-It is a hard failure if you provide a generic, list-based answer. For example, DO NOT output a response like:
-"- **Open Dialogue:** Create a safe space..."
-"- **Acknowledge and Apologize:** If there's something..."
-
+It is a hard failure if you provide a generic, list-based answer.
 Your response must be a conversational paragraph that captures the unique tone and style of the context.
-
 **Final check:** Does my response sound like a generic AI assistant? If it does, you have failed. Rewrite it to be in-character.
-
 Never mention the names of any real people, authors, or public figures.
 Today's date is: ${getCurrentDate()}.
-
 After crafting your in-character reply, extract any new calendar events found ONLY in the user's most recent message.
-
 Respond with ONLY a single, valid JSON object in this format:
-
 {
-  "response": "Your in-character, conversational reply synthesized from the knowledge base goes here.",
+  "reply": "Your in-character, conversational reply synthesized from the knowledge base goes here.",
   "events": [
     { "title": "Event Title", "when": "A descriptive, natural language time like 'This coming Tuesday at 2pm' or 'August 15th at 10am'", "allDay": false }
   ]
-}
-    `.trim();
+}`.trim();
 
+    // Step 4: Construct the message history for the API
     const messagesForApi = [
       { role: "system", content: systemPrompt },
       ...history.flatMap(msg => [
-        { role: "user", content: msg.message },
-        ...(msg.assistant_response ? [{ role: "assistant", content: msg.assistant_response }] : [])
+        { role: "user", content: msg.user },
+        ...(msg.assistant ? [{ role: "assistant", content: msg.assistant }] : [])
       ]),
       { role: "user", content: message }
     ];
 
-    // Call OpenAI API
-    const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        temperature: 0.7,
-        top_p: 1,
-        response_format: { type: "json_object" },
-        messages: messagesForApi
-      })
+    // Step 5: Call the OpenAI API
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: messagesForApi,
+      temperature: 0.7,
+      top_p: 1,
+      response_format: { type: "json_object" },
     });
 
-    const gptData = await gptRes.json();
+    const assistant_response_text = completion.choices[0].message.content;
+    console.log("OpenAI API Response Body:", assistant_response_text);
     
-    // Detailed logging to debug OpenAI issues
-    console.log("OpenAI API Response Body:", JSON.stringify(gptData, null, 2));
-
-    const content = gptData.choices?.[0]?.message?.content;
-
-    if (!content) {
-      console.error("Full GPT response that caused error:", JSON.stringify(gptData, null, 2));
-      throw new Error("No content from GPT response.");
+    let assistant_response_json;
+    try {
+      assistant_response_json = JSON.parse(assistant_response_text);
+    } catch (parseError) {
+      console.error("❌ Failed to parse OpenAI response JSON:", parseError);
+      // Create a fallback response if parsing fails
+      assistant_response_json = { reply: assistant_response_text, events: [] };
     }
 
-    const parsedResponse = JSON.parse(content);
-    const { response, events = [] } = parsedResponse;
+    // Ensure 'reply' field exists
+    if (!assistant_response_json.reply) {
+      assistant_response_json.reply = "I'm sorry, I had trouble generating a proper response. Please try again.";
+    }
 
-    // Save conversation to history
-    await db.collection("messages").add({
-      user_id,
-      message,
-      assistant_response: response,
+    // Step 6: Save the new message to Firestore
+    await db.collection('chats').add({
+      userId: userId,
+      user_message: message,
+      assistant_response: assistant_response_json.reply,
       timestamp: new Date()
     });
 
-    // Return response with events for frontend to handle
-    res.json({ 
-      response, 
-      events,
-      hasEvents: events.length > 0
-    });
+    // Step 7: Send the response to the client
+    res.json(assistant_response_json);
 
   } catch (err) {
-    console.error("❌ /chat endpoint failed:", err.message, err.stack);
+    console.error("❌ /chat endpoint failed:", err);
     res.status(500).json({ error: "Failed to process your request." });
   }
 });
@@ -572,10 +561,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Simple date function
 function getCurrentDate() {
-  const now = new Date();
-  return now.toISOString().split('T')[0];
+  return new Date().toDateString();
 }
 
 // Start server
