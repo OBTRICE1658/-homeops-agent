@@ -127,13 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
           chatBox.removeChild(indicator);
         }
 
-        if (data.reply) {
-          addMessage("agent", data.reply);
+        if (data.response) {
+          addMessage("agent", data.response);
         }
 
-        // If new events were created, refetch all events to update the calendar
-        if (data.events && data.events.length > 0) {
-          console.log(`✅ ${data.events.length} new event(s) created. Refreshing calendar...`);
+        // If a new calendar event was created, refresh the calendar
+        if (data.calendarEvent) {
+          console.log(`✅ Calendar event detected. Refreshing calendar...`, data.calendarEvent);
           fetchAndRenderEvents(); // Refetch all events to update the calendar
         }
 
@@ -149,7 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Initial greeting
-    addMessage("agent", "Hi. I'm your personal chief of staff. What can I help you with today?");
+    setTimeout(() => {
+        addMessage("agent", "Hi. I'm your personal chief of staff. What can I help you with today?");
+    }, 100);
 
     function highlightCalendarEvent(eventObj) {
       if (!eventObj) return;
