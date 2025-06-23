@@ -1,7 +1,7 @@
 // Backend API configuration
 const BACKEND_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000'  // Local development
-  : 'https://homeops-agent.onrender.com';  // Production backend
+  : `https://${window.location.hostname}`;  // Production - use same hostname
 
 // Helper function to make API calls
 async function apiCall(endpoint, options = {}) {
