@@ -1480,16 +1480,67 @@ body.dark {
   -webkit-backdrop-filter: blur(8px) saturate(1.1);
   border-radius: 12px;
   padding: 16px;
+  min-height: 400px; /* Ensure minimum height on mobile */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 900px) {
   .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
     padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
   }
+  
+  /* Ensure calendar view has proper spacing */
+  #calendar-view {
+    padding: 1rem 0.5rem calc(180px + env(safe-area-inset-bottom, 0px)) 0.5rem;
+  }
+  
+  #calendar {
+    min-height: 350px; /* Slightly smaller on mobile but still usable */
+    padding: 12px 8px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+  }
 }
+
 @media (max-width: 600px) {
   .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
     padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  /* Mobile calendar specific fixes */
+  #calendar-view {
+    padding: 0.5rem 0.25rem calc(180px + env(safe-area-inset-bottom, 0px)) 0.25rem;
+  }
+  
+  #calendar {
+    min-height: 320px;
+    padding: 8px 4px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  
+  /* Ensure FullCalendar elements are properly sized on mobile */
+  .fc {
+    font-size: 0.85rem;
+  }
+  
+  .fc-toolbar {
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 2px;
+  }
+  
+  .fc-toolbar-title {
+    font-size: 0.9rem;
+  }
+  
+  .fc-button {
+    font-size: 0.8rem;
+    padding: 4px 8px;
   }
 }
 

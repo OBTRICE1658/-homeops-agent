@@ -76,13 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Global function to initialize calendar when userId is available
     window.initializeCalendarIfReady = function() {
+      console.log("🔄 initializeCalendarIfReady called");
+      console.log("🔄 window.userId:", window.userId);
+      console.log("🔄 window.userIdReady:", window.userIdReady);
+      console.log("🔄 window.calendarRendered:", window.calendarRendered);
+      
       if (window.userId && window.userIdReady && !window.calendarRendered) {
-        console.log("🟢 initializeCalendarIfReady called, userId ready");
+        console.log("🟢 initializeCalendarIfReady: All conditions met, rendering calendar");
         renderCalendar();
       } else if (!window.userId || !window.userIdReady) {
-        console.log("⏳ initializeCalendarIfReady called, but userId not ready yet");
+        console.log("⏳ initializeCalendarIfReady: userId not ready yet");
+        console.log("⏳ userId:", window.userId, "userIdReady:", window.userIdReady);
       } else {
-        console.log("ℹ️ initializeCalendarIfReady called, calendar already rendered");
+        console.log("ℹ️ initializeCalendarIfReady: Calendar already rendered");
       }
     };
 
@@ -131,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("🔄 window.userId:", window.userId);
       console.log("🔄 window.userIdReady:", window.userIdReady);
       console.log("🔄 window.calendarRendered:", window.calendarRendered);
+      console.log("🔄 FullCalendar available:", typeof FullCalendar !== "undefined");
       
       // Prevent duplicate initialization
       if (window.calendarRendered && window.calendar) {
@@ -139,6 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       const calendarEl = document.getElementById("calendar");
+      console.log("🔄 Calendar element found:", !!calendarEl);
+      if (calendarEl) {
+        console.log("🔄 Calendar element dimensions:", calendarEl.offsetWidth, "x", calendarEl.offsetHeight);
+        console.log("🔄 Calendar element display:", getComputedStyle(calendarEl).display);
+        console.log("🔄 Calendar element visibility:", getComputedStyle(calendarEl).visibility);
+      }
+      
       if (!calendarEl || typeof FullCalendar === "undefined") {
         console.error("Calendar element or FullCalendar library not found.");
         if (calendarEl) {
@@ -204,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       window.calendar.render();
       window.calendarRendered = true;
-      console.log("✅ Calendar initialized");
+      console.log("✅ Calendar initialized and rendered");
 
       // Add any events that were created before the calendar was ready
       if (window.pendingCalendarEvents && window.pendingCalendarEvents.length > 0) {
@@ -315,17 +329,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (typeof firebase !== 'undefined' && firebase.auth) {
+      console.log("🔥 Firebase auth available, setting up auth state listener");
       firebase.auth().onAuthStateChanged((user) => {
+        console.log("🔥 Auth state changed:", user ? "User logged in" : "No user");
         if (user) {
           window.userId = user.uid;
+          window.userIdReady = true;
           console.log('✅ window.userId set:', window.userId);
+          console.log('✅ window.userIdReady set to true');
+          
           // Only initialize calendar if it hasn't been rendered yet
           if (!window.calendarRendered) {
+            console.log('🔄 Calendar not rendered yet, initializing...');
             renderCalendar();
-            console.log('🔄 Calendar initialized after userId set');
+            console.log('🔄 Calendar initialization triggered after userId set');
+          } else {
+            console.log('ℹ️ Calendar already rendered, skipping initialization');
           }
+        } else {
+          console.log('❌ No user authenticated');
+          window.userId = null;
+          window.userIdReady = false;
         }
       });
+    } else {
+      console.error("❌ Firebase auth not available");
     }
 
   } catch (err) {

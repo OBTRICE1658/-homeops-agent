@@ -286,14 +286,20 @@ app.post("/api/save-event", async (req, res) => {
 
   try {
     console.log("🔄 Parsing event time:", event.when);
-    // Parse the natural language "when" string using America/New_York timezone
-    const referenceDate = new Date();
+    // FIX: Use America/New_York timezone as reference to prevent "tomorrow" booking 2 days ahead
+    const tz = "America/New_York";
+    const referenceDate = DateTime.now().setZone(tz).toJSDate();
+    console.log("🕐 Reference date (NY time):", referenceDate.toISOString());
+    
     const parsedResults = chrono.parse(event.when, referenceDate, { forwardDate: true });
+    console.log("📅 Chrono parse results:", parsedResults.length, "matches found");
+    
     let parsedStart;
     if (parsedResults.length > 0) {
       // Use luxon to convert to UTC from America/New_York
-      const tz = "America/New_York";
       const components = parsedResults[0].start.knownValues;
+      console.log("🔍 Parsed components:", components);
+      
       let dt = DateTime.fromObject({
         year: components.year || referenceDate.getFullYear(),
         month: components.month || (referenceDate.getMonth() + 1),
@@ -303,8 +309,11 @@ app.post("/api/save-event", async (req, res) => {
         second: 0
       }, { zone: tz });
       parsedStart = dt.toJSDate();
+      console.log("✅ Parsed with components:", dt.toISOString());
     } else {
+      console.log("⚠️ No chrono parse results, trying parseDate fallback");
       parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
+      console.log("✅ Fallback parse result:", parsedStart?.toISOString());
     }
 
     if (!parsedStart) {
@@ -313,7 +322,7 @@ app.post("/api/save-event", async (req, res) => {
     }
 
     const startISO = new Date(parsedStart).toISOString();
-    console.log("✅ Parsed time:", { original: event.when, parsed: startISO });
+    console.log("✅ Final parsed time:", { original: event.when, parsed: startISO });
     
     const eventToSave = {
       title: event.title,
