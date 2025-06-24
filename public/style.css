@@ -181,32 +181,35 @@ body.dark {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0.5rem 0.5rem;
-  min-height: 80px;
-  gap: 4px;
-  background: transparent;
-  backdrop-filter: blur(10px) saturate(1.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-}
-
-.top-bar-logo {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 2px 12px rgba(102,126,234,0.10);
-  object-fit: contain;
-  display: block;
-  margin: 0 auto 0.3rem auto;
-}
-
-.brand-name {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #333;
-  text-align: center;
+  justify-content: flex-start;
+  background: none;
+  box-shadow: none;
+  border: none;
   margin: 0;
+  padding: 2.5rem 0 1.5rem 0;
+  min-height: unset;
+  position: relative;
+}
+
+.top-bar-logo.large-logo {
+  width: 72px;
+  height: 72px;
+  max-width: 90vw;
+  max-height: 90px;
+  display: block;
+  margin: 0 auto 0.7rem auto;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: contain;
+}
+
+.brand-name.large-brand {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #222;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
   letter-spacing: 0.01em;
 }
 
@@ -824,19 +827,19 @@ body.dark {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 0.5rem;
-    min-height: 80px;
-    gap: 4px;
-    background: transparent;
-    backdrop-filter: blur(10px) saturate(1.2);
-    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    padding: 2rem 0 1.2rem 0;
+    min-height: unset;
+    position: relative;
   }
-  .top-bar-logo {
-    width: 44px;
-    height: 44px;
+  .top-bar-logo.large-logo {
+    width: 56px;
+    height: 56px;
+    max-height: 60px;
+    margin-bottom: 0.5rem;
   }
-  .brand-name {
-    font-size: 1.1rem;
+  .brand-name.large-brand {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
   }
   .user-menu {
     display: none !important;
@@ -1354,5 +1357,10 @@ body.dark {
 
 #dashboard-view, #calendar-view, #home-view {
   padding-bottom: 100px;
+}
+
+/* Add extra margin below header for separation */
+.top-bar + .view, .top-bar + section {
+  margin-top: 0.5rem;
 }
 
