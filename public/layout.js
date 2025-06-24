@@ -21,11 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       views.forEach((view) => {
         view.style.display = "none";
+        view.classList.remove("active");
       });
 
       const activeView = document.getElementById(`${viewId}-view`);
       if (activeView) {
-        activeView.style.display = "block";
+        activeView.style.display = "flex";
+        activeView.classList.add("active");
         console.log("✅ Activated view:", viewId);
       } else {
         console.warn("🚫 View not found:", viewId);
