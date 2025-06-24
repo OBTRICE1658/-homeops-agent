@@ -23,21 +23,25 @@ body.dark {
 
 .app-container {
   display: flex;
-  width: 100%;
-  position: relative;
-  z-index: 1;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  min-height: 0;
+  min-width: 0;
 }
 
 /* Sidebar */
 .sidebar {
   width: 80px;
-  background-color: #111827;
-  color: white;
+  min-width: 80px;
+  max-width: 80px;
+  height: 100vh;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0;
-  gap: 1rem;
+  background: #111827;
+  z-index: 10;
 }
 
 .logo {
@@ -99,21 +103,19 @@ body.dark {
 
 /* Main Content */
 .main-content {
-  flex: 1;
-  padding: 2rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.18);
   position: relative;
   z-index: 1;
-  background: rgba(255,255,255,0.18);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
-  width: 100%;
-  max-width: none;
-  margin: 0 auto;
-  padding: 2rem 4vw;
-  box-sizing: border-box;
-  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 56px; /* Reserve space for bottom nav */
 }
 
 .view-header {
@@ -161,22 +163,22 @@ body.dark {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden;
 }
 
 /* Top Bar - Simplified Design */
 .top-bar {
+  padding: 1.2rem 0 1.2rem 0;
+  margin: 0;
+  min-height: unset;
+  background: none;
+  box-shadow: none;
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: none;
-  box-shadow: none;
-  border: none;
-  margin: 0;
-  padding: 2.5rem 0 1.5rem 0;
-  min-height: unset;
-  position: relative;
 }
 
 .top-bar-logo.large-logo {
@@ -797,21 +799,21 @@ body.dark {
 
 /* --- Desktop First Styles --- */
 .bottom-nav {
-  display: none; /* Hidden by default on desktop */
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
+  bottom: 0;
+  z-index: 1002;
+  height: 56px;
+  min-height: 56px;
   background: rgba(255,255,255,0.80);
   backdrop-filter: blur(10px) saturate(1.2);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);
   border-top: 1px solid rgba(255,255,255,0.3);
   justify-content: space-around;
-  padding: 8px 0 4px 0;
-  z-index: 1002;
+  display: flex;
   box-shadow: 0 -4px 24px rgba(31, 38, 135, 0.10);
   width: 100vw;
-  min-height: 56px;
 }
 
 .bottom-nav button, .bottom-nav button .lucide, .bottom-nav button i {
