@@ -234,8 +234,8 @@ body.dark {
   flex-direction: column;
   align-items: flex-start;
   border-radius: 16px;
-  padding: 2rem;
-  min-height: 400px;
+  padding: 2.5rem;
+  min-height: 500px;
   max-width: 900px;
   width: 100%;
   background: rgba(255,255,255,0.95);
@@ -484,9 +484,9 @@ body.dark {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  min-height: 600px;
+  min-height: 700px;
   margin: 0 auto 18px auto;
-  padding: 1.5rem;
+  padding: 2rem;
   box-sizing: border-box;
 }
 
@@ -498,6 +498,12 @@ body.dark {
     padding: 0;
     min-width: 0;
     min-height: 400px; /* Smaller height on mobile */
+  }
+  
+  .chat-box {
+    max-width: 98vw;
+    padding: 1rem;
+    min-height: 300px; /* Smaller height on mobile */
   }
 }
 
@@ -741,21 +747,21 @@ body.dark {
 
 /* --- Desktop First Styles --- */
 .bottom-nav {
-  display: flex !important;
+  display: none; /* Hidden by default on desktop */
   position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 64px;
-  justify-content: space-around;
-  align-items: center;
   background: rgba(255,255,255,0.80);
   backdrop-filter: blur(10px) saturate(1.2);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border-top: 1px solid rgba(255,255,255,0.3);
+  justify-content: space-around;
+  padding: 8px 0 4px 0;
+  z-index: 1002;
   box-shadow: 0 -4px 24px rgba(31, 38, 135, 0.10);
-  z-index: 1000;
-  border-top: 1px solid #e0e0e0;
+  width: 100vw;
+  min-height: 56px;
 }
 
 .bottom-nav button, .bottom-nav button .lucide, .bottom-nav button i {
@@ -773,8 +779,21 @@ body.dark {
 
 @media (max-width: 600px) {
   .bottom-nav {
-    height: 64px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: flex; /* Show on mobile */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    border-top: 1px solid rgba(255,255,255,0.3);
+    justify-content: space-around;
+    padding: 8px 0 4px 0;
+    z-index: 1002;
+    box-shadow: 0 -4px 24px rgba(31, 38, 135, 0.10);
+    width: 100vw;
+    min-height: 56px;
   }
   .bottom-nav button {
     font-size: 1.1rem;
@@ -841,7 +860,7 @@ body.dark {
   }
   .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
     min-height: calc(100vh - 80px - 64px);
-    padding-bottom: 120px;
+    padding-bottom: 140px;
   }
   .view h2 {
     font-size: 20px;
@@ -855,7 +874,7 @@ body.dark {
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    padding: 8px 4px 120px 4px;
+    padding: 8px 4px 140px 4px;
   }
   .chat-wrapper {
     display: flex;
