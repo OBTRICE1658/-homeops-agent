@@ -863,8 +863,7 @@ body.dark {
     display: none !important;
   }
   .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
-    min-height: calc(100vh - 80px - 64px);
-    padding-bottom: 140px;
+    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
   }
   .view h2 {
     font-size: 20px;
@@ -1481,5 +1480,16 @@ body.dark {
   -webkit-backdrop-filter: blur(8px) saturate(1.1);
   border-radius: 12px;
   padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
+    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (max-width: 600px) {
+  .view, #chat-view, #dashboard-view, #calendar-view, #home-view {
+    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
