@@ -182,13 +182,12 @@ body.dark {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 0.5rem 0.5rem;
+  min-height: 80px;
+  gap: 4px;
   background: transparent;
-  border: none;
-  box-shadow: none;
-  margin-bottom: 0.5rem;
-  padding: 1.2rem 0 0.5rem 0;
-  min-height: 90px;
-  position: relative;
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
 }
 
 .top-bar-logo {
@@ -363,12 +362,10 @@ body.dark {
 /* Dashboard */
 .dashboard-grid, .home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto 2rem auto;
-  padding: 1.5rem 1rem 2rem 1rem;
-  justify-items: center;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 0.5rem;
+  width: 100%;
 }
 
 .dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
@@ -825,11 +822,12 @@ body.dark {
   }
   .top-bar {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem 0.5rem;
     min-height: 80px;
     gap: 4px;
-    background: rgba(255,255,255,0.92);
+    background: transparent;
     backdrop-filter: blur(10px) saturate(1.2);
     -webkit-backdrop-filter: blur(10px) saturate(1.2);
   }
@@ -930,15 +928,17 @@ body.dark {
   .dashboard-grid, .home-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 16px;
+    gap: 1rem;
+    padding: 0.5rem;
+    width: 100%;
   }
   .dashboard-card, .home-module {
-    background: rgba(255,255,255,0.80);
+    background: rgba(255,255,255,0.18);
     backdrop-filter: blur(8px) saturate(1.1);
     -webkit-backdrop-filter: blur(8px) saturate(1.1);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 16px;
+    padding: 1.25rem;
+    min-height: 180px;
   }
   #calendar {
     background: rgba(255,255,255,0.80);
@@ -985,19 +985,29 @@ body.dark {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  gap: 2rem;
-  padding: 2rem;
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .home-module {
   background-color: rgba(255,255,255,0.18);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  padding: 1.5rem 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  min-height: 200px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-module:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .large-module {
