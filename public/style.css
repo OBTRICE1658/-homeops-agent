@@ -360,11 +360,19 @@ body.dark {
 }
 
 /* Dashboard */
-.dashboard-grid {
+.dashboard-grid, .home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
   padding: 1.5rem 1rem;
+  justify-items: center;
+}
+
+.dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
+  max-width: 480px;
+  margin: 0 auto 18px auto;
 }
 
 .dashboard-card {
@@ -1364,5 +1372,42 @@ body.dark {
   .fc-button {
     font-size: 0.95rem;
     padding: 6px 10px;
+  }
+}
+
+/* Lucide icon styling */
+.lucide, .bottom-nav i[data-lucide] {
+  width: 2rem !important;
+  height: 2rem !important;
+  color: #667eea !important;
+  display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 0 !important;
+}
+
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+/* Responsive grid for mobile */
+@media (max-width: 600px) {
+  .dashboard-grid, .home-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 8px 2px 24px 2px;
+    max-width: 100vw;
+  }
+  .dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
+    max-width: 98vw;
+    margin: 0 auto 12px auto;
+    padding: 10px 4px;
+  }
+  #calendar {
+    min-width: 0;
+    padding: 0;
   }
 }
