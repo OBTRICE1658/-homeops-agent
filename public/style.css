@@ -254,18 +254,15 @@ body.dark {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1.5rem;
-  height: 500px;
-  overflow-y: auto;
-  background: rgba(255,255,255,0.18);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  margin-bottom: 1rem;
+  border-radius: 16px;
+  padding: 2rem;
+  min-height: 400px;
   max-width: 900px;
   width: 100%;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.13);
+  margin-bottom: 1.5rem;
+  border: none;
 }
 
 /* Chat Message Styling */
@@ -365,15 +362,25 @@ body.dark {
 /* Dashboard */
 .dashboard-grid, .home-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  padding: 0.5rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem 0 2rem 0;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
-  max-width: 480px;
-  margin: 0 auto 18px auto;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.13), 0 1.5px 8px rgba(74,144,226,0.08);
+  margin: 22px 0;
+  padding: 32px 28px 28px 28px;
+  border: none;
+  transition: box-shadow 0.2s, transform 0.2s;
+  max-width: 100%;
 }
 
 .dashboard-card {
@@ -494,16 +501,13 @@ body.dark {
 }
 
 #calendar {
-  background: rgba(255,255,255,0.18);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  padding: 1rem;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  overflow-x: auto;
-  min-height: 600px; /* 👈 This is what enables the calendar to display */
+  min-width: 0;
+  min-height: 600px;
+  margin: 0 auto 18px auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
 }
 
 /* FullCalendar inner font + layout */
@@ -1216,7 +1220,7 @@ body.dark {
   border-radius: 22px;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.13), 0 1.5px 8px rgba(74,144,226,0.08);
   margin: 22px 0;
-  padding: 24px 18px 20px 18px;
+  padding: 32px 28px 28px 28px;
   border: none;
   transition: box-shadow 0.2s, transform 0.2s;
 }
@@ -1348,10 +1352,16 @@ body.dark {
     max-width: 98vw;
     margin: 0 auto 12px auto;
     padding: 10px 4px;
+    border-radius: 18px;
   }
   #calendar {
     min-width: 0;
     padding: 0;
+  }
+  .chat-box {
+    max-width: 98vw;
+    padding: 1rem;
+    min-height: 300px;
   }
 }
 
@@ -1440,6 +1450,14 @@ body.dark {
     font-size: 1rem;
     padding: 0.8rem 0;
     border-radius: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid, .home-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    padding: 1rem 0 1rem 0;
   }
 }
 
