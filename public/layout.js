@@ -20,57 +20,21 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("🔄 Switching to view:", viewId);
 
       views.forEach((view) => {
-        view.style.display = "none";
         view.classList.remove("active");
+        view.style.display = "none";
       });
 
       const activeView = document.getElementById(`${viewId}-view`);
       if (activeView) {
-        activeView.style.display = "flex";
         activeView.classList.add("active");
+        activeView.style.display = "flex";
         console.log("✅ Activated view:", viewId);
+        // Only render calendar if switching to calendar view
+        if (viewId === "calendar" && window.userId && window.userIdReady) {
+          renderCalendar();
+        }
       } else {
         console.warn("🚫 View not found:", viewId);
-      }
-
-      // Handle calendar rendering and refreshing
-      if (viewId === "calendar") {
-        // Defensive: Only initialize if userId is set and ready
-        if (!window.userId || !window.userIdReady) {
-          console.warn("⏳ Tried to initialize calendar before userId was ready. Waiting...");
-          const calendarEl = document.getElementById("calendar");
-          if (calendarEl) {
-            calendarEl.innerHTML = '<div style="color:orange;text-align:center;padding:2em;">⏳ Loading user data... Please wait for authentication.</div>';
-          }
-          // Retry after 500ms
-          setTimeout(() => {
-            if (window.userId && window.userIdReady && !window.calendarRendered) {
-              console.log("🟢 Retrying calendar initialization after userId became available");
-              renderCalendar();
-            }
-          }, 500);
-          return;
-        }
-        if (!window.calendarRendered) {
-          renderCalendar();
-        } else if (window.calendar) {
-          console.log("🔄 Calendar view activated.");
-          // Force FullCalendar to re-render and update its size/layout
-          setTimeout(() => {
-            if (window.calendar && typeof window.calendar.render === 'function') {
-              window.calendar.render();
-              console.log("🔄 Called calendar.render() after view switch");
-            }
-            if (window.calendar && typeof window.calendar.updateSize === 'function') {
-              window.calendar.updateSize();
-              console.log("🔄 Called calendar.updateSize() after view switch");
-            }
-          }, 50);
-        }
-      }
-
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
       }
     }
 
