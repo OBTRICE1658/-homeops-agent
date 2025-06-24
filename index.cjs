@@ -35,7 +35,7 @@ try {
 
 const db = admin.firestore();
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // Load the persona file content at startup
 let tonePromptContent = "";
@@ -638,7 +638,7 @@ function getCurrentDate() {
 }
 
 // Start server
-app.listen(port, () => {
-  console.log(`✅ Server listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`✅ Server listening on port ${PORT}`);
 });
 
