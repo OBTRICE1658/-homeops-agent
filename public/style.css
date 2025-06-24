@@ -7,34 +7,13 @@
 
 /* Layout Containers */
 body {
-  font-family: system-ui, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%) no-repeat center center fixed;
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  color: #222;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
-  display: flex;
-  position: relative;
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: none;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.35;
-  background-image: url('data:image/svg+xml;utf8,<svg width="100%25" height="100%25" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="grad1" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" style="stop-color:%234A90E2;stop-opacity:0.6" /><stop offset="100%25" style="stop-color:%234A90E2;stop-opacity:0.1" /></radialGradient></defs><ellipse cx="800" cy="150" rx="300" ry="180" fill="url(%23grad1)"/><ellipse cx="300" cy="650" rx="250" ry="120" fill="url(%23grad1)"/><ellipse cx="600" cy="400" rx="400" ry="220" fill="url(%23grad1)"/><circle cx="1000" cy="600" r="150" fill="url(%23grad1)"/><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/></svg>');
+  color: #333;
+  line-height: 1.6;
 }
 
 body.dark {

@@ -260,7 +260,11 @@ auth.onAuthStateChanged((user) => {
   if (!user) {
     window.location.href = '/';
   } else {
-    document.getElementById('userEmail').textContent = user.email;
+    // Set global userId for calendar and other components
+    window.userId = user.uid;
+    window.userIdReady = true;
+    console.log("✅ Auth: window.userId set globally:", window.userId);
+    
     if (typeof initializeChat === 'function') {
       initializeChat(user);
     } else {
@@ -268,13 +272,18 @@ auth.onAuthStateChanged((user) => {
     }
   }
 });
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  try {
-    await auth.signOut();
-  } catch (error) {
-    console.error('Logout error:', error);
-  }
-});
+
+// Handle logout if logout button exists
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  });
+}
 </script>
 
 <!-- ✅ Your app scripts (remove defer) -->
