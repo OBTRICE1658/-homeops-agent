@@ -91,16 +91,13 @@
     </aside>
 
     <main class="main-content">
+      <!-- Top Bar with large centered logo and brand -->
+      <header class="top-bar">
+        <img src="img/logo.svg" alt="HomeOps Logo" class="top-bar-logo large-logo">
+        <span class="brand-name large-brand">HomeOps.ai</span>
+      </header>
 
-
-  <!-- Top Bar with large centered logo and brand -->
-  <header class="top-bar">
-    <img src="img/logo.svg" alt="HomeOps Logo" class="top-bar-logo large-logo">
-    <span class="brand-name large-brand">HomeOps.ai</span>
-  </header>
-
-
-   <section id="home-view" class="view">
+      <section id="home-view" class="view">
         <div class="home-grid">
           <!-- Module 1: Email Decoder -->
           <div id="email-decoder-module" class="home-module">
@@ -146,10 +143,8 @@
             </div>
           </div>
         </div>
-   </section>
+      </section>
 
-
-      <!-- Ask HomeOps (Chat) -->
       <section id="chat-view" class="view">
         <div class="chat-wrapper">
           <div id="chat" class="chat-box"></div>
@@ -159,7 +154,7 @@
           </form>
         </div>
       </section>
-      <!-- House View (Dashboard) -->
+
       <section id="dashboard-view" class="view">
         <h2>📊 The House View</h2>
         <div class="dashboard-grid">
@@ -213,7 +208,7 @@
           </div>
         </div>
       </section>
-      <!-- Calendar View (only one calendar container) -->
+
       <section id="calendar-view" class="view">
         <div class="view-header">
           <h2>📅 My Calendar</h2>
@@ -221,9 +216,24 @@
         </div>
         <div id="calendar"></div>
       </section>
+    </main>
 
-</main>
-</div>
+    <!-- ✅ Bottom nav for mobile view -->
+    <div class="bottom-nav" aria-label="Main navigation">
+      <button data-view="home" onclick="activateView('home')" title="My Ops Center">
+        <i data-lucide="home"></i>
+      </button>
+      <button data-view="chat" onclick="activateView('chat')" title="Ask HomeOps">
+        <i data-lucide="message-square"></i>
+      </button>
+      <button data-view="dashboard" onclick="activateView('dashboard')" title="The House View">
+        <i data-lucide="bar-chart-3"></i>
+      </button>
+      <button data-view="calendar" onclick="activateView('calendar')" title="Calendar View">
+        <i data-lucide="calendar-days"></i>
+      </button>
+    </div>
+  </div>
 
 <!-- ✅ Icons MUST be loaded before your app scripts -->
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -280,24 +290,6 @@ if (logoutBtn) {
 <script src="/relief.js"></script>
 <script src="/homebase.js"></script>
 
-</main>
-</div>
-
-<!-- ✅ Bottom nav for mobile view -->
-<div class="bottom-nav" aria-label="Main navigation">
-  <button data-view="home" onclick="activateView('home')" title="My Ops Center">
-    <i data-lucide="home"></i>
-  </button>
-  <button data-view="chat" onclick="activateView('chat')" title="Ask HomeOps">
-    <i data-lucide="message-square"></i>
-  </button>
-  <button data-view="dashboard" onclick="activateView('dashboard')" title="The House View">
-    <i data-lucide="bar-chart-3"></i>
-  </button>
-  <button data-view="calendar" onclick="activateView('calendar')" title="Calendar View">
-    <i data-lucide="calendar-days"></i>
-  </button>
-</div>
 </body>
 </html>
 
