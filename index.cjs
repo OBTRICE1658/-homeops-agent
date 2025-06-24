@@ -292,6 +292,7 @@ app.post("/api/save-event", async (req, res) => {
     // FIX: Use America/New_York timezone as reference to prevent "tomorrow" booking 2 days ahead
     const tz = "America/New_York";
     const referenceDate = DateTime.now().setZone(tz).toJSDate();
+    // referenceDate is a native JS Date, so .toISOString() is correct
     console.log("🕐 Reference date (NY time):", referenceDate.toISOString());
     
     const parsedResults = chrono.parse(event.when, referenceDate, { forwardDate: true });
@@ -312,10 +313,12 @@ app.post("/api/save-event", async (req, res) => {
         second: 0
       }, { zone: tz });
       parsedStart = dt.toJSDate();
+      // dt is a Luxon DateTime, so use .toISO()
       console.log("✅ Parsed with components:", dt.toISO());
     } else {
       console.log("⚠️ No chrono parse results, trying parseDate fallback");
       parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });
+      // parsedStart is a native JS Date, so .toISOString() is correct
       console.log("✅ Fallback parse result:", parsedStart?.toISOString());
     }
 
@@ -324,7 +327,8 @@ app.post("/api/save-event", async (req, res) => {
       return res.status(400).json({ error: "Could not parse the event time." });
     }
 
-    const startISO = new Date(parsedStart).toISOString();
+    // parsedStart is always a native JS Date here
+    const startISO = parsedStart.toISOString();
     console.log("✅ Final parsed time:", { original: event.when, parsed: startISO });
     
     const eventToSave = {
