@@ -1584,3 +1584,55 @@ body.dark {
   }
 }
 
+/* Ensure app fills viewport and views never cut off */
+html, body, .app-container, .main-content {
+  height: 100vh;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container, .main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1 1 auto;
+  position: relative;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); /* bottom nav height */
+  overflow: hidden;
+}
+
+.view {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 1rem 1rem 0 1rem;
+}
+
+/* Remove padding-bottom from .view and all view-specific selectors */
+.view, #chat-view, #dashboard-view, #calendar-view, #home-view {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Bottom nav stays fixed */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1002;
+}
+
