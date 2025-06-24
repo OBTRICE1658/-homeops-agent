@@ -312,7 +312,7 @@ app.post("/api/save-event", async (req, res) => {
         second: 0
       }, { zone: tz });
       parsedStart = dt.toJSDate();
-      console.log("✅ Parsed with components:", dt.toISOString());
+      console.log("✅ Parsed with components:", dt.toISO());
     } else {
       console.log("⚠️ No chrono parse results, trying parseDate fallback");
       parsedStart = chrono.parseDate(event.when, referenceDate, { forwardDate: true });

@@ -482,20 +482,24 @@ body.dark {
 #calendar-view {
   padding: 2rem;
   min-height: 600px; /* Ensure minimum height for calendar view */
+  display: block !important;
+  visibility: visible !important;
 }
 
 /* Desktop calendar styles - ensure proper size */
 #calendar {
-  width: 100%;
-  max-width: none;
-  min-width: 0;
-  min-height: 800px;
-  height: 600px; /* Force height on desktop */
-  margin: 0 auto 18px auto;
-  padding: 2.5rem;
-  box-sizing: border-box;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 800px !important;
+  height: 600px !important; /* Force height on desktop */
+  margin: 0 auto 18px auto !important;
+  padding: 2.5rem !important;
+  box-sizing: border-box !important;
   display: block !important; /* Force display */
   visibility: visible !important; /* Force visibility */
+  position: relative !important;
+  overflow: visible !important;
 }
 
 /* Mobile-only calendar styles */
@@ -503,17 +507,21 @@ body.dark {
   #calendar-view {
     padding: 1rem 0.5rem;
     min-height: 400px;
+    display: block !important;
+    visibility: visible !important;
   }
   
   #calendar {
-    max-width: 98vw;
-    margin: 0 auto 12px auto;
-    padding: 0;
-    min-width: 0;
-    min-height: 400px; /* Smaller height on mobile */
-    height: 400px; /* Force height on mobile */
+    max-width: 98vw !important;
+    margin: 0 auto 12px auto !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    min-height: 400px !important; /* Smaller height on mobile */
+    height: 400px !important; /* Force height on mobile */
     display: block !important;
     visibility: visible !important;
+    position: relative !important;
+    overflow: visible !important;
   }
   
   .chat-box {

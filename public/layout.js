@@ -151,6 +151,17 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("🔄 Calendar element dimensions:", calendarEl.offsetWidth, "x", calendarEl.offsetHeight);
         console.log("🔄 Calendar element display:", getComputedStyle(calendarEl).display);
         console.log("🔄 Calendar element visibility:", getComputedStyle(calendarEl).visibility);
+        
+        // Force calendar container to have proper dimensions if it's 0x0
+        if (calendarEl.offsetWidth === 0 || calendarEl.offsetHeight === 0) {
+          console.log("⚠️ Calendar element has 0 dimensions, forcing size");
+          calendarEl.style.width = '100%';
+          calendarEl.style.height = '600px';
+          calendarEl.style.minHeight = '400px';
+          calendarEl.style.display = 'block';
+          calendarEl.style.visibility = 'visible';
+          console.log("🔄 Applied forced styles to calendar element");
+        }
       }
       
       if (!calendarEl || typeof FullCalendar === "undefined") {
@@ -219,6 +230,20 @@ document.addEventListener("DOMContentLoaded", () => {
       window.calendar.render();
       window.calendarRendered = true;
       console.log("✅ Calendar initialized and rendered");
+
+      // Force calendar to have proper dimensions after rendering
+      setTimeout(() => {
+        if (window.calendar && typeof window.calendar.updateSize === 'function') {
+          console.log("🔄 Forcing calendar updateSize after initialization");
+          window.calendar.updateSize();
+          
+          // Check dimensions again
+          const calendarEl = document.getElementById("calendar");
+          if (calendarEl) {
+            console.log("🔄 Calendar dimensions after updateSize:", calendarEl.offsetWidth, "x", calendarEl.offsetHeight);
+          }
+        }
+      }, 100);
 
       // Add any events that were created before the calendar was ready
       if (window.pendingCalendarEvents && window.pendingCalendarEvents.length > 0) {
