@@ -1210,18 +1210,18 @@ body.dark {
 
 /* --- Modern Card Look for Modules and Calendar --- */
 .dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   border-radius: 22px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.13);
-  margin: 18px 0;
-  padding: 20px 16px;
-  border: 1.5px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.13), 0 1.5px 8px rgba(74,144,226,0.08);
+  margin: 22px 0;
+  padding: 24px 18px 20px 18px;
+  border: none;
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .dashboard-card:hover, .home-module:hover, #calendar:hover, .relief-card:hover, .email-decoder-container:hover {
-  box-shadow: 0 12px 36px rgba(31, 38, 135, 0.18);
+  box-shadow: 0 16px 40px rgba(31, 38, 135, 0.18), 0 2px 12px rgba(74,144,226,0.10);
   transform: translateY(-2px) scale(1.01);
 }
 
@@ -1295,9 +1295,9 @@ body.dark {
 
 @media (max-width: 600px) {
   .dashboard-card, .home-module, #calendar, .relief-card, .email-decoder-container {
-    margin: 12px 0;
-    padding: 14px 6px;
-    border-radius: 16px;
+    margin: 14px 0;
+    padding: 16px 6px 14px 6px;
+    border-radius: 18px;
   }
   #calendar {
     max-width: 98vw;
@@ -1362,5 +1362,84 @@ body.dark {
 /* Add extra margin below header for separation */
 .top-bar + .view, .top-bar + section {
   margin-top: 0.5rem;
+}
+
+.module-header {
+  border: none;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.module-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #222;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.module-header p {
+  font-size: 1rem;
+  color: #888;
+  margin: 0.2rem 0 0 0;
+  font-weight: 400;
+}
+
+.module-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.gmail-connect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: linear-gradient(90deg, #4A90E2 0%, #357ABD 100%);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1rem 0;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(74,144,226,0.13);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  margin: 0.5rem 0 0.2rem 0;
+}
+.gmail-connect-btn:hover {
+  background: linear-gradient(90deg, #357ABD 0%, #2E6DA4 100%);
+  box-shadow: 0 8px 24px rgba(74,144,226,0.18);
+  transform: translateY(-1px) scale(1.01);
+}
+
+.small-text {
+  font-size: 0.92rem;
+  color: #A0A0A0;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .home-module, .dashboard-card, #calendar, .relief-card, .email-decoder-container {
+    margin: 14px 0;
+    padding: 16px 6px 14px 6px;
+    border-radius: 18px;
+  }
+  .module-header h2 {
+    font-size: 1.1rem;
+  }
+  .module-header p {
+    font-size: 0.95rem;
+  }
+  .gmail-connect-btn {
+    font-size: 1rem;
+    padding: 0.8rem 0;
+    border-radius: 10px;
+  }
 }
 
