@@ -124,9 +124,9 @@ body.dark {
   padding: 2rem;
   position: relative;
   z-index: 1;
-  background: rgba(255,255,255,0.80);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
 }
@@ -162,9 +162,9 @@ body.dark {
   display: none;
   position: relative;
   z-index: 1;
-  background: rgba(255,255,255,0.80);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
 }
@@ -176,7 +176,7 @@ body.dark {
 /* Top Bar */
 .top-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
@@ -191,19 +191,18 @@ body.dark {
 }
 
 .top-bar-left {
+  min-width: 0;
+  flex-shrink: 1;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
 }
 
 .brand-name {
-  font-size: 1.3rem;
-  font-weight: bold;
-  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  white-space: nowrap;
 }
 
 .user-menu {
@@ -258,11 +257,13 @@ body.dark {
   padding: 1.5rem;
   height: 500px;
   overflow-y: auto;
-  background: white;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   margin-bottom: 1rem;
   max-width: 900px;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
 }
 
 /* Chat Message Styling */
@@ -367,7 +368,9 @@ body.dark {
 }
 
 .dashboard-card {
-  background: #ffffff;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
@@ -482,7 +485,9 @@ body.dark {
 }
 
 #calendar {
-  background: white;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   padding: 1rem;
@@ -732,13 +737,13 @@ body.dark {
 
 /* --- Desktop First Styles --- */
 .bottom-nav {
+  display: flex !important;
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   width: 100vw;
   height: 64px;
-  display: flex;
   justify-content: space-around;
   align-items: center;
   background: rgba(255,255,255,0.80);
@@ -749,26 +754,11 @@ body.dark {
   border-top: 1px solid #e0e0e0;
 }
 
-.bottom-nav button {
-  background: none;
-  border: none;
-  outline: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
+.bottom-nav button, .bottom-nav button .lucide, .bottom-nav button i {
+  font-size: 2.1rem !important;
+  width: 36px !important;
+  height: 36px !important;
   color: #333;
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  transition: background 0.2s, color 0.2s;
-}
-
-.bottom-nav button .lucide, .bottom-nav button i {
-  font-size: 2rem;
-  width: 32px;
-  height: 32px;
   margin-bottom: 2px;
 }
 
@@ -820,19 +810,8 @@ body.dark {
   .sidebar {
     display: none;
   }
-  .main-content {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    min-height: 0;
-    width: 100vw;
-    overflow: hidden;
-    position: relative;
-    background: rgba(255,255,255,0.80);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    border-radius: 0;
+  .main-content, .view, .dashboard-card, .home-module, #calendar, .chat-box {
+    background: rgba(255,255,255,0.18);
     box-shadow: none;
   }
   .top-bar {
@@ -850,20 +829,16 @@ body.dark {
     gap: 0.5rem;
   }
   .brand-name {
-    font-size: 1.1rem;
-    max-width: 90vw;
-  }
-  .user-menu {
-    justify-content: flex-end;
-    margin-left: 0;
-    width: 100%;
+    max-width: 40vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .user-email {
-    max-width: 60vw;
+    margin-right: 8px;
   }
   .logout-btn {
-    padding: 8px 10px;
-    font-size: 0.95rem;
+    margin-left: 8px;
   }
   .view {
     flex: 1 1 auto;
@@ -875,10 +850,6 @@ body.dark {
     min-height: 0;
     width: 100vw;
     box-sizing: border-box;
-    background: rgba(255,255,255,0.80);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    border-radius: 0;
   }
   .view.active {
     display: flex;
@@ -1057,6 +1028,18 @@ body.dark {
     -webkit-backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,0.3);
   }
+  .logo, .sidebar-logo, .top-bar-logo {
+    max-width: 40px;
+    max-height: 40px;
+    width: 32px;
+    height: 32px;
+    margin: 0 8px 0 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .logo {
+    margin-bottom: 0.5rem;
+  }
 }
 
 /* --- Home View Grid Layout --- */
@@ -1069,7 +1052,9 @@ body.dark {
 }
 
 .home-module {
-  background-color: #fff;
+  background-color: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   padding: 1.5rem 2rem;
@@ -1260,4 +1245,14 @@ body.dark {
   to {
     transform: rotate(360deg);
   }
+}
+
+.logo, .sidebar-logo, .top-bar-logo, img.logo, svg.logo {
+  max-width: 32px !important;
+  max-height: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin-right: 8px !important;
+  display: inline-block;
+  vertical-align: middle;
 }
