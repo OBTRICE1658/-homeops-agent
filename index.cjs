@@ -312,8 +312,8 @@ app.post("/api/save-event", async (req, res) => {
         minute: components.minute ?? 0,
         second: 0
       }, { zone: tz });
-      parsedStart = dt.toJSDate();
-      // dt is a Luxon DateTime, so use .toISO()
+      parsedStart = dt.toJSDate(); // Always convert to native Date
+      // dt is a Luxon DateTime, so use .toISO() for logging only
       console.log("✅ Parsed with components:", dt.toISO());
     } else {
       console.log("⚠️ No chrono parse results, trying parseDate fallback");
@@ -327,8 +327,17 @@ app.post("/api/save-event", async (req, res) => {
       return res.status(400).json({ error: "Could not parse the event time." });
     }
 
-    // parsedStart is always a native JS Date here
-    const startISO = parsedStart.toISOString();
+    // Ensure parsedStart is a native JS Date before calling .toISOString()
+    let startISO;
+    if (parsedStart instanceof Date && typeof parsedStart.toISOString === 'function') {
+      startISO = parsedStart.toISOString();
+    } else if (parsedStart && typeof parsedStart.toISO === 'function') {
+      // fallback if somehow a Luxon DateTime slipped through
+      startISO = parsedStart.toISO();
+    } else {
+      console.error("❌ parsedStart is not a Date or Luxon DateTime:", parsedStart);
+      return res.status(500).json({ error: "Internal error parsing event time." });
+    }
     console.log("✅ Final parsed time:", { original: event.when, parsed: startISO });
     
     const eventToSave = {
