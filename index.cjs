@@ -286,6 +286,9 @@ app.post("/api/save-event", async (req, res) => {
 
   try {
     console.log("🔄 Parsing event time:", event.when);
+    console.log("🔄 DateTime available:", typeof DateTime);
+    console.log("🔄 chrono available:", typeof chrono);
+    
     // FIX: Use America/New_York timezone as reference to prevent "tomorrow" booking 2 days ahead
     const tz = "America/New_York";
     const referenceDate = DateTime.now().setZone(tz).toJSDate();
@@ -337,7 +340,9 @@ app.post("/api/save-event", async (req, res) => {
     res.json({ success: true, event: savedEvent });
   } catch (err) {
     console.error("❌ Failed to save event:", err.message);
-    res.status(500).json({ error: "Failed to save event" });
+    console.error("❌ Error stack:", err.stack);
+    console.error("❌ Error details:", err);
+    res.status(500).json({ error: "Failed to save event", details: err.message });
   }
 });
 
