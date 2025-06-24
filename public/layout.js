@@ -348,6 +348,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   } catch (err) {
-    console.error("💥 layout.js crash:", err);
+    console.error("\uD83D\uDCA5 layout.js crash:", err);
   }
+
+  // Fallback: if no .view is visible, show home view and add debug message
+  setTimeout(() => {
+    const views = document.querySelectorAll('.view');
+    const anyVisible = Array.from(views).some(v => getComputedStyle(v).display !== 'none');
+    if (!anyVisible) {
+      const homeView = document.getElementById('home-view');
+      if (homeView) {
+        homeView.style.display = 'flex';
+        homeView.classList.add('active');
+        // Add debug message
+        homeView.insertAdjacentHTML('afterbegin', '<div style="background: #ffe0e0; color: #b00; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align: center;">[DEBUG] No view was visible, so Home view was shown as fallback. Check view switching logic if this persists.</div>');
+      }
+    }
+  }, 500);
 });
