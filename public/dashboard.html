@@ -5,7 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>HomeOps Decoder - Transform Your Inbox</title>
 
-  <link rel="stylesheet" href="style.css?v=2024-07-10" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#7E5EFF',
+              light: '#A78BFA', 
+              dark: '#6B46C1',
+            },
+            background: '#FAFAFA',
+            muted: '#F3F3F3',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <link rel="stylesheet" href="chat-ui.css?v=2024-07-09" />
     <!-- ✅ Add Tippy.js tooltip support -->
   <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
@@ -528,25 +548,27 @@
       </nav>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content bg-gray-50 min-h-screen p-6">
 
   <!-- Top Bar with logo + brand and hamburger -->
-  <header class="top-bar">
-    <div class="top-bar-left">
-      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-      </button>
-      <a href="#" onclick="activateView('home'); return false;" class="top-bar-logo-link">
-        <div class="homeops-brand">
-          <img src="img/homeops-logo.svg" alt="HomeOps" class="homeops-logo-icon">
-          <span class="homeops-brand-text">HomeOps</span>
-        </div>
-      </a>
-    </div>
-    <div class="top-bar-right">
-      <button id="logoutBtn" class="premium-logout-btn">Logout</button>
+  <header class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" id="hamburgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <a href="#" onclick="activateView('home'); return false;" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div class="flex items-center gap-3">
+            <img src="img/homeops-logo.svg" alt="HomeOps" class="w-8 h-8">
+            <span class="text-xl font-semibold text-gray-900">HomeOps</span>
+          </div>
+        </a>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="logoutBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Logout</button>
+      </div>
     </div>
   </header>
 
@@ -1183,18 +1205,28 @@
   <!-- Calendar View -->
   <section id="calendar-view" class="view">
     <!-- 📅 Calendar Toolbar -->
-    <div class="calendar-toolbar">
-      <button class="cal-view-btn active" id="monthViewBtn">month</button>
-      <button class="cal-view-btn" id="weekViewBtn">week</button>
-      <button class="cal-view-btn" id="dayViewBtn">day</button>
-      <button class="cal-view-btn" id="listViewBtn">list</button>
-      <span class="calendar-title" id="calendarTitle">July 2025</span>
-      <button class="add-event-btn ghost"><i data-lucide="plus-circle"></i> Add Event</button>
-      <button class="clear-all-btn ghost"><i data-lucide="x-circle"></i> Clear All</button>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-2">
+          <button class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors active" id="monthViewBtn">month</button>
+          <button class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors" id="weekViewBtn">week</button>
+          <button class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors" id="dayViewBtn">day</button>
+          <button class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors" id="listViewBtn">list</button>
+        </div>
+        <span class="text-lg font-semibold text-gray-900" id="calendarTitle">July 2025</span>
+        <div class="flex items-center gap-2">
+          <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Event
+          </button>
+          <button class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2">
+            <i data-lucide="x-circle" class="w-4 h-4"></i> Clear All
+          </button>
+        </div>
+      </div>
     </div>
     <!-- 📆 Calendar Grid -->
-    <div class="calendar-container-notion">
-      <div id="calendar"></div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div id="calendar" class="p-4"></div>
     </div>
     <script>
     // TODO: Wire up view switching, add event, clear all
