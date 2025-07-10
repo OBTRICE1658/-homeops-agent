@@ -7644,3 +7644,54 @@ body, html {
     padding: 6px 10px !important;
   }
 }
+
+/* --- Inline Add Event Button in Calendar Toolbar --- */
+.fc-toolbar .add-event-btn {
+  position: static !important;
+  margin-left: 16px;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  background: linear-gradient(90deg, #a78bfa, #7e5eff);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  vertical-align: middle;
+}
+.fc-toolbar .add-event-btn:hover {
+  background: linear-gradient(90deg, #7e5eff, #a78bfa);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.16);
+}
+.fc-toolbar.fc-header-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.fc-toolbar .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 700px) {
+  .fc-toolbar .add-event-btn {
+    font-size: 14px;
+    padding: 7px 12px;
+    margin-left: 8px;
+    margin-top: 6px;
+  }
+  .fc-toolbar.fc-header-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}

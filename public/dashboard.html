@@ -1189,11 +1189,25 @@
       <span><i data-lucide="calendar-clock" class="insight-icon"></i> 3 events</span>
     </div>
     <div class="calendar-container-minimal">
-      <button class="add-event-btn" onclick="/* TODO: open event modal */">
-        <i data-lucide="plus"></i> Add Event
-      </button>
+      <div id="calendar-toolbar-wrapper"></div>
       <div id="calendar"></div>
     </div>
+    <script>
+      // Wait for FullCalendar to render, then move the Add Event button inline
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          var toolbar = document.querySelector('.fc-toolbar.fc-header-toolbar');
+          if (toolbar && !document.querySelector('.add-event-btn')) {
+            var btn = document.createElement('button');
+            btn.className = 'add-event-btn';
+            btn.innerHTML = '<i data-lucide="plus"></i> Add Event';
+            btn.onclick = function() { /* TODO: open event modal */ };
+            toolbar.appendChild(btn);
+            if (window.lucide) window.lucide.createIcons();
+          }
+        }, 400);
+      });
+    </script>
   </section>
 
 </main>
