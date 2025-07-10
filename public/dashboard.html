@@ -1182,49 +1182,14 @@
 
   <!-- Calendar View -->
   <section id="calendar-view" class="view">
-    <!-- 🧠 Modern Insights Bar -->
-    <div class="calendar-insights-bar">
-      <i data-lucide="brain" class="insight-icon"></i>
-      <span><strong>Forecast:</strong> Busy week ahead (July 22–28)</span>
-      <i data-lucide="mail-open" class="insight-icon"></i>
-      <span>6 new schedule-related emails decoded</span>
-      <i data-lucide="calendar-clock" class="insight-icon"></i>
-      <span>3 upcoming events</span>
+    <!-- Minimal Insights Bar -->
+    <div class="calendar-insights-bar minimal">
+      <span><i data-lucide="brain" class="insight-icon"></i> <strong>Forecast:</strong> Busy week ahead (July 22–28)</span>
+      <span><i data-lucide="mail-open" class="insight-icon"></i> 6 schedule emails</span>
+      <span><i data-lucide="calendar-clock" class="insight-icon"></i> 3 events</span>
     </div>
-    <!-- Modern Calendar Header -->
-    <div class="modern-calendar-header gradient-header">
-      <div class="calendar-header-left">
-        <h2 class="calendar-title">
-          <i data-lucide="calendar"></i>
-          Your Calendar
-        </h2>
-        <p class="calendar-subtitle">Manage your family's schedule</p>
-      </div>
-      <div class="calendar-header-right">
-        <div class="calendar-stats">
-          <div class="stat-item">
-            <span class="stat-number">12</span>
-            <span class="stat-label">Events</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">3</span>
-            <span class="stat-label">This Week</span>
-          </div>
-        </div>
-        <div class="calendar-actions">
-          <button id="add-event-btn">
-            <i data-lucide="plus"></i>
-            <span>Add Event</span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="modern-calendar-container">
-      <div class="calendar-main">
-        <div class="calendar-outer">
-          <div id="calendar"></div>
-        </div>
-      </div>
+    <div class="calendar-container-minimal">
+      <div id="calendar"></div>
     </div>
   </section>
 
