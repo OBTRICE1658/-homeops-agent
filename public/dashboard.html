@@ -1182,35 +1182,42 @@
 
   <!-- Calendar View -->
   <section id="calendar-view" class="view">
-    <!-- Minimal Insights Bar -->
-    <div class="calendar-insights-bar minimal">
-      <span><i data-lucide="brain" class="insight-icon"></i> <strong>Forecast:</strong> Busy week ahead (July 22–28)</span>
-      <span><i data-lucide="mail-open" class="insight-icon"></i> 6 schedule emails</span>
-      <span><i data-lucide="calendar-clock" class="insight-icon"></i> 3 events</span>
+    <!-- 🧠 Forecast Strip -->
+    <div class="forecast-strip">
+      <span class="forecast-badge">
+        <i data-lucide="brain" class="forecast-icon"></i>
+        <span class="forecast-label">Forecast:</span> Busy week ahead (July 22–28)
+      </span>
+      <span class="forecast-badge">
+        <i data-lucide="mail-open" class="forecast-icon"></i> 6 schedule emails
+      </span>
+      <span class="forecast-badge">
+        <i data-lucide="calendar-days" class="forecast-icon"></i> 3 events
+      </span>
     </div>
-    <div class="calendar-container-minimal">
+    <!-- 📅 Calendar Toolbar -->
+    <div class="calendar-toolbar">
+      <button class="cal-nav-btn" id="prevBtn"><i data-lucide="chevron-left"></i></button>
+      <button class="cal-nav-btn" id="nextBtn"><i data-lucide="chevron-right"></i></button>
+      <span class="calendar-title" id="calendarTitle">July 2025</span>
+      <div class="calendar-view-tabs">
+        <button class="cal-view-btn active" id="monthViewBtn">month</button>
+        <button class="cal-view-btn" id="weekViewBtn">week</button>
+        <button class="cal-view-btn" id="dayViewBtn">day</button>
+        <button class="cal-view-btn" id="listViewBtn">list</button>
+      </div>
+      <button class="add-event-btn"><i data-lucide="plus-circle"></i> Add Event</button>
+      <button class="clear-all-btn"><i data-lucide="x-circle"></i> Clear All</button>
+    </div>
+    <!-- 📆 Calendar Grid -->
+    <div class="calendar-container-notion">
       <div id="calendar"></div>
     </div>
+    <!-- ➕ Floating Add Event Button (Mobile) -->
+    <button class="floating-add-btn" aria-label="Add Event"><i data-lucide="plus-circle"></i></button>
     <script>
-      // Wait for FullCalendar to render, then inject the Add Event button at the far right of the toolbar
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          var toolbar = document.querySelector('.fc-toolbar.fc-header-toolbar');
-          if (toolbar && !document.querySelector('.add-event-btn')) {
-            var btn = document.createElement('button');
-            btn.className = 'add-event-btn';
-            btn.innerHTML = '<i data-lucide="plus"></i> Add Event';
-            btn.onclick = function() { /* TODO: open event modal */ };
-            // Wrap toolbar content in a flex container for centering
-            var flexWrap = document.createElement('div');
-            flexWrap.className = 'calendar-toolbar-flex';
-            while (toolbar.firstChild) flexWrap.appendChild(toolbar.firstChild);
-            toolbar.appendChild(flexWrap);
-            toolbar.appendChild(btn);
-            if (window.lucide) window.lucide.createIcons();
-          }
-        }, 400);
-      });
+    // TODO: Wire up view switching, prev/next, add event, clear all, and floating button
+    // TODO: On mobile (<640px), switch calendar to list view and collapse forecast
     </script>
   </section>
 

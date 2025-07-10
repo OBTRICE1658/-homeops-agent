@@ -7758,3 +7758,286 @@ body, html {
     border-radius: 18px;
   }
 }
+
+/* --- Notion/Linear-Inspired HomeOps Calendar --- */
+.forecast-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin: 18px 0 18px 0;
+  padding: 0 8px;
+}
+.forecast-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border-radius: 6px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+.forecast-icon {
+  color: #a78bfa;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+.forecast-label {
+  color: #444;
+  font-weight: 600;
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  background: none;
+  box-shadow: none;
+  padding: 0 8px;
+}
+.cal-nav-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #666;
+  border-radius: 8px;
+  font-size: 18px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cal-nav-btn:hover {
+  background: #f3f0ff;
+}
+.calendar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 12px;
+}
+.calendar-view-tabs {
+  display: flex;
+  gap: 6px;
+}
+.cal-view-btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #666;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+.cal-view-btn.active {
+  background: linear-gradient(135deg, #A78BFA, #7E5EFF);
+  color: #fff;
+  border: none;
+}
+.cal-view-btn:not(.active):hover {
+  background: #f3f0ff;
+}
+.add-event-btn {
+  background: linear-gradient(135deg, #A78BFA, #7E5EFF);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  margin-left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.add-event-btn:hover {
+  background: linear-gradient(135deg, #7E5EFF, #A78BFA);
+}
+.clear-all-btn {
+  background: none;
+  color: #a78bfa;
+  border: 1px solid #ede9fe;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.clear-all-btn:hover {
+  background: #f3f0ff;
+  color: #7e5eff;
+}
+.calendar-container-notion {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: 900px;
+  margin: 0 auto 32px auto;
+  padding: 0;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+#calendar {
+  width: 100% !important;
+  min-height: 420px !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.fc {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.fc .fc-daygrid-day {
+  border: none !important;
+  background: none !important;
+  padding: 8px 12px !important;
+  font-weight: 500 !important;
+  color: #444 !important;
+  transition: background 0.12s;
+}
+.fc .fc-daygrid-day:hover {
+  background: #f3f0ff !important;
+}
+.fc .fc-daygrid-day-number {
+  font-weight: 500 !important;
+  color: #444 !important;
+}
+.fc .fc-daygrid-day.fc-day-today {
+  background: #f8f5ff !important;
+  border-radius: 8px !important;
+}
+.fc-event, .event {
+  background: rgba(126, 94, 255, 0.15) !important;
+  color: #4B3DB8 !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  margin-bottom: 4px !important;
+  box-shadow: none !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.fc-event .fc-event-main {
+  color: #4B3DB8 !important;
+  background: none !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.fc-event .fc-list-event-dot {
+  display: none !important;
+}
+/* --- Floating Add Button (Mobile) --- */
+.floating-add-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #A78BFA, #7E5EFF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(126, 94, 255, 0.3);
+  border: none;
+  z-index: 100;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.floating-add-btn:hover {
+  background: linear-gradient(135deg, #7E5EFF, #A78BFA);
+}
+@media (max-width: 700px) {
+  .forecast-strip {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    padding: 0 2px;
+    margin: 10px 0 10px 0;
+  }
+  .calendar-toolbar {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .calendar-title {
+    font-size: 15px;
+    margin: 0 6px;
+  }
+  .calendar-view-tabs {
+    gap: 2px;
+  }
+  .add-event-btn, .clear-all-btn {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+    margin-top: 6px;
+    font-size: 13px;
+    padding: 10px 0;
+    border-radius: 8px;
+  }
+  .calendar-container-notion {
+    max-width: 100vw;
+    border-radius: 0;
+    margin: 0;
+    min-height: 320px;
+    height: auto;
+    padding-bottom: 32px;
+  }
+  #calendar, .fc {
+    min-height: 320px !important;
+    border-radius: 0 !important;
+    width: 100vw !important;
+    overflow-x: auto !important;
+  }
+}
+/* Remove all old calendar shell, border, and header styles */
+#calendar-view .modern-calendar-header,
+#calendar-view .modern-calendar-container,
+#calendar-view .calendar-main,
+#calendar-view .calendar-outer,
+#calendar-view .calendar-stats,
+#calendar-view .calendar-title,
+#calendar-view .calendar-subtitle,
+#calendar-view .stat-item,
+#calendar-view .stat-number,
+#calendar-view .stat-label,
+#calendar-view .calendar-actions,
+#calendar-view #add-event-btn {
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
