@@ -7695,3 +7695,66 @@ body, html {
     gap: 4px;
   }
 }
+
+/* --- Centered Calendar Toolbar and Add Event Button --- */
+.fc-toolbar.fc-header-toolbar {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  position: relative;
+  margin-bottom: 18px;
+}
+.calendar-toolbar-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  gap: 8px;
+}
+.fc-toolbar .add-event-btn {
+  position: static !important;
+  margin-left: auto;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  background: linear-gradient(90deg, #a78bfa, #7e5eff);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.fc-toolbar .add-event-btn:hover {
+  background: linear-gradient(90deg, #7e5eff, #a78bfa);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.16);
+}
+@media (max-width: 700px) {
+  .fc-toolbar.fc-header-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .calendar-toolbar-flex {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .fc-toolbar .add-event-btn {
+    margin: 8px auto 0 auto;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 0;
+    border-radius: 18px;
+  }
+}
