@@ -26,5 +26,8 @@
     "homeops"
   ],
   "author": "Oliver Baron",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
 }

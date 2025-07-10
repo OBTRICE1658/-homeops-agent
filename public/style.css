@@ -1,1087 +1,555 @@
-/* Reset */
-html, body {
-  height: 100%;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
 }
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+/*
+! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+*/
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  -webkit-tap-highlight-color: transparent;
+  /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
 
 body {
-  background: #f5f6fa;
-  color: #222;
-  font-family: system-ui, sans-serif;
-  min-height: 100vh;
-  height: 100vh;
-  width: 100vw;
-  display: flex;
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
 }
 
-body.dark {
-  background: #1e1e2f;
-  color: #eee;
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
 }
 
-.app-container {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  min-height: 100vh;
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 80px;
-  background: #111827;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 0;
-  gap: 1rem;
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-  height: 40px;
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
 }
 
-.logo span {
-  font-weight: 600;
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
 }
 
-.sidebar-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px; /* Soften edges */
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-feature-settings: normal;
+  /* 2 */
+  font-variation-settings: normal;
+  /* 3 */
+  font-size: 1em;
+  /* 4 */
 }
 
-/* Navigation */
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  justify-content: center;
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
 }
 
-.nav-item {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.4rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: background 0.2s ease;
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
 }
 
-.nav-item .lucide {
-  margin-right: 0; /* Remove space between icon and (hidden) text */
+sub {
+  bottom: -0.25em;
 }
 
-.nav-item:hover,
-.nav-item.active {
-  background: #374151;
-  border-radius: 8px;
-}
-.nav-item i {
-  width: 24px;
-  height: 24px;
-  color: white;
-  transition: color 0.2s ease;
+sup {
+  top: -0.5em;
 }
 
-.nav-item:hover i {
-  color: #f9fafb; /* Slight highlight on hover */
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
 }
 
-/* Main Content */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  height: 100vh;
-  overflow: auto;
-  background: transparent;
-  color: #222;
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  letter-spacing: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
 }
 
-.view-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
 }
 
-.view-header h2 {
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type='button']),
+input:where([type='reset']),
+input:where([type='submit']) {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
   margin: 0;
 }
 
-.button-danger {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.button-danger:hover {
-  background-color: #dc2626;
-}
-
-.view {
-  display: none;
-  width: 100%;
-  height: 100%;
-}
-
-.view.active {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-#chat-view, #calendar-view, #dashboard-view, #home-view {
-  background: transparent;
-  color: #222;
-}
-
-/* Top Bar */
-.top-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem 2rem;
-  background-color: white;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.top-bar-left {
-  display: flex;
-  align-items: center;
-}
-
-.top-bar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.top-bar-logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
-  border-radius: 8px; /* Match sidebar logo */
-}
-
-.brand-name {
-  font-size: 1.6rem;
-  font-weight: bold;
-}
-
-/* Center the chat view */
-#chat-view .chat-wrapper {
-  min-height: 350px;
-  background: transparent !important;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 1rem;
-  color: #222 !important;
-}
-
-/* Chat Layout */
-.chat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1.5rem;
-  height: 500px;
-  overflow-y: auto;
-  background: transparent !important;
-  margin-bottom: 1rem;
-  max-width: 900px;
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  color: #222 !important;
-}
-
-/* Chat Message Styling */
-.message {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
+fieldset {
+  margin: 0;
   padding: 0;
 }
 
-.message .sender {
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 0.9em;
-  color: #555;
+legend {
+  padding: 0;
 }
 
-.message.agent .sender {
-  color: #4A90E2;
-}
-
-.message-bubble {
-  padding: 12px 18px;
-  border-radius: 20px;
-  max-width: 80%;
-  word-wrap: break-word;
-}
-
-.message.agent {
-  align-self: flex-start;
-}
-
-.message.agent .message-bubble {
-  background-color: #f1f0f0;
-  color: #111;
-  border-top-left-radius: 0;
-}
-
-.message.user {
-  align-self: flex-end;
-}
-
-.message.user .message-bubble {
-  background-color: #2563eb;
-  color: white;
-  border-top-right-radius: 0;
-  max-width: 100%;
-}
-
-/* Chat Form */
-.chat-form {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 900px;
-  padding: 1rem;
-  background: transparent !important;
-  color: #222 !important;
-}
-
-.chat-form input {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  background: transparent !important;
-  color: #222 !important;
-}
-
-.chat-form button {
-  padding: 0.75rem 1rem;
-  border: none;
-  background: #2563eb;
-  color: white;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  background: transparent !important;
-  color: #222 !important;
-}
-
-/* Typing Indicator */
-.typing-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.typing-indicator img {
-  width: 20px !important;
-  height: 20px !important;
-  max-width: 20px !important;
-  margin-right: 10px;
-}
-
-.typing-indicator span {
-  font-style: italic;
-  color: #999;
-}
-
-/* Dashboard */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem 1rem;
-}
-
-.dashboard-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  padding: 1.5rem;
-  border: 1px solid #e3e3e3;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.dashboard-card h3 {
-  margin: 0 0 0.75rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #222;
-}
-
-.dashboard-card ul {
-  padding-left: 1rem;
-  margin: 0;
-  list-style-type: disc;
-  color: #444;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-
-/* Reframe Module Styles */
-.reframe-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.reframe {
-  background: #f9fafb;
-  border-left: 4px solid #ccc;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-}
-
-.reframe h4 {
-  margin: 0 0 0.25rem;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #222;
-}
-
-.reframe p {
-  margin: 0.25rem 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  color: #444;
-}
-
-.reframe p em {
-  color: #777;
-}
-
-/* Relief Protocol Styles */
-.relief-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 28px;
-  margin-top: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.relief-header {
-  margin-bottom: 1.5rem;
-}
-
-.relief-card h2 {
-  font-size: 1.8rem;
-  margin: 0;
-}
-
-.subtle-label {
-  color: #999;
-  font-size: 0.95rem;
-  margin-top: 4px;
-}
-
-.relief-section {
-  margin-bottom: 1.6rem;
-}
-
-.relief-section label {
-  display: block;
-  font-weight: 600;
-  color: #444;
-  margin-bottom: 6px;
-}
-
-.relief-section p {
-  margin: 0;
-  color: #222;
-  line-height: 1.6;
-}
-
-#relief-protocol {
-  grid-column: 1 / -1;
-}
-/* Calendar View Styling */
-#calendar-view {
-  padding: 2rem;
-  min-height: calc(100vh - 200px); /* Ensure minimum height */
-  display: flex;
-  flex-direction: column;
-}
-
-#calendar {
-  min-height: 600px !important;
-  height: 600px !important;
-  background: #fff !important;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  margin-top: 1rem;
-  padding: 1rem;
-  flex: 1 !important;
-  width: 100% !important;
-  max-width: none !important;
-  overflow: visible !important;
-  color: #222 !important;
-}
-
-/* FullCalendar inner font + layout */
-.fc {
-  font-family: system-ui, sans-serif;
-  font-size: 0.9rem;
-}
-
-/* Toolbar Title */
-.fc-toolbar-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #222;
-}
-
-/* Toolbar Buttons */
-.fc-button {
-  border-radius: 8px !important;
-  background: #f3f4f6;
-  border: 1px solid #ccc;
-  color: #333;
-  padding: 0.3rem 0.75rem;
-  font-size: 0.85rem;
-}
-
-.fc-button:hover {
-  background: #e5e7eb;
-}
-/* 🌟 Highlight effect for new calendar events */
-.fc-event.highlight {
-  animation: flash 1.5s ease-in-out;
-  border: 2px solid #ffd700;
-}
-
-@keyframes flash {
-  0% { background-color: #fff8d6; }
-  50% { background-color: #ffe56a; }
-  100% { background-color: inherit; }
-}
-/* ───── FullCalendar Custom Tooltip ───── */
-.fc-event-tooltip {
-  position: absolute;
-  z-index: 9999;
-  background: #ffffff;
-  color: #000;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  font-size: 0.85rem;
-  pointer-events: none;
-  white-space: nowrap;
-}
-.calendar-tooltip {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  max-width: 200px;
-}
-/* Calendar Event Hover Card */
-.hover-card {
-  position: absolute;
-  display: none;
-  z-index: 9999;
-  background: #fff;
-  color: #111;
-  border-radius: 8px;
-  padding: 10px 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  font-size: 13px;
-  line-height: 1.4;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-  min-width: 160px;
-  max-width: 260px;
-  border: 1px solid #e2e2e2;
-}
-
-.hover-card-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.hover-card-time {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-/* --- Email Decoder / Superhuman UI --- */
-.email-decoder-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 4rem); /* Full viewport height minus padding */
-  background-color: #ffffff;
-}
-
-.decoder-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.decoder-header h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.decoder-header p {
-  font-size: 1rem;
-  color: #6b7280;
-}
-
-.email-main {
-  display: flex;
-  flex: 1;
-  overflow: hidden; /* Prevent scrolling on the main container */
-}
-
-.email-sidebar {
-  width: 240px;
-  background-color: #f9fafb;
-  border-right: 1px solid #e5e7eb;
-  padding: 1rem;
-}
-
-.email-sidebar-header h2 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0 0.5rem 0.5rem;
-}
-
-.split-inbox-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.split-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #374151;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.split-item i {
-  width: 16px;
-  height: 16px;
-  stroke-width: 2;
-}
-
-.split-item.active, .split-item:hover {
-  background-color: #e5e7eb;
-  color: #111827;
-}
-
-.email-list-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.email-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.email-list-header h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.email-count {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.email-list {
+ol,
+ul,
+menu {
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0;
 }
 
-.email-item {
-  display: grid;
-  grid-template-columns: 180px 1fr auto;
-  gap: 1rem;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
 }
 
-.email-item:hover {
-  background-color: #f9fafb;
-}
+/*
+Prevent resizing textareas horizontally by default.
+*/
 
-.email-item.unread {
-  background-color: #fefce8; /* A very subtle yellow for unread */
-  font-weight: 600;
-}
-
-.email-sender {
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.email-subject {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.email-preview {
-  color: #6b7280;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.email-timestamp {
-  font-size: 0.875rem;
-  color: #6b7280;
-  text-align: right;
-}
-
-/* --- Desktop First Styles --- */
-.bottom-nav {
-  display: none; /* Hidden by default on desktop */
-}
-
-/* --- Mobile Overrides --- */
-@media screen and (max-width: 768px) {
-  body::before {
-    content: "✅ MOBILE MODE ACTIVE";
-    position: fixed;
-    top: 8px;
-    left: 8px;
-    background: limegreen;
-    color: white;
-    padding: 2px 6px;
-    font-size: 12px;
-    z-index: 9999;
-  }
-
-  .app-container {
-    flex-direction: column;
-    height: 100vh; /* Ensure the container takes full height */
-  }
-
-  .sidebar {
-    display: none; /* Hide sidebar on mobile */
-  }
-
-  .main-content {
-    padding: 0.5rem;
-  }
-
-  .bottom-nav {
-    display: flex; /* Show bottom nav on mobile */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #111827;
-    justify-content: space-around;
-    padding: 0.5rem 0;
-    z-index: 100;
-  }
-
-  .bottom-nav button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    padding: 0.5rem 1rem;
-  }
-
-  .top-bar {
-    padding: 10px 16px;
-    font-size: 16px;
-    background: white;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 998;
-  }
-
-  .main-content,
-  .view {
-    width: 100vw;
-    padding: 16px;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    flex-grow: 1; /* Allow view to take up space */
-    display: flex; /* Use flexbox for child alignment */
-    flex-direction: column;
-  }
-
-  #chat-view {
-    height: 100%;
-  }
-
-  .chat-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    height: 100%;
-    width: 100%;
-    flex-grow: 1;
-  }
-
-  .chat-box {
-    flex-grow: 1; /* Allow chat box to take up available space */
-    overflow-y: auto;
-    margin-bottom: 0;
-  }
-
-  .chat-form {
-    display: flex;
-    flex-direction: row; /* Keep form elements in a row */
-    width: 100%;
-    gap: 6px;
-    flex-shrink: 0; /* Prevent form from shrinking */
-  }
-
-  .chat-form input,
-  .chat-form button {
-    width: 100%;
-    font-size: 16px;
-    padding: 12px;
-  }
-
-  .dashboard-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .dashboard-card {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .view {
-    min-height: 300px;
-  }
-
-  .view h2 {
-    font-size: 20px;
-  }
-
-  #calendar {
-    min-height: 250px;
-    padding: 0.5rem;
-  }
-
-  .fc {
-    font-size: 14px;
-  }
-
-  .fc-toolbar-title {
-    font-size: 16px !important;
-  }
-    /* 📆 Mobile calendar toolbar refinement */
-  .fc-header-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .fc-toolbar-title {
-    font-size: 16px !important;
-    text-align: center;
-    margin-bottom: 4px;
-  }
-
-  .fc-button {
-    font-size: 14px !important;
-    padding: 6px 12px !important;
-    border-radius: 8px !important;
-    background-color: #f9f9f9 !important;
-    color: #333 !important;
-    border: 1px solid #ccc !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  }
-
-  .fc-button.fc-button-active {
-    background-color: #333 !important;
-    color: white !important;
-    border-color: #333 !important;
-  }
-
-  .fc-button-group {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-  }
-/* 📅 FullCalendar mobile layout + toolbar cleanup */
-
-.fc {
-  font-size: 14px !important;
-  width: 100% !important;
-}
-
-}
-
-/* --- Home View Grid Layout --- */
-.home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.home-module {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  padding: 1.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.large-module {
-  grid-column: 1 / -1; /* Spans the full width */
-}
-
-.module-header {
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-}
-
-.module-header h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.module-header p {
-  font-size: 0.9rem;
-  color: #777;
-  margin-top: 0.25rem;
-}
-
-.module-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* --- Specific Module Styles --- */
-
-/* Email Decoder */
-.gmail-connect-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  background-color: #4285F4;
-  color: white;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.gmail-connect-btn:hover {
-  background-color: #357ae8;
-}
-
-.small-text {
-  font-size: 0.8rem;
-  color: #999;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-/* This Week Summary */
-.week-summary-placeholder {
-  text-align: center;
-  color: #999;
-}
-
-/* Re-frame Protocol */
-.reframe-input {
-  width: 100%;
-  height: 80px;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
+textarea {
   resize: vertical;
-  margin-bottom: 1rem;
 }
 
-.reframe-btn {
-  background-color: #1a1a1a;
-  color: white;
-  font-size: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: none;
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.reframe-btn:hover {
-  background-color: #333;
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
 }
 
-.reframe-output {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  color: #333;
-  min-height: 50px;
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
 }
 
-.reframe-output p {
-  margin: 0;
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
 
-.reframe-result h4 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
+/* Make elements with the HTML hidden attribute stay hidden by default */
 
-.reframe-result .reframe-core {
-  font-family: 'Georgia', serif;
-  font-style: italic;
-  font-size: 1.2rem;
-  color: #1a1a1a;
-  margin: 1rem 0;
-  text-align: center;
-}
-
-.reframe-result h5 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.reframe-result ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin-bottom: 1.5rem;
-}
-
-.reframe-result li {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2322c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>') no-repeat left center;
-  padding-left: 2rem;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.reframe-result h6 {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #666;
-  margin-bottom: 0.5rem;
-}
-
-.reframe-result .reframe-science {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.6;
-}
-
-/* --- Desktop First Styles --- */
-.bottom-nav {
-  display: none; /* Hidden by default on desktop */
-}
-
-.thinking-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.thinking-indicator img {
-  width: 32px;
-  height: 32px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none;
 }
