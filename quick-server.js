@@ -41,7 +41,7 @@ const dataManager = new HomeOpsDataManager();
 const oauth2Client = new google.auth.OAuth2(
   process.env.GMAIL_CLIENT_ID,
   process.env.GMAIL_CLIENT_SECRET,
-  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/auth/gmail/callback'
+  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/oauth2callback'
 );
 
 // Middleware
@@ -860,6 +860,30 @@ app.get('/auth/gmail', (req, res) => {
     prompt: 'consent' // Force consent screen to get fresh tokens
   });
   console.log('🔗 Redirecting to Gmail OAuth (fresh tokens):', authUrl);
+  res.redirect(authUrl);
+});
+
+// Google OAuth authentication (Gmail + Calendar)
+app.get('/auth/google', (req, res) => {
+  // Clear any existing credentials to force fresh OAuth
+  oauth2Client.setCredentials({});
+  
+  const isOnboarding = req.query.isOnboarding === 'true';
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/gmail.modify',
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'openid'
+    ],
+    state: isOnboarding ? 'onboarding' : 'normal',
+    prompt: 'consent' // Force consent screen to get fresh tokens
+  });
+  console.log('🔗 Redirecting to Google OAuth (Gmail + Calendar):', authUrl);
   res.redirect(authUrl);
 });
 
