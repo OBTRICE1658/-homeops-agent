@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HomeOps AI Calendar - Future of Time Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script type="module" src="/public/calendar.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; }
+    
+    .ai-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .neural-pattern {
+      background-image: 
+        radial-gradient(circle at 25px 25px, rgba(255,255,255,0.1) 2px, transparent 2px),
+        radial-gradient(circle at 75px 75px, rgba(255,255,255,0.05) 2px, transparent 2px);
+      background-size: 100px 100px;
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+    }
+    
+    .ai-card {
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .event-item {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .event-item:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .intelligence-indicator {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 min-h-screen">
+  <!-- AI-Powered Header -->
+  <header class="ai-gradient neural-pattern p-6 text-white relative overflow-hidden">
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center pulse-glow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold">HomeOps AI Calendar</h1>
+            <p class="text-sm opacity-80">Intelligence-Driven Time Management</p>
+          </div>
+        </div>
+        <div class="intelligence-indicator">
+          <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main AI Interface -->
+  <main class="flex-1 p-4 space-y-6">
+    <!-- AI Insights Dashboard -->
+    <div class="ai-card bg-white bg-opacity-10 rounded-2xl p-6 text-white">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          AI Insights
+        </h2>
+        <span class="text-xs bg-green-500 px-2 py-1 rounded-full">LEARNING</span>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="bg-blue-500 bg-opacity-20 rounded-xl p-3">
+          <div class="text-2xl font-bold" id="optimalHours">6.5h</div>
+          <div class="text-xs opacity-80">Optimal Focus Time</div>
+        </div>
+        <div class="bg-green-500 bg-opacity-20 rounded-xl p-3">
+          <div class="text-2xl font-bold" id="efficiencyScore">87%</div>
+          <div class="text-xs opacity-80">Weekly Efficiency</div>
+        </div>
+      </div>
+      
+      <div class="bg-purple-500 bg-opacity-20 rounded-xl p-3 mb-4">
+        <div class="flex items-center text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <span id="aiRecommendation">Best productivity window: 9-11 AM</span>
+        </div>
+      </div>
+
+      <button id="freeTimeBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center space-x-2 hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Find Optimal Time Slots</span>
+      </button>
+    </div>
+
+    <!-- Intelligent Calendar Grid -->
+    <div class="ai-card bg-white bg-opacity-10 rounded-2xl p-6 text-white">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">This Week</h2>
+        <div class="flex space-x-2">
+          <button class="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button class="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div id="calendarGrid" class="space-y-3">
+        <!-- AI-enhanced week view will be rendered here -->
+      </div>
+    </div>
+
+    <!-- AI Actions Panel -->
+    <div class="ai-card bg-white bg-opacity-10 rounded-2xl p-6 text-white">
+      <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        Smart Actions
+      </h3>
+      <div class="grid grid-cols-2 gap-3">
+        <button class="bg-gradient-to-r from-green-500 to-emerald-600 py-3 px-4 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 transition-all">
+          <div class="text-sm">Auto-Schedule</div>
+          <div class="text-xs opacity-80">Let AI optimize</div>
+        </button>
+        <button class="bg-gradient-to-r from-orange-500 to-red-600 py-3 px-4 rounded-xl font-medium hover:from-orange-600 hover:to-red-700 transition-all">
+          <div class="text-sm">Energy Match</div>
+          <div class="text-xs opacity-80">Match tasks to energy</div>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Enhanced Event Drawer Root -->
+  <div id="eventDrawerRoot"></div>
+</body>
+</html>

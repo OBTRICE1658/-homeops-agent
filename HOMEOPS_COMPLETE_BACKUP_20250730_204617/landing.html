@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Your Mental Load Intelligence - HomeOps</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .cta-section {
+            background: white;
+            padding: 16px 24px 24px 24px;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 50%;
+            transition: width 0.3s ease;
+        }
+        
+        .step-indicator {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .brand-mark {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            text-align: center;
+        }
+        
+        .headline {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 24px;
+            line-height: 1.4;
+            text-align: center;
+        }
+        
+        .connection-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .connection-card.connected {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            color: #667eea;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            flex: 1;
+        }
+        
+        .card-status {
+            background: #fef5e7;
+            color: #d69e2e;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .card-status.connected {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .capabilities-grid {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .capability {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .capability-icon {
+            width: 16px;
+            height: 16px;
+            color: #667eea;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .capability-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+        
+        .capability-content p {
+            font-size: 12px;
+            color: #4a5568;
+            line-height: 1.3;
+        }
+        
+        .privacy-note {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 10px;
+            color: #1e40af;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+        
+        .privacy-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+        
+        .connect-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+        }
+        
+        .connect-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .connect-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Desktop enhancements */
+        @media (min-width: 768px) {
+            body {
+                padding: 24px;
+            }
+            
+            .container {
+                max-width: 600px;
+                border-radius: 24px;
+            }
+            
+            .content {
+                padding: 40px;
+            }
+            
+            .cta-section {
+                padding: 20px 40px 40px 40px;
+            }
+            
+            h1 {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+            
+            .headline {
+                font-size: 16px;
+                margin-bottom: 32px;
+            }
+            
+            .step-indicator {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            
+            .capabilities-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <div class="step-indicator">Step 2 of 4</div>
+            
+            <div class="brand-mark">
+                <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+                    <defs>
+                        <linearGradient id="techGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="accentGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Sharp geometric container -->
+                    <rect x="8" y="8" width="84" height="84" rx="16" ry="16" fill="url(#techGradient2)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                    
+                    <!-- Tech-heavy organized house -->
+                    <g>
+                        <!-- Main structure - sharp edges -->
+                        <rect x="25" y="45" width="50" height="35" rx="2" fill="white"/>
+                        <!-- Geometric roof -->
+                        <polygon points="50,25 20,45 80,45" fill="white"/>
+                        
+                        <!-- Purple tech accents -->
+                        <rect x="28" y="48" width="44" height="2" fill="url(#accentGradient2)"/>
+                        <rect x="28" y="52" width="44" height="1" fill="url(#accentGradient2)" opacity="0.6"/>
+                        
+                        <!-- Organized grid windows -->
+                        <rect x="30" y="55" width="8" height="8" rx="1" fill="url(#accentGradient2)"/>
+                        <rect x="62" y="55" width="8" height="8" rx="1" fill="url(#accentGradient2)"/>
+                        
+                        <!-- Central control door -->
+                        <rect x="45" y="65" width="10" height="15" rx="1" fill="url(#accentGradient2)"/>
+                        <circle cx="47" cy="72" r="1" fill="white"/>
+                        
+                        <!-- Tech grid pattern -->
+                        <rect x="32" y="67" width="4" height="1" fill="url(#accentGradient2)" opacity="0.4"/>
+                        <rect x="64" y="67" width="4" height="1" fill="url(#accentGradient2)" opacity="0.4"/>
+                        <rect x="32" y="70" width="4" height="1" fill="url(#accentGradient2)" opacity="0.4"/>
+                        <rect x="64" y="70" width="4" height="1" fill="url(#accentGradient2)" opacity="0.4"/>
+                    </g>
+                </svg>
+            </div>
+            
+            <h1>Streamline Your Family Operations</h1>
+            <p class="headline">Transform email chaos into intelligent insights for high-performing modern families</p>
+            
+            <div class="connection-card" id="gmailCard">
+                <div class="card-header">
+                    <i data-lucide="mail" class="card-icon"></i>
+                    <div class="card-title">Gmail & Calendar Intelligence</div>
+                    <span class="card-status" id="gmailStatus">Not Connected</span>
+                </div>
+                
+                <div class="capabilities-grid">
+                    <div class="capability">
+                        <i data-lucide="filter" class="capability-icon"></i>
+                        <div class="capability-content">
+                            <h4>Email Intelligence</h4>
+                            <p>Identify trusted brands, school communications, and important family emails</p>
+                        </div>
+                    </div>
+                    
+                    <div class="capability">
+                        <i data-lucide="calendar" class="capability-icon"></i>
+                        <div class="capability-content">
+                            <h4>Schedule Intelligence</h4>
+                            <p>Track family events, identify conflicts, and reduce scheduling chaos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="capability">
+                        <i data-lucide="bell" class="capability-icon"></i>
+                        <div class="capability-content">
+                            <h4>Smart Alerts</h4>
+                            <p>Never miss school deadlines or important family communications</p>
+                        </div>
+                    </div>
+                    
+                    <div class="capability">
+                        <i data-lucide="brain" class="capability-icon"></i>
+                        <div class="capability-content">
+                            <h4>Mental Load Reduction</h4>
+                            <p>Stop tracking everything in your head—we'll surface what matters</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="privacy-note">
+                    <i data-lucide="shield" class="privacy-icon"></i>
+                    Read-only access • Your data stays yours • Parent-built security • No ads or tracking
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <button class="connect-btn" id="connectBtn">
+                <i data-lucide="link" class="btn-icon"></i>
+                Connect Gmail & Calendar Securely
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Get user info from session storage
+        const userInfo = JSON.parse(sessionStorage.getItem('onboarding_user') || '{}');
+        
+        // Check if returning from OAuth
+        const urlParams = new URLSearchParams(window.location.search);
+        const authSuccess = urlParams.get('auth') === 'success';
+        const authError = urlParams.get('error');
+        
+        if (authSuccess) {
+            // Mark as connected
+            markGmailConnected();
+        } else if (authError) {
+            console.error('OAuth error:', authError);
+        }
+        
+        function markGmailConnected() {
+            const card = document.getElementById('gmailCard');
+            const status = document.getElementById('gmailStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            
+            card.classList.add('connected');
+            status.textContent = 'Connected';
+            status.classList.add('connected');
+            connectBtn.innerHTML = '<i data-lucide="check" class="btn-icon"></i>Successfully Connected';
+            connectBtn.disabled = true;
+            
+            // Update user info and auto-redirect to scan
+            userInfo.gmailConnected = true;
+            userInfo.step = 2;
+            sessionStorage.setItem('onboarding_user', JSON.stringify(userInfo));
+            
+            // Auto-redirect to scan page after a short delay
+            setTimeout(() => {
+                window.location.href = '/scan?gmail_connected=true';
+            }, 2000);
+        }
+        
+        document.getElementById('connectBtn').addEventListener('click', function() {
+            if (this.disabled) return;
+            
+            // Store current progress
+            userInfo.step = 2;
+            sessionStorage.setItem('onboarding_user', JSON.stringify(userInfo));
+            
+            // Redirect to Gmail OAuth with onboarding flag
+            window.location.href = '/auth/gmail?isOnboarding=true';
+        });
+        
+        // If already connected (for testing), enable continue
+        if (sessionStorage.getItem('gmail_connected') === 'true') {
+            markGmailConnected();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: homeops-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    branch: main
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REDIRECT_URI
+        value: https://homeops-backend.onrender.com/auth/google/callback
+    healthCheckPath: /health
+    autoDeploy: true 
