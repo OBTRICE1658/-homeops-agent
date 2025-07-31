@@ -1038,6 +1038,9 @@
     function initializeCalendarView() {
       console.log('Initializing calendar view...');
       
+      // Initialize calendar display with current month/year
+      updateCalendarDisplay();
+      
       // Load simple calendar
       renderSimpleCalendar();
       
@@ -4625,8 +4628,8 @@
       }
       
       try {
-        // Get user ID (in a real app, this would come from authentication)
-        const userId = 'demo@homeops.app';
+        // Get user ID from our OAuth flow (use the authenticated user's email)
+        const userId = 'oliverhbaron@gmail.com'; // This should be your authenticated email
         
         // Fetch REAL email intelligence from our Gmail integration
         console.log('🧠 Loading real Gmail intelligence...');
@@ -4683,20 +4686,25 @@
         id: insight.id || `insight-${index}`,
         category: insight.category.toLowerCase() || 'general',
         priority: insight.priority.toLowerCase() || 'medium',
-        subject: insight.title || 'Email Intelligence',
-        sender: 'HomeOps AI <ai@homeops.app>', // This matches what displayDecoderCards expects
-        summary: insight.insight || 'AI-generated insight',
-        actionRequired: insight.action ? true : false,
+        subject: insight.title || 'Email Intelligence', // Real email subject
+        sender: insight.from || 'Unknown Sender', // Real email sender
+        summary: insight.description || 'AI-generated insight', // Real email snippet
+        actionRequired: insight.actionable || false,
         timeline: null,
         timestamp: insight.date || new Date().toISOString(),
         labels: [insight.category],
-        snippet: insight.insight || '',
-        action: insight.action || 'Review',
+        snippet: insight.description || '', // Real email content
+        action: insight.action_items ? insight.action_items[0] : 'Review',
         icon: insight.icon || 'mail',
-        time_ago: 'just now', // Add this field that displayDecoderCards expects
-        email_id: `insight-${index}`,
-        gmail_url: '#', // Placeholder URL
-        calendar_events: null // No calendar events for basic insights
+        time_ago: insight.time_ago || 'just now',
+        email_id: insight.id || `insight-${index}`,
+        gmail_url: insight.id ? `https://mail.google.com/mail/u/0/#inbox/${insight.id}` : '#', // Real Gmail URL
+        calendar_events: insight.calendar_events || null,
+        // Add the enhanced fields for full display
+        full_analysis: insight.full_analysis || '',
+        manipulation_score: insight.manipulation_score || 0,
+        action_items: insight.action_items || [],
+        personalized_score: insight.personalized_score || 0
       }));
     }
     
@@ -4834,7 +4842,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 ${categoryIcon}
-                <span style="background: rgba(139, 92, 246, 0.2); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                <span class="category-tag" style="background: rgba(139, 92, 246, 0.2); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                   ${card.category.toUpperCase()}
                 </span>
               </div>
@@ -4863,7 +4871,7 @@
                 <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> View in Gmail
               </button>
               
-              <button onclick="expandCard('${card.email_id}')" 
+              <button onclick="viewEmailDetails('${card.email_id}')" 
                       style="display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: rgba(156, 163, 175, 0.2); border: 1px solid rgba(156, 163, 175, 0.4); border-radius: 6px; color: white; font-size: 12px; cursor: pointer;">
                 <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Read More
               </button>
@@ -5048,6 +5056,7 @@
     let currentYear = 2025;
     
     function changeMonth(direction) {
+      console.log(`📅 Changing month from ${currentMonth} by ${direction}`);
       currentMonth += direction;
       if (currentMonth > 12) {
         currentMonth = 1;
@@ -5056,6 +5065,7 @@
         currentMonth = 12;
         currentYear--;
       }
+      console.log(`📅 New month/year: ${currentMonth}/${currentYear}`);
       updateCalendarDisplay();
     }
     
@@ -5079,12 +5089,14 @@
       
       const events = JSON.parse(localStorage.getItem('homeops_calendar_events') || '[]');
       const now = new Date();
-      const currentMonth = now.getMonth();
-      const currentYear = now.getFullYear();
+      
+      // Use the global currentMonth and currentYear variables instead of current date
+      const displayMonth = currentMonth - 1; // Convert to 0-indexed for Date constructor
+      const displayYear = currentYear;
       
       // Get first day of month and number of days
-      const firstDay = new Date(currentYear, currentMonth, 1);
-      const lastDay = new Date(currentYear, currentMonth + 1, 0);
+      const firstDay = new Date(displayYear, displayMonth, 1);
+      const lastDay = new Date(displayYear, displayMonth + 1, 0);
       const daysInMonth = lastDay.getDate();
       const startingDayOfWeek = firstDay.getDay();
       
@@ -5095,7 +5107,7 @@
       for (let i = 0; i < startingDayOfWeek; i++) {
         const emptyDay = document.createElement('div');
         emptyDay.style.cssText = 'padding: 8px 4px; opacity: 0.3; background: rgba(255,255,255,0.05);';
-        const prevMonth = new Date(currentYear, currentMonth, 0);
+        const prevMonth = new Date(displayYear, displayMonth, 0);
         const prevMonthDay = prevMonth.getDate() - startingDayOfWeek + i + 1;
         emptyDay.textContent = prevMonthDay;
         calendarDays.appendChild(emptyDay);
@@ -5104,15 +5116,15 @@
       // Add days of the current month
       for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('div');
-        const dayDate = new Date(currentYear, currentMonth, day);
+        const dayDate = new Date(displayYear, displayMonth, day);
         const isToday = dayDate.toDateString() === now.toDateString();
         
         // Check if this day has events
         const dayEvents = events.filter(event => {
           const eventDate = new Date(event.start);
           return eventDate.getDate() === day && 
-                 eventDate.getMonth() === currentMonth && 
-                 eventDate.getFullYear() === currentYear;
+                 eventDate.getMonth() === displayMonth && 
+                 eventDate.getFullYear() === displayYear;
         });
         
         let dayStyle = `
@@ -6502,6 +6514,191 @@
       }
     }
     
+    // View detailed email in a dedicated view
+    function viewEmailDetails(emailId) {
+      // Find the email data
+      const emailCard = document.querySelector(`[onclick*="${emailId}"]`);
+      if (!emailCard) {
+        console.error('Email not found:', emailId);
+        return;
+      }
+      
+      // Get the card data from the feedback button
+      const feedbackBtn = emailCard.closest('.decoder-card')?.querySelector('.feedback-btn');
+      const cardDataStr = feedbackBtn?.getAttribute('data-card');
+      
+      let cardData;
+      try {
+        cardData = JSON.parse(cardDataStr?.replace(/&quot;/g, '"').replace(/&#39;/g, "'") || '{}');
+      } catch (e) {
+        console.error('Failed to parse card data:', e);
+        return;
+      }
+      
+      // Update URL hash with email ID
+      window.location.hash = `email-${emailId}`;
+      
+      // Create detailed email view
+      const detailView = `
+        <div id="email-detail-view" style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          z-index: 1000;
+          overflow-y: auto;
+          padding: 20px;
+        ">
+          <!-- Header with back button -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.2);">
+            <button onclick="closeEmailDetail()" style="
+              background: rgba(255,255,255,0.1);
+              border: 1px solid rgba(255,255,255,0.2);
+              border-radius: 8px;
+              padding: 8px;
+              color: white;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+            ">
+              <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
+            </button>
+            <h2 style="color: white; margin: 0; flex: 1; font-size: 18px;">Email Details</h2>
+          </div>
+          
+          <!-- Email Header Info -->
+          <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 12px;">
+              <div style="flex: 1;">
+                <h3 style="margin: 0 0 8px 0; color: white; font-size: 16px;">${cardData.subject || cardData.summary}</h3>
+                <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 14px;">From: ${cardData.sender}</p>
+                <p style="margin: 4px 0 0 0; color: rgba(255,255,255,0.6); font-size: 12px;">${cardData.time_ago}</p>
+              </div>
+              <span style="background: rgba(139, 92, 246, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: white;">
+                ${cardData.category?.toUpperCase()}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Email Analysis -->
+          <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h4 style="margin: 0 0 12px 0; color: white; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="brain" style="width: 18px; height: 18px; color: #a78bfa;"></i>
+              AI Analysis
+            </h4>
+            <p style="margin: 0; color: rgba(255,255,255,0.9); line-height: 1.5; font-size: 14px;">
+              ${cardData.full_analysis || cardData.summary || 'No detailed analysis available.'}
+            </p>
+          </div>
+          
+          <!-- Manipulation Score -->
+          ${cardData.manipulation_score ? `
+            <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+              <h4 style="margin: 0 0 12px 0; color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="shield-check" style="width: 18px; height: 18px; color: #f59e0b;"></i>
+                Manipulation Analysis
+              </h4>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="flex: 1; background: rgba(255,255,255,0.1); border-radius: 8px; height: 8px;">
+                  <div style="
+                    background: ${cardData.manipulation_score > 7 ? '#ef4444' : cardData.manipulation_score > 4 ? '#f59e0b' : '#10b981'};
+                    height: 100%;
+                    border-radius: 8px;
+                    width: ${(cardData.manipulation_score / 10) * 100}%;
+                  "></div>
+                </div>
+                <span style="color: white; font-weight: 600;">${cardData.manipulation_score}/10</span>
+              </div>
+              <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.7); font-size: 12px;">
+                ${cardData.manipulation_score > 7 ? 'High manipulation tactics detected' : 
+                  cardData.manipulation_score > 4 ? 'Moderate persuasion techniques used' : 
+                  'Low manipulation risk'}
+              </p>
+            </div>
+          ` : ''}
+          
+          <!-- Action Items -->
+          ${cardData.action_items && cardData.action_items.length > 0 ? `
+            <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+              <h4 style="margin: 0 0 12px 0; color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="check-square" style="width: 18px; height: 18px; color: #10b981;"></i>
+                Recommended Actions
+              </h4>
+              <ul style="margin: 0; padding-left: 16px; color: rgba(255,255,255,0.9);">
+                ${cardData.action_items.map(item => `<li style="margin-bottom: 4px;">${item}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button onclick="openInGmail('${cardData.gmail_url}')" style="
+              flex: 1;
+              background: rgba(59, 130, 246, 0.3);
+              border: 1px solid rgba(59, 130, 246, 0.5);
+              border-radius: 8px;
+              padding: 12px;
+              color: white;
+              font-size: 14px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+            ">
+              <i data-lucide="external-link" style="width: 16px; height: 16px;"></i>
+              Open in Gmail
+            </button>
+            
+            ${cardData.calendar_events ? `
+              <button onclick="addToCalendar('${cardData.email_id}', '${cardData.calendar_events}')" style="
+                flex: 1;
+                background: rgba(34, 197, 94, 0.3);
+                border: 1px solid rgba(34, 197, 94, 0.5);
+                border-radius: 8px;
+                padding: 12px;
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+              ">
+                <i data-lucide="calendar-plus" style="width: 16px; height: 16px;"></i>
+                Add to Calendar
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      
+      // Add the detail view to the page
+      document.body.insertAdjacentHTML('beforeend', detailView);
+      
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+      
+      console.log('📧 Opened email detail view for:', emailId);
+    }
+    
+    // Close email detail view
+    function closeEmailDetail() {
+      const detailView = document.getElementById('email-detail-view');
+      if (detailView) {
+        detailView.remove();
+      }
+      
+      // Reset URL hash
+      window.location.hash = '';
+      
+      console.log('📧 Closed email detail view');
+    }
+    
     async function submitFeedback(event, emailId, feedback, cardData) {
       try {
         // Parse card data if it's a string
@@ -6604,10 +6801,32 @@
       });
       button.classList.add('active');
       
-      // Load decoder cards if not already loaded
-      if (category === 'all') {
+      // Filter existing cards by category
+      const allCards = document.querySelectorAll('.decoder-card');
+      allCards.forEach(card => {
+        if (category === 'all') {
+          card.style.display = 'block';
+        } else {
+          // Check if card matches the selected category
+          const cardCategory = card.querySelector('.category-tag')?.textContent?.toLowerCase() || '';
+          const shouldShow = cardCategory.includes(category.toLowerCase()) || 
+                           (category === 'priority' && cardCategory.includes('urgent')) ||
+                           (category === 'commerce' && cardCategory.includes('shopping')) ||
+                           (category === 'family' && cardCategory.includes('personal')) ||
+                           (category === 'noise' && cardCategory.includes('notification'));
+          
+          card.style.display = shouldShow ? 'block' : 'none';
+        }
+      });
+      
+      // Load decoder cards if not already loaded and showing all
+      if (category === 'all' && allCards.length === 0) {
         loadDecoderCards();
       }
+      
+      // Update the display count
+      const visibleCards = document.querySelectorAll('.decoder-card[style*="block"], .decoder-card:not([style*="none"])');
+      console.log(`📂 Showing ${visibleCards.length} emails in category: ${category}`);
     }
     
     // Demo DecoderCard for testing
@@ -6968,6 +7187,36 @@
     // Initialize app on load
     document.addEventListener('DOMContentLoaded', async function() {
       console.log('🚀 HomeOps App initializing...');
+      
+      // Load real calendar data from API first
+      try {
+        const userId = 'oliverhbaron@gmail.com';
+        const response = await fetch(`/api/calendar-events?userId=${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.events && data.events.length > 0) {
+            console.log(`📅 Loaded ${data.events.length} real calendar events`);
+            
+            // Convert Google Calendar events to HomeOps format
+            const homeopsEvents = data.events.map(event => ({
+              id: event.id || Math.random().toString(36).substr(2, 9),
+              title: event.summary || 'Event',
+              start: event.start?.dateTime || event.start?.date,
+              end: event.end?.dateTime || event.end?.date,
+              description: event.description || '',
+              location: event.location || '',
+              type: 'calendar',
+              source: 'google_calendar'
+            }));
+            
+            // Store in localStorage for app to use
+            localStorage.setItem('homeops_calendar_events', JSON.stringify(homeopsEvents));
+            console.log('✅ Real calendar events stored in localStorage');
+          }
+        }
+      } catch (error) {
+        console.log('📅 Using fallback calendar data:', error.message);
+      }
       
       // Initialize calendar system
       updateCalendarDisplay();

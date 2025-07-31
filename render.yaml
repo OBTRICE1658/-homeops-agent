@@ -3,8 +3,8 @@ services:
     name: homeops-backend
     env: node
     buildCommand: npm install
-    startCommand: node server.js
-    branch: main
+    startCommand: node quick-server.js
+    branch: calendar-rebuild-safe
     envVars:
       - key: OPENAI_API_KEY
         sync: false
@@ -14,5 +14,15 @@ services:
         sync: false
       - key: GMAIL_REDIRECT_URI
         value: https://homeops-backend.onrender.com/auth/google/callback
-    healthCheckPath: /health
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        value: homeops-web
+    healthCheckPath: /api/test
     autoDeploy: true 

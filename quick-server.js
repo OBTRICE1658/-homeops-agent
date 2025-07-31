@@ -32,7 +32,7 @@ try {
 }
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Initialize HomeOps Data Manager for real data
 const dataManager = new HomeOpsDataManager();
@@ -41,7 +41,7 @@ const dataManager = new HomeOpsDataManager();
 const oauth2Client = new google.auth.OAuth2(
   process.env.GMAIL_CLIENT_ID,
   process.env.GMAIL_CLIENT_SECRET,
-  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/oauth2callback'
+  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/auth/gmail/callback'
 );
 
 // Middleware
@@ -279,31 +279,70 @@ function parseAIInsights(aiResponse) {
 app.get('/api/email-intelligence', async (req, res) => {
   try {
     const userId = req.query.userId || 'default';
-    const profile = getUserProfile(userId);
     const limit = parseInt(req.query.limit) || 5;
     
     console.log(`🧠 Getting REAL email intelligence for: ${userId}`);
     
-    // Try to get real Gmail data first
+    // Try to get real Gmail data first using stored Firebase tokens
     let insights = [];
     let dataSource = 'fallback';
     
-    if (profile.integrations && profile.integrations.gmail) {
-      console.log('📧 Attempting Gmail API connection...');
-      try {
-        const gmailInsights = await fetchGmailInsights(profile.integrations.gmail, limit);
-        if (gmailInsights && gmailInsights.length > 0) {
-          insights = gmailInsights;
-          dataSource = 'real';
-          console.log(`✅ Retrieved ${insights.length} real Gmail insights`);
-        }
-      } catch (gmailError) {
-        console.error('❌ Gmail fetch failed:', gmailError.message);
+    try {
+      // Check if we have Gmail tokens stored in Firebase for this user
+      const tokenDoc = await db.collection('gmail_tokens').doc(userId).get();
+      if (tokenDoc.exists) {
+        console.log(`✅ Found Gmail tokens for: ${userId}`);
+        const tokens = tokenDoc.data();
+        
+        // Set up OAuth client with stored tokens
+        oauth2Client.setCredentials(tokens);
+        
+        // Fetch real Gmail emails
+        const realEmails = await fetchRealGmailEmails(userId, limit);
+        
+        // Convert to insights format with proper UI fields
+        insights = realEmails.map((email, index) => {
+          const category = categorizeEmail(email.subject, email.snippet, email.from);
+          const manipulationScore = calculateMentalLoadScore(category, 'medium', email.snippet);
+          
+          return {
+            id: email.id || `insight_${index + 1}`,
+            type: 'email',
+            priority: 'medium',
+            title: email.subject,
+            description: email.snippet,
+            from: email.from,
+            date: email.date,
+            time_ago: 'just now',
+            category: category,
+            actionable: true,
+            source: 'gmail',
+            // UI-specific fields
+            full_analysis: `This email from ${email.from} appears to be ${category.toLowerCase()}-related content. The subject line "${email.subject}" suggests immediate attention may be required for optimal time management.`,
+            manipulation_score: Math.floor(manipulationScore / 10), // Convert to 1-10 scale
+            personalized_score: manipulationScore / 100,
+            action_items: [
+              'Review email content for time-sensitive elements',
+              'Add any calendar events to your schedule',
+              'Respond if immediate action is required'
+            ],
+            calendar_events: email.subject.includes('appointment') || email.subject.includes('meeting') || email.subject.includes('reservation') 
+              ? 'Potential calendar event detected in email content' 
+              : null
+          };
+        });
+        
+        dataSource = 'real';
+        console.log(`✅ Retrieved ${insights.length} real Gmail insights`);
+      } else {
+        throw new Error('No Gmail tokens found for user');
       }
-    }
-    
-    // Fallback to generated insights if no real data
-    if (insights.length === 0) {
+    } catch (gmailError) {
+      console.error('❌ Gmail fetch failed:', gmailError.message);
+      
+      // Fallback to generated insights
+      const profile = getUserProfile(userId);
+      const dataManager = new HomeOpsDataManager(userId, null);
       insights = await dataManager.generateRealTimeInsights(userId, profile, limit);
       console.log(`📦 Using ${insights.length} generated insights as fallback`);
     }
@@ -937,6 +976,32 @@ async function handleOAuthCallback(req, res) {
         user_email: userEmail
       });
       console.log('✅ Gmail tokens stored in Firebase for:', userEmail);
+      
+      // CRITICAL: Update user profile with integration data
+      let profile = getUserProfile(userEmail);
+      if (!profile) {
+        profile = createNewUserProfile(userEmail, { name: userEmail.split('@')[0] });
+      }
+      
+      // Set up integrations object
+      if (!profile.integrations) {
+        profile.integrations = {};
+      }
+      
+      // Store Gmail integration data in user profile
+      profile.integrations.gmail = {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        expiry_date: tokens.expiry_date,
+        token_type: tokens.token_type || 'Bearer',
+        user_email: userEmail,
+        connected_at: new Date().toISOString()
+      };
+      
+      // Save updated profile
+      userProfiles[userEmail] = profile;
+      console.log(`✅ User profile updated with Gmail integration for: ${userEmail}`);
+      
     } catch (storeError) {
       console.error('❌ Error storing tokens:', storeError.message);
     }
@@ -1092,76 +1157,162 @@ function calculateMentalLoadScore(category, priority, summary) {
   return finalScore;
 }
 
+// Function to fetch real Gmail emails
+async function fetchRealGmailEmails(userEmail, maxResults = 10) {
+  try {
+    const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
+    if (!tokenDoc.exists) {
+      throw new Error('No Gmail tokens found');
+    }
+    
+    const tokens = tokenDoc.data();
+    oauth2Client.setCredentials(tokens);
+    
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    
+    // Get list of messages from the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const query = `after:${Math.floor(sevenDaysAgo.getTime() / 1000)}`;
+    
+    const response = await gmail.users.messages.list({
+      userId: 'me',
+      q: query,
+      maxResults: maxResults
+    });
+    
+    if (!response.data.messages || response.data.messages.length === 0) {
+      console.log('� No recent emails found');
+      return [];
+    }
+    
+    console.log(`📧 Found ${response.data.messages.length} recent emails`);
+    
+    // Get details for each message
+    const emails = await Promise.all(
+      response.data.messages.slice(0, maxResults).map(async (message, index) => {
+        try {
+          const details = await gmail.users.messages.get({
+            userId: 'me',
+            id: message.id,
+            format: 'full'
+          });
+          
+          const headers = details.data.payload.headers;
+          const subject = headers.find(h => h.name === 'Subject')?.value || 'No Subject';
+          const from = headers.find(h => h.name === 'From')?.value || 'Unknown Sender';
+          const date = headers.find(h => h.name === 'Date')?.value || new Date().toISOString();
+          
+          // Get email body
+          let body = '';
+          if (details.data.payload.body.data) {
+            body = Buffer.from(details.data.payload.body.data, 'base64').toString();
+          } else if (details.data.payload.parts) {
+            for (const part of details.data.payload.parts) {
+              if (part.mimeType === 'text/plain' && part.body.data) {
+                body = Buffer.from(part.body.data, 'base64').toString();
+                break;
+              }
+            }
+          }
+          
+          // Clean and truncate body for snippet
+          const snippet = body.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200) + '...';
+          
+          return {
+            id: message.id,
+            subject,
+            from,
+            date,
+            snippet,
+            body: body.substring(0, 1000) // Limit body size for AI processing
+          };
+        } catch (error) {
+          console.error(`❌ Error fetching email ${index + 1}:`, error.message);
+          return null;
+        }
+      })
+    );
+    
+    return emails.filter(email => email !== null);
+  } catch (error) {
+    console.error('❌ Error fetching Gmail emails:', error);
+    throw error;
+  }
+}
+
 // Calibration data endpoint
 app.get('/api/calibration-data', async (req, res) => {
   try {
     console.log('📧 Loading calibration emails with real AI processing...');
     
-    // Check for forceReal parameter to use actual Gmail data
-    const useRealGmail = req.query.real === 'true';
+    const userEmail = 'oliverhbaron@gmail.com'; // Your email
+    let emails = [];
+    let dataSource = 'mock';
     
-    if (useRealGmail) {
+    // Try to get real Gmail data first
+    try {
       console.log('🔄 Attempting to load REAL Gmail data...');
-      
-      // Try to get real Gmail data
-      const userEmail = 'oliverhbaron@gmail.com'; // Your email
-      try {
-        const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
-        if (tokenDoc.exists) {
-          console.log(`✅ Found Gmail tokens for: ${userEmail}`);
-          // TODO: Implement real Gmail fetch here
-          // For now, fall back to enhanced mock data
-          console.log('⚠️  Real Gmail integration not yet implemented, using enhanced mock data');
-        } else {
-          console.log(`❌ No Gmail tokens found for: ${userEmail}, using enhanced mock data`);
-        }
-      } catch (error) {
-        console.log('❌ Error accessing Gmail tokens, using enhanced mock data:', error.message);
+      const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
+      if (tokenDoc.exists) {
+        console.log(`✅ Found Gmail tokens for: ${userEmail}`);
+        emails = await fetchRealGmailEmails(userEmail, 10);
+        dataSource = 'real';
+        console.log(`✅ Successfully loaded ${emails.length} real Gmail emails`);
+      } else {
+        throw new Error('No Gmail tokens found');
       }
+    } catch (error) {
+      console.log('❌ Gmail fetch failed, falling back to mock data:', error.message);
+      // Fallback to mock data
+      const mockDataPath = path.join(__dirname, 'mock', 'emails.json');
+      const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf8'));
+      emails = mockData.emails.slice(0, 10).map(email => ({
+        id: email.id,
+        subject: email.subject,
+        from: email.source,
+        date: new Date().toISOString(),
+        snippet: email.summary,
+        body: email.summary
+      }));
+      dataSource = 'mock';
     }
     
-    // For now, use enhanced mock data but process it with real AI summaries
-    // This gives us real AI-generated summaries while we work on Gmail OAuth setup
-    
-    // Load mock emails
-    const mockDataPath = path.join(__dirname, 'mock', 'emails.json');
-    const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf8'));
-    
-    console.log(`🎯 Processing ${Math.min(10, mockData.emails.length)} emails with real AI summaries...`);
+    console.log(`🎯 Processing ${emails.length} emails with real AI summaries (source: ${dataSource})...`);
     
     // Process emails with real AI summaries
     const processedEmails = await Promise.all(
-      mockData.emails.slice(0, 10).map(async (email, index) => {
+      emails.map(async (email, index) => {
         try {
           console.log(`🤖 Generating AI summary for email ${index + 1}: ${email.subject}`);
           
           // Generate real AI summary using our enhanced function
           const aiSummaryResult = await generateEmailSummary({
             subject: email.subject,
-            from: email.source,
-            date: new Date().toISOString(),
-            body: email.summary || email.snippet || ''
-          }, email.source);
+            from: email.from,
+            date: email.date,
+            body: email.body || email.snippet || ''
+          }, email.from);
           
-          const aiSummary = aiSummaryResult?.summary || email.summary || `Email from ${email.source} about ${email.subject}`;
+          const aiSummary = aiSummaryResult?.summary || email.snippet || `Email from ${email.from} about ${email.subject}`;
           
           // Better categorization
-          const category = categorizeEmail(email.subject, email.summary || '', email.source);
-          const brandName = email.source.split(' ')[0] || email.source.split('@')[0] || 'Unknown';
+          const category = categorizeEmail(email.subject, email.snippet || '', email.from);
+          const brandName = email.from.split(' ')[0] || email.from.split('@')[0] || 'Unknown';
           const lucideIcon = getLucideIcon(category, brandName);
-          const mentalLoadScore = calculateMentalLoadScore(category, email.priority || 'medium', aiSummary);
+          const mentalLoadScore = calculateMentalLoadScore(category, 'medium', aiSummary);
           
           console.log(`✅ Email ${index + 1} processed: ${category} category, ${mentalLoadScore} score`);
           
           return {
             id: email.id || `enhanced_${index + 1}`,
-            from: email.source,
+            from: email.from,
             subject: email.subject,
-            date: new Date().toISOString(),
-            formattedDate: new Date().toLocaleDateString('en-US', { 
+            date: email.date,
+            formattedDate: new Date(email.date).toLocaleDateString('en-US', { 
               weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
             }),
-            snippet: email.summary || email.snippet || '',
+            snippet: email.snippet || '',
             category: category,
             categoryIcon: getCategoryIcon(category),
             lucideIcon: lucideIcon,
@@ -1173,26 +1324,26 @@ app.get('/api/calibration-data', async (req, res) => {
         } catch (emailError) {
           console.error(`❌ Error processing email ${index + 1}:`, emailError.message);
           // Return basic email data if AI processing fails
-          const category = categorizeEmail(email.subject, email.summary || '', email.source);
-          const brandName = email.source.split(' ')[0] || email.source.split('@')[0] || 'Unknown';
+          const category = categorizeEmail(email.subject, email.snippet || '', email.from);
+          const brandName = email.from.split(' ')[0] || email.from.split('@')[0] || 'Unknown';
           const lucideIcon = getLucideIcon(category, brandName);
-          const mentalLoadScore = calculateMentalLoadScore(category, email.priority || 'medium', email.summary);
+          const mentalLoadScore = calculateMentalLoadScore(category, 'medium', email.snippet);
           
           return {
             id: email.id || `basic_${index + 1}`,
-            from: email.source,
+            from: email.from,
             subject: email.subject,
-            date: new Date().toISOString(),
-            formattedDate: new Date().toLocaleDateString('en-US', { 
+            date: email.date,
+            formattedDate: new Date(email.date).toLocaleDateString('en-US', { 
               weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
             }),
-            snippet: email.summary || '',
+            snippet: email.snippet || '',
             category: category,
             categoryIcon: getCategoryIcon(category),
             lucideIcon: lucideIcon,
-            aiSummary: email.summary || `Email from ${email.source} about ${email.subject}`,
+            aiSummary: email.snippet || `Email from ${email.from} about ${email.subject}`,
             score: mentalLoadScore,
-            insight: `Mental Load Analysis: ${email.summary}`,
+            insight: `Mental Load Analysis: ${email.snippet}`,
             mental_load_score: mentalLoadScore
           };
         }
@@ -1204,9 +1355,10 @@ app.get('/api/calibration-data', async (req, res) => {
     res.json({
       success: true,
       emails: processedEmails,
+      dataSource: dataSource,
       totalCount: processedEmails.length,
-      message: 'Enhanced mock emails with real AI summaries loaded successfully',
-      source: 'enhanced-mock'
+      message: `${dataSource === 'real' ? 'Real Gmail' : 'Enhanced mock'} emails with real AI summaries loaded successfully`,
+      timestamp: new Date().toISOString()
     });
     
   } catch (error) {
@@ -4061,26 +4213,62 @@ app.get('/api/calendar-events', async (req, res) => {
   try {
     const userId = req.query.userId || 'default';
     
-    // Get user profile
-    const profile = getUserProfile(userId);
-    if (!profile) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'User profile not found' 
-      });
-    }
+    console.log(`📅 Getting calendar events for: ${userId}`);
     
-    // Get calendar data from HomeOpsDataManager
-    const dataManager = new HomeOpsDataManager(userId, null);
-    const calendarData = await dataManager.getCalendarInsights();
+    let events = [];
+    let dataSource = 'fallback';
+    
+    // Try to get real Calendar data first using stored Firebase tokens
+    try {
+      const tokenDoc = await db.collection('gmail_tokens').doc(userId).get();
+      if (tokenDoc.exists) {
+        console.log(`✅ Found tokens for Calendar API: ${userId}`);
+        const tokens = tokenDoc.data();
+        
+        // Set up OAuth client with stored tokens
+        oauth2Client.setCredentials(tokens);
+        
+        // Get Calendar API
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+        
+        // Get events from the next 7 days
+        const timeMin = new Date();
+        const timeMax = new Date();
+        timeMax.setDate(timeMax.getDate() + 7);
+        
+        const response = await calendar.events.list({
+          calendarId: 'primary',
+          timeMin: timeMin.toISOString(),
+          timeMax: timeMax.toISOString(),
+          singleEvents: true,
+          orderBy: 'startTime',
+        });
+        
+        events = response.data.items || [];
+        dataSource = 'real';
+        console.log(`✅ Retrieved ${events.length} real Calendar events`);
+        
+      } else {
+        throw new Error('No tokens found for user');
+      }
+    } catch (calendarError) {
+      console.error('❌ Calendar fetch failed:', calendarError.message);
+      
+      // Fallback to mock data
+      const dataManager = new HomeOpsDataManager(userId, null);
+      const calendarData = await dataManager.getCalendarInsights();
+      events = calendarData.upcomingEvents || [];
+      console.log(`📦 Using ${events.length} fallback calendar events`);
+    }
     
     // Return formatted calendar events
     res.json({
       success: true,
-      events: calendarData.upcomingEvents || [],
-      weeklyLoad: calendarData.weeklyLoad || 65,
-      upcomingCount: calendarData.upcomingCount || 0,
-      message: 'Calendar events retrieved successfully'
+      events: events,
+      dataSource: dataSource,
+      weeklyLoad: 65, // Could be calculated from real events
+      upcomingCount: events.length,
+      message: `Calendar events retrieved successfully (${dataSource})`
     });
     
   } catch (error) {

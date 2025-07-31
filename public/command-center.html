@@ -410,16 +410,16 @@
     // User initialization and management
     async function initializeUser() {
       try {
-        // For now, create a demo user - in production this would be actual auth
-        const userId = getUserIdFromSession() || 'demo-user';
+        // Force authenticated user (in production this would come from actual auth)
+        const userId = 'oliverhbaron@gmail.com';
         
-        if (userId === 'demo-user') {
-          // Create demo user profile
-          await createDemoUser();
-        }
-        
-        dashboardData.currentUser = userId;
+        // Store encoded for consistency but use plain for API calls
+        localStorage.setItem('homeops-user-id', btoa(userId));
+        dashboardData.currentUser = userId; // Store plain email for API calls
         console.log(`👤 User initialized: ${userId}`);
+        
+        // Create or get authenticated user profile
+        await createOrGetAuthenticatedUser();
         
         // Update dynamic header
         updateDynamicHeader();
@@ -439,23 +439,26 @@
       }
     }
     
-    async function createDemoUser() {
+    async function createOrGetAuthenticatedUser() {
       try {
+        // First try to get the authenticated user from OAuth flow
+        const authenticatedEmail = 'oliverhbaron@gmail.com'; // Your authenticated email
+        
         const response = await fetch('/api/user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: 'demo@homeops.app',
-            name: 'Demo User'
+            email: authenticatedEmail,
+            name: 'Oliver'
           })
         });
         
         const result = await response.json();
         if (result.success) {
           localStorage.setItem('homeops-user-id', result.userId);
-          console.log('✅ Demo user created:', result.userId);
+          console.log('✅ Authenticated user connected:', result.userId);
           return result.userId;
         }
       } catch (error) {
@@ -952,16 +955,32 @@
           return;
         }
         
-        const userId = dashboardData.currentUser || 'default';
-        const response = await fetch(`/api/dashboard-summary?userId=${userId}`);
+        // Clear any cached demo user data and use authenticated user
+        localStorage.removeItem('homeops-user-id');
+        
+        const userId = 'oliverhbaron@gmail.com'; // Force authenticated user
+        localStorage.setItem('homeops-user-id', btoa(userId)); // Store encoded for consistency
+        dashboardData.currentUser = userId; // Store plain email for API calls
+        
+        // Use the working email intelligence endpoint that Email Decoder uses
+        const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=10&days=7`);
         const data = await response.json();
         
-        if (data.success) {
-          dashboardData.summary = data.summary;
-          updateSummaryTiles(data.summary);
-          console.log('📊 Personalized summary loaded for:', userId);
+        if (data.success && data.insights) {
+          // Calculate summary from email insights
+          const emailInsights = data.insights;
+          const summary = {
+            urgent: emailInsights.filter(e => e.priority === 'high' || e.category?.toLowerCase() === 'urgent').length,
+            events: emailInsights.filter(e => e.calendar_events || e.category?.toLowerCase().includes('meeting')).length,
+            commerce: emailInsights.filter(e => e.category?.toLowerCase().includes('commerce') || e.category?.toLowerCase().includes('shopping')).length,
+            insights: emailInsights.length
+          };
+          
+          dashboardData.summary = summary;
+          updateSummaryTiles(summary);
+          console.log('📊 Personalized summary loaded from email intelligence for:', userId);
         } else {
-          throw new Error('Failed to load summary data');
+          throw new Error('Failed to load email intelligence data');
         }
       } catch (error) {
         console.warn('Using fallback summary data:', error);
