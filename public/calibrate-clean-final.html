@@ -187,7 +187,6 @@
             background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%);
             border: 1px solid #f59e0b;
             border-radius: 12px;
-            padding: 14px;
             margin-bottom: 14px;
             position: relative;
             overflow: hidden;
@@ -206,10 +205,33 @@
         .ai-summary-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             font-weight: 700;
             color: #92400e;
-            margin-bottom: 8px;
             font-size: 13px;
+            padding: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+
+        .ai-summary-header:hover {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .ai-summary-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .ai-summary-chevron {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+            color: #92400e;
+        }
+
+        .ai-summary-chevron.expanded {
+            transform: rotate(180deg);
         }
 
         .ai-summary-content {
@@ -217,6 +239,17 @@
             font-size: 12px;
             line-height: 1.4;
             font-weight: 500;
+            padding: 0 14px 0 14px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .ai-summary-content.expanded {
+            max-height: 200px;
+            padding: 0 14px 14px 14px;
+            opacity: 1;
         }
 
         .mental-load-score {
@@ -547,9 +580,12 @@
                     
                     ${email.aiSummary ? `
                     <div class="ai-summary">
-                        <div class="ai-summary-header">
-                            <i data-lucide="sparkles" style="width: 14px; height: 14px; margin-right: 6px;"></i>
-                            Why This Surfaced
+                        <div class="ai-summary-header" onclick="toggleAISummary(this)">
+                            <div class="ai-summary-toggle">
+                                <i data-lucide="sparkles" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                                Why This Surfaced
+                            </div>
+                            <i data-lucide="chevron-down" class="ai-summary-chevron" style="width: 16px; height: 16px;"></i>
                         </div>
                         <div class="ai-summary-content">${email.aiSummary}</div>
                     </div>
@@ -612,6 +648,19 @@
             // Move to next email
             currentIndex++;
             showCurrentEmail();
+        }
+
+        function toggleAISummary(headerElement) {
+            const content = headerElement.nextElementSibling;
+            const chevron = headerElement.querySelector('.ai-summary-chevron');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                chevron.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                chevron.classList.add('expanded');
+            }
         }
 
         function showCompletion() {

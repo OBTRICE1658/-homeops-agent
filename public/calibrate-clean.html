@@ -3,227 +3,668 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeOps Email Calibration - 20 Emails</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <title>HomeOps - Email Intelligence Calibration</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-        .calibration-debug {
-            background: #f0f0f0;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .email-card {
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .container {
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 480px;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 400;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+            background: linear-gradient(145deg, #fafbfc 0%, #f1f5f9 100%);
+        }
+
+        .progress-bar {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 600;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .email-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .email-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        }
+
+        .email-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .email-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .email-from {
+            margin-left: 10px;
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .email-type {
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .email-date {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .email-subject {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        .email-snippet {
+            color: #64748b;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .ai-summary {
+            background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        .ai-summary-header {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .ai-summary-content {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .mental-load-score {
+            background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mental-load-score::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
+        }
+
+        .score-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #0369a1;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .score-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0369a1;
+        }
+
+        .mental-load-meter {
+            position: relative;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.4) 50%, 
+                transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .meter-low { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); }
+        .meter-medium { background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%); }
+        .meter-high { background: linear-gradient(90deg, #ef4444 0%, #f87171 100%); }
+
         .rating-buttons {
             display: flex;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 15px;
+            margin-top: 25px;
         }
+
         .rating-btn {
-            padding: 8px 16px;
-            border: 1px solid #007AFF;
+            flex: 1;
+            padding: 16px 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
             background: white;
-            color: #007AFF;
-            border-radius: 5px;
             cursor: pointer;
-        }
-        .rating-btn:hover, .rating-btn.selected {
-            background: #007AFF;
-            color: white;
-        }
-        .nav-buttons {
+            font-weight: 600;
+            transition: all 0.3s ease;
             display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
         }
-        .nav-btn {
-            padding: 10px 20px;
-            background: #007AFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+
+        .rating-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            transition: left 0.5s;
         }
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+
+        .rating-btn:hover::before {
+            left: 100%;
+        }
+
+        .rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .thumbs-up {
+            color: #059669;
+            border-color: #10b981;
+            background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+
+        .thumbs-up:hover {
+            background: linear-gradient(145deg, #d1fae5 0%, #a7f3d0 100%);
+            border-color: #059669;
+        }
+
+        .thumbs-down {
+            color: #dc2626;
+            border-color: #ef4444;
+            background: linear-gradient(145deg, #fef2f2 0%, #fed7d7 100%);
+        }
+
+        .thumbs-down:hover {
+            background: linear-gradient(145deg, #fed7d7 0%, #fca5a5 100%);
+            border-color: #dc2626;
+        }
+
+        .cta-section {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            padding: 20px 30px 30px 30px;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .skip-link {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .skip-link:hover {
+            color: #374151;
+            text-decoration: underline;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                margin: 0;
+                max-height: 94vh;
+                border-radius: 16px;
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 30px 16px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .header p {
+                font-size: 15px;
+            }
+            
+            .header-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 16px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .email-card {
+                padding: 16px;
+                margin-bottom: 16px;
+                border-radius: 12px;
+            }
+            
+            .rating-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .progress-bar {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="calibration-container">
-        <h1>🧠 HomeOps Email Calibration (20 Emails)</h1>
-        
-        <div class="calibration-debug" id="debug-info">
-            Status: Initializing...
-        </div>
-        
-        <div class="nav-buttons">
-            <button class="nav-btn" id="prev-btn" onclick="previousEmail()" disabled>← Previous</button>
-            <span id="progress">Email 1 of 20</span>
-            <button class="nav-btn" id="next-btn" onclick="nextEmail()">Next →</button>
-        </div>
-        
-        <div id="email-container">
-            <div class="email-card">
-                <p>Loading emails...</p>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i data-lucide="gauge" style="width: 36px; height: 36px;"></i>
+                </div>
+                <h1>Email Intelligence Calibration</h1>
+                <p>Help us learn what matters to you</p>
             </div>
         </div>
-        
-        <div class="nav-buttons">
-            <button class="nav-btn" onclick="previousEmail()" disabled id="prev-btn-2">← Previous</button>
-            <span>Rate emails to train your Mental Load Assistant</span>
-            <button class="nav-btn" onclick="nextEmail()" id="next-btn-2">Next →</button>
+
+        <div class="content">
+            <div class="progress-bar" id="progress-text">Email 1 of 20</div>
+            
+            <div id="email-container">
+                <div class="email-card">
+                    <div style="text-align: center; color: #64748b; padding: 50px;">
+                        <i data-lucide="loader-2" style="width: 40px; height: 40px; animation: spin 1s linear infinite;"></i>
+                        <p style="margin-top: 20px; font-size: 16px; font-weight: 500;">Loading your emails...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <a href="#" onclick="skipCalibration()" class="skip-link">Skip Calibration</a>
         </div>
     </div>
 
     <script>
-        let emails = [];
+        let currentEmails = [];
         let currentIndex = 0;
-        let ratings = {};
-        
-        function updateDebug(message) {
-            document.getElementById('debug-info').textContent = message;
-        }
-        
-        async function loadEmails() {
+
+        // Load calibration data
+        async function loadCalibrationData() {
             try {
-                updateDebug('Fetching emails from /api/calibration-data...');
-                
-                const response = await fetch('/api/calibration-data');
-                updateDebug(`Response status: ${response.status} ${response.ok ? 'OK' : 'ERROR'}`);
-                
+                console.log('🔄 Loading calibration data...');
+                const response = await fetch('/api/calibration-data?' + Date.now());
                 const data = await response.json();
-                updateDebug(`Data received: ${JSON.stringify({success: data.success, emailCount: data.emails ? data.emails.length : 'no emails'})}`);
                 
-                if (!data.success || !data.emails) {
-                    throw new Error('Invalid response: ' + JSON.stringify(data));
+                console.log('📧 Data received:', data);
+                
+                if (data.success && data.emails) {
+                    currentEmails = data.emails;
+                    console.log('✅ Loaded', currentEmails.length, 'emails for calibration');
+                    
+                    // Show first email
+                    showCurrentEmail();
+                } else {
+                    showError('Failed to load emails: ' + (data.message || 'Unknown error'));
                 }
-                
-                emails = data.emails;
-                updateDebug(`✅ Loaded ${emails.length} emails successfully`);
-                
-                if (emails.length === 0) {
-                    throw new Error('No emails in response');
-                }
-                
-                showCurrentEmail();
-                
             } catch (error) {
-                updateDebug(`❌ Error: ${error.message}`);
-                document.getElementById('email-container').innerHTML = `
-                    <div class="email-card">
-                        <h3>Error Loading Emails</h3>
-                        <p>${error.message}</p>
-                        <button onclick="loadEmails()">Try Again</button>
-                    </div>
-                `;
+                console.error('❌ Error loading calibration data:', error);
+                showError('Error loading emails: ' + error.message);
             }
         }
-        
+
+        function getMeterClass(score) {
+            if (score <= 40) return 'meter-low';
+            if (score <= 70) return 'meter-medium';
+            return 'meter-high';
+        }
+
         function showCurrentEmail() {
-            if (!emails || emails.length === 0) return;
+            const container = document.getElementById('email-container');
             
-            const email = emails[currentIndex];
-            updateDebug(`Showing email ${currentIndex + 1}/${emails.length}: ${email.subject.substring(0, 50)}...`);
+            if (currentIndex >= currentEmails.length) {
+                showCompletion();
+                return;
+            }
+
+            const email = currentEmails[currentIndex];
             
-            document.getElementById('progress').textContent = `Email ${currentIndex + 1} of ${emails.length}`;
+            console.log('📧 Showing email:', {
+                subject: email.subject,
+                from: email.from,
+                formattedDate: email.formattedDate,
+                category: email.category,
+                lucideIcon: email.lucideIcon,
+                aiSummary: email.aiSummary,
+                score: email.score
+            });
+
+            // Get icon with fallback
+            const icon = email.lucideIcon || 'mail';
+            const score = email.score || 0;
+            const meterClass = getMeterClass(score);
             
-            document.getElementById('email-container').innerHTML = `
+            const emailCard = `
                 <div class="email-card">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                        <span style="font-size: 20px;">${email.brandIcon || '📧'}</span>
-                        <span><strong>${email.brandName || email.sender}</strong></span>
-                        <span style="background: #e3f2fd; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${email.emailType || email.category}</span>
+                    <div class="email-header">
+                        <i data-lucide="${icon}" style="width: 24px; height: 24px; margin-right: 10px; color: #667eea;"></i>
+                        <div class="email-from">${email.from || 'Unknown Sender'}</div>
+                        <span class="email-type">${email.category || 'General'}</span>
                     </div>
                     
-                    <h3>${email.subject}</h3>
-                    <p style="color: #666; margin: 10px 0;">${email.snippet || email.summary}</p>
-                    
-                    <div style="font-size: 12px; color: #888; margin: 10px 0;">
-                        📅 ${email.time_ago || 'Recently'} | 
-                        ⚠️ Priority: ${email.priority || 'Medium'} |
-                        🎯 Manipulation Score: ${email.manipulation_score || 'N/A'}/10
+                    <div class="email-date">
+                        <i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                        ${email.formattedDate || 'Unknown Date'}
                     </div>
                     
-                    <h4>How would you handle this email?</h4>
+                    <div class="email-subject">${email.subject || 'No Subject'}</div>
+                    <div class="email-snippet">${email.snippet || ''}</div>
+                    
+                    ${email.aiSummary ? `
+                    <div class="ai-summary">
+                        <div class="ai-summary-header">
+                            <i data-lucide="sparkles" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                            Why This Surfaced
+                        </div>
+                        <div class="ai-summary-content">${email.aiSummary}</div>
+                    </div>
+                    ` : ''}
+                    
+                    ${score ? `
+                    <div class="mental-load-score">
+                        <div class="score-header">
+                            <div style="display: flex; align-items: center;">
+                                <i data-lucide="gauge" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                                Mental Load Impact
+                            </div>
+                            <span class="score-value">${score}/100</span>
+                        </div>
+                        <div class="mental-load-meter">
+                            <div class="meter-fill ${meterClass}" style="width: ${score}%"></div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
                     <div class="rating-buttons">
-                        <button class="rating-btn" onclick="rateEmail('immediate')">🔥 Immediate</button>
-                        <button class="rating-btn" onclick="rateEmail('today')">📅 Today</button>
-                        <button class="rating-btn" onclick="rateEmail('this_week')">📝 This Week</button>
-                        <button class="rating-btn" onclick="rateEmail('someday')">🗂️ Someday</button>
-                        <button class="rating-btn" onclick="rateEmail('ignore')">🗑️ Ignore</button>
+                        <button class="rating-btn thumbs-up" onclick="rateEmail('interested')">
+                            <i data-lucide="thumbs-up" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                            Interested
+                        </button>
+                        <button class="rating-btn thumbs-down" onclick="rateEmail('not-interested')">
+                            <i data-lucide="thumbs-down" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                            Not Interested
+                        </button>
                     </div>
                 </div>
             `;
             
-            // Update navigation buttons
-            document.getElementById('prev-btn').disabled = currentIndex === 0;
-            document.getElementById('prev-btn-2').disabled = currentIndex === 0;
-            document.getElementById('next-btn').disabled = currentIndex === emails.length - 1;
-            document.getElementById('next-btn-2').disabled = currentIndex === emails.length - 1;
+            container.innerHTML = emailCard;
             
-            // Restore previous rating
-            if (ratings[email.id]) {
-                const buttons = document.querySelectorAll('.rating-btn');
-                buttons.forEach(btn => {
-                    if (btn.textContent.includes(ratings[email.id])) {
-                        btn.classList.add('selected');
-                    }
-                });
+            // Update progress
+            document.getElementById('progress-text').textContent = `Email ${currentIndex + 1} of ${currentEmails.length}`;
+            
+            // Initialize Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
             }
         }
-        
+
         function rateEmail(rating) {
-            if (!emails || currentIndex >= emails.length) return;
+            console.log('📝 Rating email:', rating);
             
-            const email = emails[currentIndex];
-            ratings[email.id] = rating;
-            
-            updateDebug(`⭐ Rated email ${email.id}: ${rating}`);
-            
-            // Update button styles
-            document.querySelectorAll('.rating-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-            
-            // Save to server
+            // Submit rating
+            const email = currentEmails[currentIndex];
             fetch('/api/calibration-rating', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    emailId: email.id,
+                    email_id: email.id,
                     rating: rating,
-                    timestamp: new Date().toISOString()
+                    email: email
                 })
-            }).catch(err => console.error('Rating save failed:', err));
+            }).catch(error => console.error('Rating submission error:', error));
+            
+            // Move to next email
+            currentIndex++;
+            showCurrentEmail();
         }
-        
-        function nextEmail() {
-            if (currentIndex < emails.length - 1) {
-                currentIndex++;
-                showCurrentEmail();
+
+        function showCompletion() {
+            const container = document.getElementById('email-container');
+            container.innerHTML = `
+                <div class="email-card" style="text-align: center; padding: 50px;">
+                    <i data-lucide="check-circle" style="width: 64px; height: 64px; color: #059669; margin-bottom: 20px;"></i>
+                    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #1e293b;">Calibration Complete!</h2>
+                    <p style="color: #64748b; margin: 16px 0; font-size: 16px;">Thank you for helping us understand your preferences.</p>
+                    <button onclick="window.location.href='/app'" style="background: linear-gradient(145deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 20px; transition: transform 0.2s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        Continue to Your Dashboard
+                    </button>
+                </div>
+            `;
+            
+            if (window.lucide) {
+                lucide.createIcons();
             }
         }
-        
-        function previousEmail() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                showCurrentEmail();
+
+        function showError(message) {
+            const container = document.getElementById('email-container');
+            container.innerHTML = `
+                <div class="email-card" style="text-align: center; padding: 50px;">
+                    <i data-lucide="alert-circle" style="width: 64px; height: 64px; color: #dc2626; margin-bottom: 20px;"></i>
+                    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #1e293b;">Error Loading Emails</h2>
+                    <p style="color: #64748b; margin: 16px 0; font-size: 16px;">${message}</p>
+                    <button onclick="loadCalibrationData()" style="background: linear-gradient(145deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 20px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        Try Again
+                    </button>
+                </div>
+            `;
+            
+            if (window.lucide) {
+                lucide.createIcons();
             }
         }
-        
-        // Start loading immediately
-        loadEmails();
+
+        function skipCalibration() {
+            window.location.href = '/app';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Enhanced calibration page loaded');
+            
+            // Initialize Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            
+            // Load calibration data
+            loadCalibrationData();
+        });
     </script>
 </body>
 </html>

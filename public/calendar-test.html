@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar API Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005bb5;
+        }
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Calendar API Test Page</h1>
+        
+        <div class="section">
+            <h3>🔍 Get Calendar Events</h3>
+            <p>Fetch your upcoming calendar events (next 30 days)</p>
+            <button onclick="getCalendarEvents()">Get My Calendar Events</button>
+            <div id="calendarResults" class="results" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h3>➕ Create Calendar Event</h3>
+            <p>Create a new event in your Google Calendar</p>
+            
+            <label>Event Title:</label>
+            <input type="text" id="eventTitle" placeholder="HomeOps Test Meeting" value="HomeOps Test Meeting">
+            
+            <label>Description:</label>
+            <textarea id="eventDescription" placeholder="Testing calendar integration...">Testing calendar integration from HomeOps</textarea>
+            
+            <label>Start Time:</label>
+            <input type="datetime-local" id="startTime">
+            
+            <label>End Time:</label>
+            <input type="datetime-local" id="endTime">
+            
+            <label>Location (optional):</label>
+            <input type="text" id="location" placeholder="Virtual Meeting" value="Virtual Meeting">
+            
+            <button onclick="createCalendarEvent()">Create Event</button>
+            <div id="createResults" class="results" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h3>🔗 OAuth Status</h3>
+            <p>Check if you're properly authenticated</p>
+            <button onclick="checkAuthStatus()">Check OAuth Status</button>
+            <div id="authResults" class="results" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Set default times (1 hour from now)
+        window.onload = function() {
+            const now = new Date();
+            const startTime = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour from now
+            const endTime = new Date(now.getTime() + 2 * 60 * 60 * 1000); // 2 hours from now
+            
+            document.getElementById('startTime').value = startTime.toISOString().slice(0, 16);
+            document.getElementById('endTime').value = endTime.toISOString().slice(0, 16);
+        };
+
+        async function getCalendarEvents() {
+            const resultsDiv = document.getElementById('calendarResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.textContent = 'Loading calendar events...';
+            
+            try {
+                const response = await fetch('/api/calendar-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.textContent = `✅ Success! Found ${data.totalCount} events:\n\n` + 
+                        JSON.stringify(data.events, null, 2);
+                } else {
+                    resultsDiv.textContent = `❌ Error: ${data.message}\n\n` + 
+                        JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultsDiv.textContent = `❌ Network Error: ${error.message}`;
+            }
+        }
+
+        async function createCalendarEvent() {
+            const resultsDiv = document.getElementById('createResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.textContent = 'Creating calendar event...';
+            
+            const eventData = {
+                summary: document.getElementById('eventTitle').value,
+                description: document.getElementById('eventDescription').value,
+                startTime: new Date(document.getElementById('startTime').value).toISOString(),
+                endTime: new Date(document.getElementById('endTime').value).toISOString(),
+                location: document.getElementById('location').value
+            };
+            
+            try {
+                const response = await fetch('/api/calendar-events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(eventData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.textContent = `✅ Event created successfully!\n\n` + 
+                        JSON.stringify(data.event, null, 2);
+                } else {
+                    resultsDiv.textContent = `❌ Error: ${data.message}\n\n` + 
+                        JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultsDiv.textContent = `❌ Network Error: ${error.message}`;
+            }
+        }
+
+        async function checkAuthStatus() {
+            const resultsDiv = document.getElementById('authResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.textContent = 'Checking OAuth status...';
+            
+            try {
+                // Try to get calendar events to check auth
+                const response = await fetch('/api/calendar-events');
+                const data = await response.json();
+                
+                if (data.needsAuth) {
+                    resultsDiv.textContent = `🔐 Not authenticated. Please go through OAuth flow:\n` +
+                        `http://localhost:3000/onboard`;
+                } else if (data.success) {
+                    resultsDiv.textContent = `✅ Authenticated! You have access to:\n` +
+                        `- Gmail API ✓\n` +
+                        `- Calendar API ✓\n` +
+                        `- Found ${data.totalCount} calendar events`;
+                } else {
+                    resultsDiv.textContent = `⚠️ Auth status unclear:\n\n` + 
+                        JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultsDiv.textContent = `❌ Network Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

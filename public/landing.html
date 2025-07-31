@@ -407,10 +407,16 @@
         // Check if returning from OAuth
         const urlParams = new URLSearchParams(window.location.search);
         const authSuccess = urlParams.get('auth') === 'success';
+        const googleConnected = urlParams.get('google_connected') === 'true';
+        const gmailConnected = urlParams.get('gmail') === 'true';
+        const calendarConnected = urlParams.get('calendar') === 'true';
         const authError = urlParams.get('error');
         
-        if (authSuccess) {
-            // Mark as connected
+        if (authSuccess || (googleConnected && gmailConnected && calendarConnected)) {
+            // Mark as connected and store in session
+            sessionStorage.setItem('google_connected', 'true');
+            sessionStorage.setItem('gmail_connected', 'true');
+            sessionStorage.setItem('calendar_connected', 'true');
             markGmailConnected();
         } else if (authError) {
             console.error('OAuth error:', authError);
@@ -422,19 +428,20 @@
             const connectBtn = document.getElementById('connectBtn');
             
             card.classList.add('connected');
-            status.textContent = 'Connected';
+            status.textContent = 'Gmail & Calendar Connected';
             status.classList.add('connected');
-            connectBtn.innerHTML = '<i data-lucide="check" class="btn-icon"></i>Successfully Connected';
+            connectBtn.innerHTML = '<i data-lucide="check" class="btn-icon"></i>Google Services Connected';
             connectBtn.disabled = true;
             
-            // Update user info and auto-redirect to scan
+            // Update user info with both Gmail and Calendar
             userInfo.gmailConnected = true;
+            userInfo.calendarConnected = true;
             userInfo.step = 2;
             sessionStorage.setItem('onboarding_user', JSON.stringify(userInfo));
             
-            // Auto-redirect to scan page after a short delay
+            // Auto-redirect to scan page with enhanced OAuth status
             setTimeout(() => {
-                window.location.href = '/scan?gmail_connected=true';
+                window.location.href = '/scan?google_connected=true&gmail=true&calendar=true';
             }, 2000);
         }
         
@@ -445,12 +452,13 @@
             userInfo.step = 2;
             sessionStorage.setItem('onboarding_user', JSON.stringify(userInfo));
             
-            // Redirect to Gmail OAuth with onboarding flag
-            window.location.href = '/auth/gmail?isOnboarding=true';
+            // Redirect to Enhanced Google OAuth (Gmail + Calendar)
+            window.location.href = '/auth/google?isOnboarding=true';
         });
         
         // If already connected (for testing), enable continue
-        if (sessionStorage.getItem('gmail_connected') === 'true') {
+        if (sessionStorage.getItem('gmail_connected') === 'true' || 
+            sessionStorage.getItem('google_connected') === 'true') {
             markGmailConnected();
         }
     </script>

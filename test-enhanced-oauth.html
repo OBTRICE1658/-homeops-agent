@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced OAuth + Calendar Sync Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .primary { background: #007bff; color: white; }
+        .success { background: #28a745; color: white; }
+        .warning { background: #ffc107; color: black; }
+        .danger { background: #dc3545; color: white; }
+        .info { background: #17a2b8; color: white; }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: monospace;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .event-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .event-form input, .event-form textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .event-form textarea {
+            grid-column: span 2;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .events-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+        }
+        .event-item {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        .event-details {
+            flex: 1;
+        }
+        .event-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .event-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .sync-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .synced { background: #d4edda; color: #155724; }
+        .pending { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Enhanced OAuth + Calendar Sync Test Dashboard</h1>
+        
+        <!-- Authentication Section -->
+        <div class="section">
+            <h2>🔐 Authentication & Setup</h2>
+            <div class="button-group">
+                <button class="primary" onclick="checkAuthStatus()">Check Auth Status</button>
+                <button class="success" onclick="initiateOAuth()">Start OAuth Flow</button>
+                <button class="info" onclick="initializeSync()">Initialize Sync Service</button>
+                <button class="warning" onclick="getSyncStatus()">Sync Status</button>
+            </div>
+            <div id="authStatus" class="status">Click "Check Auth Status" to begin...</div>
+        </div>
+
+        <!-- Bidirectional Sync Section -->
+        <div class="section">
+            <h2>🔄 Bidirectional Calendar Sync</h2>
+            <div class="button-group">
+                <button class="primary" onclick="fullSync()">Full Bidirectional Sync</button>
+                <button class="info" onclick="pullFromGoogle()">Pull from Google</button>
+                <button class="warning" onclick="loadLocalEvents()">Load Local Events</button>
+                <button class="success" onclick="getSyncedEvents()">Get Synced Events</button>
+            </div>
+            <div id="syncResults" class="status">Ready for sync operations...</div>
+        </div>
+
+        <!-- Event Management Section -->
+        <div class="section">
+            <h2>📅 Event Management</h2>
+            <div class="event-form">
+                <input type="text" id="eventTitle" placeholder="Event Title" value="Test HomeOps Event">
+                <input type="datetime-local" id="eventStart">
+                <input type="datetime-local" id="eventEnd">
+                <input type="text" id="eventLocation" placeholder="Location (optional)">
+                <textarea id="eventDescription" placeholder="Description (optional)">This is a test event created through HomeOps enhanced OAuth system with bidirectional sync.</textarea>
+                <select id="eventCategory">
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="health">Health</option>
+                    <option value="social">Social</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button class="success" onclick="createEvent()">Create Event</button>
+                <button class="warning" onclick="updateSelectedEvent()">Update Selected</button>
+                <button class="danger" onclick="deleteSelectedEvent()">Delete Selected</button>
+            </div>
+        </div>
+
+        <!-- Events List Section -->
+        <div class="section">
+            <h2>📋 Calendar Events</h2>
+            <div class="button-group">
+                <button class="info" onclick="refreshEventsList()">Refresh Events</button>
+                <button class="primary" onclick="getGoogleEvents()">Google Calendar Events</button>
+            </div>
+            <div id="eventsList" class="events-list">
+                <div style="padding: 20px; text-align: center; color: #666;">
+                    Click "Refresh Events" to load calendar events
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug & Testing Section -->
+        <div class="section">
+            <h2>🔧 Debug & Testing</h2>
+            <div class="button-group">
+                <button class="info" onclick="testCalendarAPI()">Test Calendar API</button>
+                <button class="warning" onclick="testGmailAPI()">Test Gmail API</button>
+                <button class="primary" onclick="getCalendars()">List All Calendars</button>
+                <button class="danger" onclick="clearLocalData()">Clear Local Data</button>
+            </div>
+            <div id="debugOutput" class="status">Debug information will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        let selectedEventId = null;
+
+        // Set default datetime values
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const startTime = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour from now
+            const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour duration
+            
+            document.getElementById('eventStart').value = startTime.toISOString().slice(0, 16);
+            document.getElementById('eventEnd').value = endTime.toISOString().slice(0, 16);
+        });
+
+        // Helper function to display results
+        function displayResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const status = isError ? '❌ ERROR' : '✅ SUCCESS';
+            element.textContent = `[${timestamp}] ${status}\n${JSON.stringify(data, null, 2)}`;
+            element.style.borderLeftColor = isError ? '#dc3545' : '#28a745';
+        }
+
+        // Authentication Functions
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+                displayResult('authStatus', data);
+            } catch (error) {
+                displayResult('authStatus', { error: error.message }, true);
+            }
+        }
+
+        function initiateOAuth() {
+            window.location.href = '/auth/google';
+        }
+
+        async function initializeSync() {
+            try {
+                const response = await fetch('/api/google/sync/initialize', { method: 'POST' });
+                const data = await response.json();
+                displayResult('authStatus', data);
+            } catch (error) {
+                displayResult('authStatus', { error: error.message }, true);
+            }
+        }
+
+        async function getSyncStatus() {
+            try {
+                const response = await fetch('/api/google/sync/status');
+                const data = await response.json();
+                displayResult('authStatus', data);
+            } catch (error) {
+                displayResult('authStatus', { error: error.message }, true);
+            }
+        }
+
+        // Sync Functions
+        async function fullSync() {
+            try {
+                displayResult('syncResults', { status: 'Starting full bidirectional sync...' });
+                const response = await fetch('/api/google/sync/full', { method: 'POST' });
+                const data = await response.json();
+                displayResult('syncResults', data);
+                refreshEventsList(); // Refresh events after sync
+            } catch (error) {
+                displayResult('syncResults', { error: error.message }, true);
+            }
+        }
+
+        async function pullFromGoogle() {
+            try {
+                const response = await fetch('/api/google/events');
+                const data = await response.json();
+                displayResult('syncResults', { pulled: data.length, events: data });
+            } catch (error) {
+                displayResult('syncResults', { error: error.message }, true);
+            }
+        }
+
+        async function loadLocalEvents() {
+            try {
+                const response = await fetch('/api/google/events/synced');
+                const data = await response.json();
+                displayResult('syncResults', { local: data.length, events: data });
+            } catch (error) {
+                displayResult('syncResults', { error: error.message }, true);
+            }
+        }
+
+        async function getSyncedEvents() {
+            try {
+                const response = await fetch('/api/google/events/synced');
+                const data = await response.json();
+                displayResult('syncResults', { synced: data.length, events: data });
+                populateEventsList(data);
+            } catch (error) {
+                displayResult('syncResults', { error: error.message }, true);
+            }
+        }
+
+        // Event Management Functions
+        async function createEvent() {
+            try {
+                const eventData = {
+                    title: document.getElementById('eventTitle').value,
+                    startTime: new Date(document.getElementById('eventStart').value).toISOString(),
+                    endTime: new Date(document.getElementById('eventEnd').value).toISOString(),
+                    location: document.getElementById('eventLocation').value,
+                    description: document.getElementById('eventDescription').value,
+                    homeops_category: document.getElementById('eventCategory').value,
+                    homeops_priority: 'medium'
+                };
+
+                const response = await fetch('/api/google/events/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData)
+                });
+                
+                const result = await response.json();
+                displayResult('debugOutput', { created: result });
+                refreshEventsList();
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        async function updateSelectedEvent() {
+            if (!selectedEventId) {
+                alert('Please select an event to update');
+                return;
+            }
+            
+            try {
+                const updates = {
+                    title: document.getElementById('eventTitle').value,
+                    startTime: new Date(document.getElementById('eventStart').value).toISOString(),
+                    endTime: new Date(document.getElementById('eventEnd').value).toISOString(),
+                    location: document.getElementById('eventLocation').value,
+                    description: document.getElementById('eventDescription').value,
+                    homeops_category: document.getElementById('eventCategory').value
+                };
+
+                const response = await fetch(`/api/google/events/${selectedEventId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updates)
+                });
+                
+                const result = await response.json();
+                displayResult('debugOutput', { updated: result });
+                refreshEventsList();
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        async function deleteSelectedEvent() {
+            if (!selectedEventId) {
+                alert('Please select an event to delete');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this event?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/google/events/${selectedEventId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                displayResult('debugOutput', { deleted: result });
+                selectedEventId = null;
+                refreshEventsList();
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        // Events List Functions
+        async function refreshEventsList() {
+            try {
+                const response = await fetch('/api/google/events/synced');
+                const events = await response.json();
+                populateEventsList(events);
+            } catch (error) {
+                document.getElementById('eventsList').innerHTML = 
+                    `<div style="padding: 20px; text-align: center; color: #dc3545;">
+                        Error loading events: ${error.message}
+                    </div>`;
+            }
+        }
+
+        async function getGoogleEvents() {
+            try {
+                const response = await fetch('/api/google/events');
+                const events = await response.json();
+                populateEventsList(events);
+                displayResult('debugOutput', { googleEvents: events.length, events });
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        function populateEventsList(events) {
+            const listElement = document.getElementById('eventsList');
+            
+            if (!events || events.length === 0) {
+                listElement.innerHTML = 
+                    `<div style="padding: 20px; text-align: center; color: #666;">
+                        No events found. Create some events to see them here!
+                    </div>`;
+                return;
+            }
+
+            listElement.innerHTML = events.map(event => `
+                <div class="event-item" onclick="selectEvent('${event.id || event.googleId}', this)">
+                    <div class="event-details">
+                        <div class="event-title">${event.title || event.summary || 'Untitled Event'}</div>
+                        <div class="event-time">
+                            ${event.startTime ? new Date(event.startTime).toLocaleString() : 'No start time'}
+                            ${event.location ? ` • ${event.location}` : ''}
+                        </div>
+                        ${event.homeops_category ? `<span class="sync-status synced">HomeOps: ${event.homeops_category}</span>` : ''}
+                    </div>
+                    <div>
+                        ${event.homeops_last_sync ? '<span class="sync-status synced">Synced</span>' : '<span class="sync-status pending">Local Only</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectEvent(eventId, element) {
+            // Remove previous selection
+            document.querySelectorAll('.event-item').forEach(item => {
+                item.style.backgroundColor = '';
+            });
+            
+            // Highlight selected event
+            element.style.backgroundColor = '#e3f2fd';
+            selectedEventId = eventId;
+            
+            // You could populate the form with event details here
+            console.log('Selected event:', eventId);
+        }
+
+        // Debug Functions
+        async function testCalendarAPI() {
+            try {
+                const response = await fetch('/api/google/calendars');
+                const data = await response.json();
+                displayResult('debugOutput', { calendars: data });
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        async function testGmailAPI() {
+            try {
+                const response = await fetch('/api/gmail/labels');
+                const data = await response.json();
+                displayResult('debugOutput', { gmailLabels: data });
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        async function getCalendars() {
+            try {
+                const response = await fetch('/api/google/calendars');
+                const calendars = await response.json();
+                displayResult('debugOutput', { allCalendars: calendars });
+            } catch (error) {
+                displayResult('debugOutput', { error: error.message }, true);
+            }
+        }
+
+        async function clearLocalData() {
+            if (confirm('This will clear all local calendar sync data. Continue?')) {
+                try {
+                    // This would need to be implemented on the server
+                    displayResult('debugOutput', { message: 'Clear local data endpoint not implemented yet' });
+                } catch (error) {
+                    displayResult('debugOutput', { error: error.message }, true);
+                }
+            }
+        }
+
+        // Auto-refresh events every 30 seconds if we have auth
+        setInterval(async () => {
+            try {
+                const authResponse = await fetch('/api/auth/status');
+                const authStatus = await authResponse.json();
+                if (authStatus.authenticated) {
+                    refreshEventsList();
+                }
+            } catch (error) {
+                // Silently ignore auto-refresh errors
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

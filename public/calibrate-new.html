@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Email Intelligence Calibration NEW</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .calibration-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .calibration-header {
+            text-align: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .calibration-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .calibration-header p {
+            color: #666;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .email-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .email-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .email-from {
+            margin-left: 8px;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .email-type {
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .email-date {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .email-subject {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .email-snippet {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .ai-summary {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .ai-summary-header {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .ai-summary-content {
+            color: #78350f;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .mental-load-score {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .score-header {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 14px;
+        }
+
+        .rating-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rating-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rating-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .thumbs-up {
+            color: #059669;
+            border-color: #d1fae5;
+        }
+
+        .thumbs-down {
+            color: #dc2626;
+            border-color: #fed7d7;
+        }
+
+        .progress-bar {
+            text-align: center;
+            margin: 20px 0;
+            color: #6b7280;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calibration-container">
+        <div class="calibration-header">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 12px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="home" style="width: 32px; height: 32px;"></i>
+                </div>
+                <h1>Email Intelligence Calibration</h1>
+                <p>Help us learn what matters to you</p>
+            </div>
+            <div class="progress-bar" id="progress-text">Email 1 of 20</div>
+        </div>
+
+        <div id="email-container">
+            <div class="email-card">
+                <div style="text-align: center; color: #6b7280; padding: 40px;">
+                    <i data-lucide="loader-2" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i>
+                    <p style="margin-top: 16px;">Loading your emails...</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="#" onclick="skipCalibration()" style="color: #6b7280; text-decoration: underline;">Skip Calibration</a>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        let currentEmails = [];
+        let currentIndex = 0;
+
+        // Load calibration data
+        async function loadCalibrationData() {
+            try {
+                console.log('🔄 Loading calibration data...');
+                const response = await fetch('/api/calibration-data?' + Date.now());
+                const data = await response.json();
+                
+                console.log('📧 Data received:', data);
+                
+                if (data.success && data.emails) {
+                    currentEmails = data.emails;
+                    console.log('✅ Loaded', currentEmails.length, 'emails for calibration');
+                    
+                    // Show first email
+                    showCurrentEmail();
+                } else {
+                    showError('Failed to load emails: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('❌ Error loading calibration data:', error);
+                showError('Error loading emails: ' + error.message);
+            }
+        }
+
+        function showCurrentEmail() {
+            const container = document.getElementById('email-container');
+            
+            if (currentIndex >= currentEmails.length) {
+                showCompletion();
+                return;
+            }
+
+            const email = currentEmails[currentIndex];
+            
+            console.log('📧 Showing email:', {
+                subject: email.subject,
+                from: email.from,
+                formattedDate: email.formattedDate,
+                category: email.category,
+                lucideIcon: email.lucideIcon,
+                aiSummary: email.aiSummary,
+                score: email.score
+            });
+
+            // Get icon with fallback
+            const icon = email.lucideIcon || 'mail';
+            
+            const emailCard = `
+                <div class="email-card">
+                    <div class="email-header">
+                        <i data-lucide="${icon}" style="width: 20px; height: 20px; margin-right: 8px; color: #667eea;"></i>
+                        <div class="email-from">${email.from || 'Unknown Sender'}</div>
+                        <span class="email-type">${email.category || 'General'}</span>
+                    </div>
+                    
+                    <div class="email-date">
+                        <i data-lucide="calendar" style="width: 12px; height: 12px; margin-right: 4px;"></i>
+                        ${email.formattedDate || 'Unknown Date'}
+                    </div>
+                    
+                    <div class="email-subject">${email.subject || 'No Subject'}</div>
+                    <div class="email-snippet">${email.snippet || ''}</div>
+                    
+                    ${email.aiSummary ? `
+                    <div class="ai-summary">
+                        <div class="ai-summary-header">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                            Why This Surfaced
+                        </div>
+                        <div class="ai-summary-content">${email.aiSummary}</div>
+                    </div>
+                    ` : ''}
+                    
+                    ${email.score ? `
+                    <div class="mental-load-score">
+                        <div class="score-header">
+                            <i data-lucide="gauge" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                            Mental Load Score: ${email.score}/100
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="rating-buttons">
+                        <button class="rating-btn thumbs-up" onclick="rateEmail('interested')">
+                            <i data-lucide="thumbs-up" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                            Interested
+                        </button>
+                        <button class="rating-btn thumbs-down" onclick="rateEmail('not-interested')">
+                            <i data-lucide="thumbs-down" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                            Not Interested
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = emailCard;
+            
+            // Update progress
+            document.getElementById('progress-text').textContent = `Email ${currentIndex + 1} of ${currentEmails.length}`;
+            
+            // Initialize Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        function rateEmail(rating) {
+            console.log('📝 Rating email:', rating);
+            
+            // Submit rating
+            const email = currentEmails[currentIndex];
+            fetch('/api/calibration-rating', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email_id: email.id,
+                    rating: rating,
+                    email: email
+                })
+            }).catch(error => console.error('Rating submission error:', error));
+            
+            // Move to next email
+            currentIndex++;
+            showCurrentEmail();
+        }
+
+        function showCompletion() {
+            const container = document.getElementById('email-container');
+            container.innerHTML = `
+                <div class="email-card" style="text-align: center; padding: 40px;">
+                    <i data-lucide="check-circle" style="width: 48px; height: 48px; color: #059669; margin-bottom: 16px;"></i>
+                    <h2>Calibration Complete!</h2>
+                    <p style="color: #6b7280; margin: 16px 0;">Thank you for helping us understand your preferences.</p>
+                    <button onclick="window.location.href='/'" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Continue to Dashboard
+                    </button>
+                </div>
+            `;
+            
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('email-container');
+            container.innerHTML = `
+                <div class="email-card" style="text-align: center; padding: 40px;">
+                    <i data-lucide="alert-circle" style="width: 48px; height: 48px; color: #dc2626; margin-bottom: 16px;"></i>
+                    <h2>Error Loading Emails</h2>
+                    <p style="color: #6b7280; margin: 16px 0;">${message}</p>
+                    <button onclick="loadCalibrationData()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Try Again
+                    </button>
+                </div>
+            `;
+            
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        function skipCalibration() {
+            window.location.href = '/';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Fixed calibration page loaded');
+            
+            // Initialize Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            
+            // Load calibration data
+            loadCalibrationData();
+        });
+    </script>
+</body>
+</html>

@@ -827,9 +827,9 @@ app.get('/api/emotional-load-forecast', async (req, res) => {
   }
 });
 
-// Calibrate route - serve the mobile-optimized calibrate file
+// Calibrate route - serve the enhanced calibration UI with real AI summaries
 app.get('/calibrate', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'calibrate-mobile-fixed.html'));
+  res.sendFile(path.join(__dirname, 'public', 'calibrate-clean-final.html'));
 });
 
 // Onboarding flow routes
@@ -1069,54 +1069,105 @@ function calculateMentalLoadScore(category, priority, summary) {
 }
 
 // Calibration data endpoint
-app.get('/api/calibration-data', (req, res) => {
+app.get('/api/calibration-data', async (req, res) => {
   try {
-    console.log('📧 Loading calibration data...');
+    console.log('📧 Loading calibration emails with real AI processing...');
+    
+    // For now, use enhanced mock data but process it with real AI summaries
+    // This gives us real AI-generated summaries while we work on Gmail OAuth setup
     
     // Load mock emails
     const mockDataPath = path.join(__dirname, 'mock', 'emails.json');
     const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf8'));
     
-    // Process first 17 emails for enhanced calibration experience
-    const emails = mockData.emails.slice(0, 17).map((email, index) => {
-      // Better brand name extraction
-      const brandName = email.source.split(' ')[0] || email.source.split('@')[0] || 'Unknown';
-      const lucideIcon = getLucideIcon(email.category, brandName);
-      const mentalLoadScore = calculateMentalLoadScore(email.category, email.priority, email.summary);
-      
-      console.log(`📧 Email ${index + 1}: ${email.category} -> ${lucideIcon} icon, score: ${mentalLoadScore}`);
-      
-      return {
-        id: email.id || `mock_${index + 1}`,
-        brandName: brandName,
-        brandIcon: lucideIcon,
-        emailType: email.category,
-        subject: email.subject,
-        snippet: email.summary,
-        insight: `Mental load assessment for ${email.category} priority email`,
-        aiSummary: email.summary,
-        score: mentalLoadScore,
-        category: email.category.toLowerCase(),
-        originalCategory: email.category,
-        from: email.source,
-        date: new Date().toLocaleDateString(),
-        priority: email.priority
-      };
-    });
+    console.log(`🎯 Processing ${Math.min(10, mockData.emails.length)} emails with real AI summaries...`);
     
-    console.log(`✅ Returning ${emails.length} processed emails`);
+    // Process emails with real AI summaries
+    const processedEmails = await Promise.all(
+      mockData.emails.slice(0, 10).map(async (email, index) => {
+        try {
+          console.log(`🤖 Generating AI summary for email ${index + 1}: ${email.subject}`);
+          
+          // Generate real AI summary using our enhanced function
+          const aiSummaryResult = await generateEmailSummary({
+            subject: email.subject,
+            from: email.source,
+            date: new Date().toISOString(),
+            body: email.summary || email.snippet || ''
+          }, email.source);
+          
+          const aiSummary = aiSummaryResult?.summary || email.summary || `Email from ${email.source} about ${email.subject}`;
+          
+          // Better categorization
+          const category = categorizeEmail(email.subject, email.summary || '', email.source);
+          const brandName = email.source.split(' ')[0] || email.source.split('@')[0] || 'Unknown';
+          const lucideIcon = getLucideIcon(category, brandName);
+          const mentalLoadScore = calculateMentalLoadScore(category, email.priority || 'medium', aiSummary);
+          
+          console.log(`✅ Email ${index + 1} processed: ${category} category, ${mentalLoadScore} score`);
+          
+          return {
+            id: email.id || `enhanced_${index + 1}`,
+            from: email.source,
+            subject: email.subject,
+            date: new Date().toISOString(),
+            formattedDate: new Date().toLocaleDateString('en-US', { 
+              weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
+            }),
+            snippet: email.summary || email.snippet || '',
+            category: category,
+            categoryIcon: getCategoryIcon(category),
+            lucideIcon: lucideIcon,
+            aiSummary: aiSummary,
+            score: mentalLoadScore,
+            insight: `Mental Load Analysis: ${aiSummary}`,
+            mental_load_score: mentalLoadScore
+          };
+        } catch (emailError) {
+          console.error(`❌ Error processing email ${index + 1}:`, emailError.message);
+          // Return basic email data if AI processing fails
+          const category = categorizeEmail(email.subject, email.summary || '', email.source);
+          const brandName = email.source.split(' ')[0] || email.source.split('@')[0] || 'Unknown';
+          const lucideIcon = getLucideIcon(category, brandName);
+          const mentalLoadScore = calculateMentalLoadScore(category, email.priority || 'medium', email.summary);
+          
+          return {
+            id: email.id || `basic_${index + 1}`,
+            from: email.source,
+            subject: email.subject,
+            date: new Date().toISOString(),
+            formattedDate: new Date().toLocaleDateString('en-US', { 
+              weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
+            }),
+            snippet: email.summary || '',
+            category: category,
+            categoryIcon: getCategoryIcon(category),
+            lucideIcon: lucideIcon,
+            aiSummary: email.summary || `Email from ${email.source} about ${email.subject}`,
+            score: mentalLoadScore,
+            insight: `Mental Load Analysis: ${email.summary}`,
+            mental_load_score: mentalLoadScore
+          };
+        }
+      })
+    );
+    
+    console.log(`✅ Processed ${processedEmails.length} emails with real AI summaries`);
     
     res.json({
       success: true,
-      emails: emails,
-      totalEmails: emails.length
+      emails: processedEmails,
+      totalCount: processedEmails.length,
+      message: 'Enhanced mock emails with real AI summaries loaded successfully',
+      source: 'enhanced-mock'
     });
     
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Calibration data error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
+      message: 'Failed to load calibration emails'
     });
   }
 });
@@ -2321,14 +2372,42 @@ Keep the summary under 100 words and focus on what's most useful for tracking pu
 }
 async function generateEmailSummary(emailData, senderName) {
   try {
-    const summaryPrompt = `Please provide a concise, parent-friendly summary of this email from ${senderName}:
+    console.log(`🤖 Generating AI summary for email from ${senderName}`);
+    console.log(`📧 Subject: ${emailData.subject}`);
+    console.log(`📝 Body preview: ${emailData.body?.substring(0, 100)}...`);
+    
+    // Enhanced pattern matching for better summaries
+    const emailText = `${emailData.subject} ${emailData.body}`.toLowerCase();
+    let summaryPrompt = `Please provide a concise, parent-friendly summary of this email from ${senderName}:
 
 SUBJECT: ${emailData.subject}
 FROM: ${emailData.from}
 DATE: ${emailData.date}
 
 EMAIL CONTENT:
-${emailData.body}
+${emailData.body}`;
+
+    // Add context-specific instructions based on email content
+    if (emailText.includes('course closed') || emailText.includes('closure') || emailText.includes('golf') || emailText.includes('member')) {
+      summaryPrompt += `
+
+This appears to be a golf course communication. Please summarize:
+1. The main announcement or notification
+2. Any dates when the course is closed/unavailable
+3. What members should know or do
+4. Alternative arrangements if mentioned
+
+Focus on the practical impact for a golf member.`;
+    } else if (emailText.includes('delivery') || emailText.includes('shipped') || emailText.includes('tracking')) {
+      summaryPrompt += `
+
+This appears to be a delivery notification. Please summarize:
+1. What is being delivered
+2. Expected delivery date/time
+3. Any tracking information
+4. Action required from recipient`;
+    } else {
+      summaryPrompt += `
 
 Provide a summary that includes:
 1. Main purpose of the email (2-3 sentences)
@@ -2336,6 +2415,7 @@ Provide a summary that includes:
 3. Important dates to remember (if any)
 
 Keep the summary under 150 words and focus on what's most important for a busy parent to know.`;
+    }
 
     // Add timeout to prevent hanging
     const timeoutPromise = new Promise((_, reject) => 
@@ -2361,7 +2441,7 @@ Keep the summary under 150 words and focus on what's most important for a busy p
     if (response.ok) {
       const data = await response.json();
       const summary = data.choices?.[0]?.message?.content || 'Summary not available';
-      console.log(`✅ Generated AI summary for ${senderName} email`);
+      console.log(`✅ Generated AI summary for ${senderName} email:`, summary);
       
       // Add calendar event data if available
       if (emailData.calendarEvents && emailData.calendarEvents.length > 0) {
@@ -2376,6 +2456,8 @@ Keep the summary under 150 words and focus on what's most important for a busy p
         summary: summary,
         hasCalendarEvents: false
       };
+    } else {
+      console.error(`❌ OpenAI API response not ok:`, response.status, response.statusText);
     }
   } catch (error) {
     console.error(`❌ AI summary generation failed for ${senderName}:`, error.message);
@@ -3296,9 +3378,69 @@ function getManualCommerceRecommendations(lowerMessage) {
   return [];
 }
 
+// Helper function to categorize emails
+function categorizeEmail(subject, snippet, from) {
+  const text = `${subject} ${snippet} ${from}`.toLowerCase();
+  
+  // School/Education patterns
+  if (text.includes('school') || text.includes('teacher') || text.includes('principal') || 
+      text.includes('homework') || text.includes('classroom') || text.includes('student') ||
+      text.includes('education') || text.includes('grade') || text.includes('test') ||
+      text.includes('assignment') || text.includes('parent-teacher')) {
+    return 'School';
+  }
+  
+  // Work patterns
+  if (text.includes('meeting') || text.includes('deadline') || text.includes('project') ||
+      text.includes('work') || text.includes('office') || text.includes('team') ||
+      text.includes('manager') || text.includes('schedule') || text.includes('report') ||
+      text.includes('presentation') || from.includes('microsoft') || from.includes('teams')) {
+    return 'Work';
+  }
+  
+  // Family patterns
+  if (text.includes('family') || text.includes('dinner') || text.includes('birthday') ||
+      text.includes('reunion') || text.includes('vacation') || text.includes('anniversary') ||
+      text.includes('wedding') || text.includes('baby') || text.includes('party')) {
+    return 'Family';
+  }
+  
+  // Finance patterns
+  if (text.includes('payment') || text.includes('bill') || text.includes('bank') ||
+      text.includes('credit') || text.includes('invoice') || text.includes('statement') ||
+      text.includes('transaction') || text.includes('account') || text.includes('finance') ||
+      text.includes('money') || text.includes('insurance')) {
+    return 'Finance';
+  }
+  
+  // Health patterns
+  if (text.includes('doctor') || text.includes('appointment') || text.includes('medical') ||
+      text.includes('health') || text.includes('clinic') || text.includes('hospital') ||
+      text.includes('prescription') || text.includes('vaccine')) {
+    return 'Health';
+  }
+  
+  // Shopping/Commerce patterns
+  if (text.includes('order') || text.includes('shipped') || text.includes('delivery') ||
+      text.includes('tracking') || text.includes('amazon') || text.includes('purchase') ||
+      text.includes('sale') || text.includes('discount')) {
+    return 'Shopping';
+  }
+  
+  // Default category
+  return 'Other';
+}
+
 // Helper function to get category icons
 function getCategoryIcon(category) {
   const iconMap = {
+    'School': '🎓',
+    'Work': '💼', 
+    'Family': '👨‍👩‍👧‍👦',
+    'Finance': '💰',
+    'Health': '🏥',
+    'Shopping': '🛒',
+    'Other': '📧',
     'toys': 'blocks',
     'arts-crafts': 'palette', 
     'kitchen': 'chef-hat',
