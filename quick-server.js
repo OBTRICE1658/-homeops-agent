@@ -1073,6 +1073,29 @@ app.get('/api/calibration-data', async (req, res) => {
   try {
     console.log('📧 Loading calibration emails with real AI processing...');
     
+    // Check for forceReal parameter to use actual Gmail data
+    const useRealGmail = req.query.real === 'true';
+    
+    if (useRealGmail) {
+      console.log('🔄 Attempting to load REAL Gmail data...');
+      
+      // Try to get real Gmail data
+      const userEmail = 'oliverhbaron@gmail.com'; // Your email
+      try {
+        const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
+        if (tokenDoc.exists) {
+          console.log(`✅ Found Gmail tokens for: ${userEmail}`);
+          // TODO: Implement real Gmail fetch here
+          // For now, fall back to enhanced mock data
+          console.log('⚠️  Real Gmail integration not yet implemented, using enhanced mock data');
+        } else {
+          console.log(`❌ No Gmail tokens found for: ${userEmail}, using enhanced mock data`);
+        }
+      } catch (error) {
+        console.log('❌ Error accessing Gmail tokens, using enhanced mock data:', error.message);
+      }
+    }
+    
     // For now, use enhanced mock data but process it with real AI summaries
     // This gives us real AI-generated summaries while we work on Gmail OAuth setup
     
