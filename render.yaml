@@ -4,7 +4,7 @@ services:
     env: node
     buildCommand: npm install
     startCommand: node quick-server.js
-    branch: calendar-rebuild-safe
+    branch: email-decoder-onboarding
     envVars:
       - key: OPENAI_API_KEY
         sync: false
@@ -13,7 +13,7 @@ services:
       - key: GMAIL_CLIENT_SECRET
         sync: false
       - key: GMAIL_REDIRECT_URI
-        value: https://homeops-backend.onrender.com/auth/google/callback
+        value: https://homeops.ai/auth/google/callback
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
