@@ -163,6 +163,120 @@
       margin-bottom: 8px;
       opacity: 0.9;
     }
+
+    /* Top Emails Styling */
+    .top-emails-list {
+      margin-top: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .email-item {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .email-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
+    }
+
+    .email-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .email-from {
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .email-importance {
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .email-subject {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .email-summary {
+      font-size: 11px;
+      opacity: 0.8;
+      line-height: 1.3;
+    }
+
+    .loading-emails {
+      text-align: center;
+      opacity: 0.7;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    /* Weekly Summary Styling */
+    .weekly-summary {
+      margin-top: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .loading-summary {
+      text-align: center;
+      opacity: 0.7;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    .week-greeting {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .week-insights {
+      font-size: 13px;
+      line-height: 1.4;
+      opacity: 0.9;
+      margin-bottom: 12px;
+    }
+
+    .priority-events {
+      margin-top: 12px;
+    }
+
+    .priority-event {
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 3px solid rgba(255, 255, 255, 0.5);
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .event-day {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .event-title {
+      margin-left: 8px;
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
@@ -178,16 +292,18 @@
       <div class="action-card" onclick="openEmailDetails()">
         <div class="card-header">
           <i data-lucide="mail" class="card-icon"></i>
-          <div class="card-title">Email Intelligence</div>
+          <div class="card-title">Top 5 Important Emails Today</div>
         </div>
         <div class="card-content">
           <div class="metric" id="urgent-count">-</div>
-          <div class="metric-label">Urgent messages need attention</div>
-          <div class="insight-text" id="email-insight">Loading your email insights...</div>
+          <div class="metric-label">Critical emails decoded</div>
+          <div class="top-emails-list" id="top-emails-list">
+            <div class="loading-emails">🧠 AI is analyzing your inbox...</div>
+          </div>
         </div>
         <div class="quick-actions">
           <div class="action-btn" onclick="event.stopPropagation(); openGmail()">Open Gmail</div>
-          <div class="action-btn" onclick="event.stopPropagation(); snoozeAll()">Snooze All</div>
+          <div class="action-btn" onclick="event.stopPropagation(); refreshEmails()">Refresh</div>
         </div>
       </div>
 
@@ -195,16 +311,18 @@
       <div class="action-card" onclick="openCalendar()">
         <div class="card-header">
           <i data-lucide="calendar" class="card-icon"></i>
-          <div class="card-title">Today's Schedule</div>
+          <div class="card-title">This Week's Overview</div>
         </div>
         <div class="card-content">
           <div class="metric" id="events-count">-</div>
-          <div class="metric-label">Events today</div>
-          <div class="insight-text" id="calendar-insight">Loading your schedule...</div>
+          <div class="metric-label">Events this week</div>
+          <div class="weekly-summary" id="weekly-summary">
+            <div class="loading-summary">🗓️ AI is analyzing your upcoming week...</div>
+          </div>
         </div>
         <div class="quick-actions">
-          <div class="action-btn" onclick="event.stopPropagation(); addEvent()">Quick Add</div>
-          <div class="action-btn" onclick="event.stopPropagation(); findMeetingTime()">Find Time</div>
+          <div class="action-btn" onclick="event.stopPropagation(); openCalendar()">View Calendar</div>
+          <div class="action-btn" onclick="event.stopPropagation(); refreshCalendar()">Refresh</div>
         </div>
       </div>
 
@@ -283,8 +401,8 @@
       document.getElementById('urgent-count').textContent = '...';
       document.getElementById('events-count').textContent = '...';
       document.getElementById('deals-count').textContent = '...';
-      document.getElementById('email-insight').textContent = 'Loading email insights...';
-      document.getElementById('calendar-insight').textContent = 'Loading calendar...';
+      document.getElementById('top-emails-list').innerHTML = '<div class="loading-emails">🧠 AI is scanning for important emails...</div>';
+      document.getElementById('weekly-summary').innerHTML = '<div class="loading-summary">🗓️ AI is analyzing your upcoming week...</div>';
       document.getElementById('commerce-insight').textContent = 'Finding deals...';
       
       try {
@@ -323,83 +441,161 @@
 
     async function loadEmailIntelligence(userId) {
       try {
-        const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=10&days=7`);
+        const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=20&days=1`);
         const data = await response.json();
         
         console.log('📧 Email intelligence data:', data);
         
         if (data.success && data.insights) {
-          // Count urgent emails based on different priority fields
-          const urgentCount = data.insights.filter(insight => 
-            insight.priority === 'high' || 
-            insight.priority === 'High' ||
-            insight.manipulation_score > 7 ||
-            insight.personalized_score > 0.7 ||
-            (insight.title && (
-              insight.title.toLowerCase().includes('urgent') ||
-              insight.title.toLowerCase().includes('important') ||
-              insight.title.toLowerCase().includes('asap')
-            ))
-          ).length;
+          // Filter and rank emails by importance
+          const importantEmails = data.insights
+            .filter(email => {
+              // Focus on 1:1 emails, bills, school, personal important stuff
+              const isPersonal = email.category !== 'Promotional' && email.category !== 'Marketing';
+              const isImportant = 
+                email.manipulation_score > 5 ||
+                email.priority === 'high' ||
+                email.priority === 'High' ||
+                (email.title && (
+                  email.title.toLowerCase().includes('bill') ||
+                  email.title.toLowerCase().includes('payment') ||
+                  email.title.toLowerCase().includes('school') ||
+                  email.title.toLowerCase().includes('camp') ||
+                  email.title.toLowerCase().includes('appointment') ||
+                  email.title.toLowerCase().includes('meeting') ||
+                  email.title.toLowerCase().includes('urgent') ||
+                  email.title.toLowerCase().includes('important') ||
+                  email.title.toLowerCase().includes('reminder') ||
+                  email.title.toLowerCase().includes('due') ||
+                  email.title.toLowerCase().includes('deadline')
+                )) ||
+                (email.from && !email.from.includes('noreply'));
+              
+              return isPersonal && isImportant;
+            })
+            .sort((a, b) => {
+              // Sort by importance score
+              const scoreA = (a.manipulation_score || 0) + (a.personalized_score || 0) * 10;
+              const scoreB = (b.manipulation_score || 0) + (b.personalized_score || 0) * 10;
+              return scoreB - scoreA;
+            })
+            .slice(0, 5); // Top 5
+
+          document.getElementById('urgent-count').textContent = importantEmails.length;
           
-          document.getElementById('urgent-count').textContent = urgentCount || data.insights.length;
+          // Render the top emails list
+          const emailsList = document.getElementById('top-emails-list');
           
-          // Generate insight from actual data
-          let insight = 'Your inbox is under control.';
-          if (data.insights.length > 0) {
-            if (urgentCount > 0) {
-              insight = `${urgentCount} urgent emails need attention. `;
-            } else {
-              insight = `${data.insights.length} recent emails processed. `;
-            }
-            
-            // Look for brand mentions in the insights
-            const brands = data.insights
-              .map(email => email.from || email.title)
-              .filter(from => from && (
-                from.includes('@') || 
-                from.includes('Amazon') ||
-                from.includes('Nike') ||
-                from.includes('Starbucks') ||
-                from.includes('Uber')
-              ))
-              .slice(0, 2);
-            
-            if (brands.length > 0) {
-              insight += `Recent updates from ${brands.join(', ')}.`;
-            } else {
-              insight += 'All messages processed and categorized.';
-            }
+          if (importantEmails.length === 0) {
+            emailsList.innerHTML = `
+              <div class="loading-emails">
+                ✅ No critical emails today! Your inbox is under control.
+                ${data.dataSource === 'fallback' ? '<br><small>(Connect Gmail for real insights)</small>' : ''}
+              </div>
+            `;
+          } else {
+            emailsList.innerHTML = importantEmails.map((email, index) => {
+              const importance = email.manipulation_score > 8 ? 'URGENT' : 
+                               email.manipulation_score > 6 ? 'HIGH' : 'IMPORTANT';
+              
+              const aiSummary = generateAISummary(email);
+              
+              return `
+                <div class="email-item" onclick="openSpecificEmail('${email.id || index}')">
+                  <div class="email-header">
+                    <div class="email-from">${email.from || 'Unknown Sender'}</div>
+                    <div class="email-importance">${importance}</div>
+                  </div>
+                  <div class="email-subject">${email.title || 'No Subject'}</div>
+                  <div class="email-summary">${aiSummary}</div>
+                </div>
+              `;
+            }).join('');
           }
           
-          // Show data source for debugging
-          if (data.dataSource === 'fallback') {
-            insight += ' (Demo data - connect Gmail for real insights)';
-          }
+          // Store important emails for other functions
+          window.homeOpsImportantEmails = importantEmails;
           
-          document.getElementById('email-insight').textContent = insight;
         } else {
           throw new Error('Invalid email intelligence response');
         }
       } catch (error) {
         console.error('Email loading error:', error);
         document.getElementById('urgent-count').textContent = '?';
-        document.getElementById('email-insight').textContent = 'Unable to load email data - please check connection';
+        document.getElementById('top-emails-list').innerHTML = `
+          <div class="loading-emails">❌ Unable to load emails. Please check connection.</div>
+        `;
       }
+    }
+
+    function generateAISummary(email) {
+      // AI-powered summary generation based on email content
+      const subject = (email.title || '').toLowerCase();
+      const description = (email.description || '').toLowerCase();
+      const from = (email.from || '').toLowerCase();
+      
+      // Bill/Payment detection
+      if (subject.includes('bill') || subject.includes('payment') || subject.includes('invoice')) {
+        return `💰 Bill payment detected - requires your attention for payment processing`;
+      }
+      
+      // School/Education
+      if (subject.includes('school') || subject.includes('teacher') || subject.includes('class') || 
+          from.includes('school') || from.includes('edu')) {
+        return `🎓 School-related communication - likely about schedules, events, or student updates`;
+      }
+      
+      // Camp/Activities
+      if (subject.includes('camp') || subject.includes('activity') || subject.includes('registration')) {
+        return `🏕️ Camp or activity update - may contain schedule changes or important instructions`;
+      }
+      
+      // Appointments/Meetings
+      if (subject.includes('appointment') || subject.includes('meeting') || subject.includes('reminder')) {
+        return `📅 Appointment or meeting notice - check for time, location, or cancellation details`;
+      }
+      
+      // Personal/1:1 communication
+      if (!from.includes('noreply') && !from.includes('no-reply') && !subject.includes('newsletter')) {
+        return `👤 Personal message - direct communication that likely needs your response`;
+      }
+      
+      // Financial/Important documents
+      if (subject.includes('statement') || subject.includes('document') || subject.includes('tax')) {
+        return `📄 Important document received - may be financial or legal in nature`;
+      }
+      
+      // Urgent/Time-sensitive
+      if (subject.includes('urgent') || subject.includes('asap') || subject.includes('deadline')) {
+        return `⚡ Time-sensitive message - immediate attention may be required`;
+      }
+      
+      // Default summary
+      return `📧 ${email.category || 'Important'} email from ${email.from || 'sender'} - AI detected this needs your attention`;
     }
 
     async function loadCalendarEvents(userId) {
       try {
-        // First try to get events from localStorage (populated by calendar sync)
-        let todayEvents = [];
+        // Get user's first name for personalized greeting
+        const userEmail = localStorage.getItem('homeops_user_email') || '';
+        const firstName = userEmail ? userEmail.split('@')[0].split('.')[0] : 'there';
+        const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+        // Get this week's events from localStorage (populated by calendar sync)
+        let weekEvents = [];
         const allEvents = JSON.parse(localStorage.getItem('homeops_calendar_events') || '[]');
         
         if (allEvents.length > 0) {
-          const today = new Date().toDateString();
-          todayEvents = allEvents.filter(event => {
+          const today = new Date();
+          const startOfWeek = new Date(today);
+          startOfWeek.setDate(today.getDate() - today.getDay()); // Start of this week (Sunday)
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6); // End of this week (Saturday)
+          
+          weekEvents = allEvents.filter(event => {
             try {
-              const eventDate = new Date(event.start || event.date || event.dateTime).toDateString();
-              return eventDate === today;
+              const eventDate = new Date(event.start?.dateTime || event.start?.date || event.date);
+              return eventDate >= startOfWeek && eventDate <= endOfWeek;
             } catch (e) {
               return false;
             }
@@ -408,28 +604,33 @@
         
         // Also try to fetch from API as backup
         try {
-          const response = await fetch(`/api/calendar-events?userId=${userId}`);
+          const response = await fetch(`/api/calendar-events?userId=${userId}&days=7`);
           if (response.ok) {
             const calendarData = await response.json();
             if (calendarData.events && calendarData.events.length > 0) {
-              const today = new Date().toDateString();
-              const apiTodayEvents = calendarData.events.filter(event => {
+              const today = new Date();
+              const startOfWeek = new Date(today);
+              startOfWeek.setDate(today.getDate() - today.getDay());
+              const endOfWeek = new Date(startOfWeek);
+              endOfWeek.setDate(startOfWeek.getDate() + 6);
+              
+              const apiWeekEvents = calendarData.events.filter(event => {
                 try {
-                  const eventDate = new Date(event.start?.dateTime || event.start?.date || event.date).toDateString();
-                  return eventDate === today;
+                  const eventDate = new Date(event.start?.dateTime || event.start?.date || event.date);
+                  return eventDate >= startOfWeek && eventDate <= endOfWeek;
                 } catch (e) {
                   return false;
                 }
               });
               
               // Merge events, avoiding duplicates
-              apiTodayEvents.forEach(apiEvent => {
-                const exists = todayEvents.some(localEvent => 
+              apiWeekEvents.forEach(apiEvent => {
+                const exists = weekEvents.some(localEvent => 
                   localEvent.id === apiEvent.id || 
                   localEvent.summary === apiEvent.summary
                 );
                 if (!exists) {
-                  todayEvents.push(apiEvent);
+                  weekEvents.push(apiEvent);
                 }
               });
             }
@@ -438,48 +639,129 @@
           console.log('Calendar API not available, using localStorage only');
         }
         
-        document.getElementById('events-count').textContent = todayEvents.length;
+        document.getElementById('events-count').textContent = weekEvents.length;
         
-        // Generate insight
-        let insight = 'Free day ahead! No events scheduled.';
-        if (todayEvents.length > 0) {
-          // Find next upcoming event
-          const now = new Date();
-          const upcomingEvents = todayEvents
-            .map(event => ({
-              ...event,
-              startTime: new Date(event.start?.dateTime || event.start?.date || event.date || now)
-            }))
-            .filter(event => event.startTime > now)
-            .sort((a, b) => a.startTime - b.startTime);
-          
-          if (upcomingEvents.length > 0) {
-            const nextEvent = upcomingEvents[0];
-            const timeUntil = Math.round((nextEvent.startTime - now) / 60000);
-            const eventTitle = nextEvent.summary || nextEvent.title || 'Untitled Event';
-            
-            if (timeUntil < 60) {
-              insight = `Next: "${eventTitle}" in ${timeUntil} minutes.`;
-            } else if (timeUntil < 120) {
-              insight = `Next: "${eventTitle}" in ${Math.round(timeUntil/60)} hour.`;
-            } else {
-              insight = `${todayEvents.length} events today. Next: "${eventTitle}".`;
-            }
-          } else {
-            insight = `${todayEvents.length} events completed today. You're all caught up!`;
-          }
-        }
-        
-        document.getElementById('calendar-insight').textContent = insight;
+        // Generate AI-powered weekly summary
+        const weeklySummary = generateWeeklySummary(capitalizedName, weekEvents);
+        document.getElementById('weekly-summary').innerHTML = weeklySummary;
         
         // Store events count for other functions
-        window.homeOpsCalendarCount = todayEvents.length;
+        window.homeOpsWeekEvents = weekEvents;
         
       } catch (error) {
         console.error('Calendar loading error:', error);
         document.getElementById('events-count').textContent = '?';
-        document.getElementById('calendar-insight').textContent = 'Unable to load calendar data';
+        document.getElementById('weekly-summary').innerHTML = `
+          <div class="loading-summary">❌ Unable to load calendar data</div>
+        `;
       }
+    }
+
+    function generateWeeklySummary(firstName, weekEvents) {
+      if (weekEvents.length === 0) {
+        return `
+          <div class="week-greeting">Hey ${firstName}! 👋</div>
+          <div class="week-insights">
+            You have a completely free week ahead! This is a great opportunity to:
+            <br>• Focus on personal projects
+            <br>• Plan ahead for busy weeks
+            <br>• Take some well-deserved downtime
+          </div>
+        `;
+      }
+
+      // Analyze the week's events
+      const eventsByDay = {};
+      const today = new Date();
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      weekEvents.forEach(event => {
+        try {
+          const eventDate = new Date(event.start?.dateTime || event.start?.date || event.date);
+          const dayName = dayNames[eventDate.getDay()];
+          const dateKey = eventDate.toDateString();
+          
+          if (!eventsByDay[dayName]) {
+            eventsByDay[dayName] = [];
+          }
+          eventsByDay[dayName].push({
+            ...event,
+            eventDate,
+            dayName,
+            isToday: dateKey === today.toDateString(),
+            isPast: eventDate < today
+          });
+        } catch (e) {
+          console.log('Error parsing event date:', e);
+        }
+      });
+
+      // Generate AI insights
+      let insights = [];
+      const totalEvents = weekEvents.length;
+      const busyDays = Object.keys(eventsByDay).length;
+      
+      // Intensity analysis
+      if (totalEvents > 15) {
+        insights.push("This is a particularly busy week for you");
+      } else if (totalEvents > 8) {
+        insights.push("You have a moderately busy week ahead");
+      } else {
+        insights.push("You have a manageable week with good breathing room");
+      }
+
+      // Day distribution analysis
+      if (busyDays <= 2) {
+        insights.push(`Most of your commitments are concentrated in just ${busyDays} day${busyDays > 1 ? 's' : ''}`);
+      } else if (busyDays >= 5) {
+        insights.push("Your schedule is spread throughout the week");
+      }
+
+      // Find priority/important events
+      const priorityEvents = weekEvents
+        .filter(event => {
+          const title = (event.summary || event.title || '').toLowerCase();
+          return title.includes('meeting') || 
+                 title.includes('appointment') || 
+                 title.includes('deadline') ||
+                 title.includes('presentation') ||
+                 title.includes('interview') ||
+                 title.includes('call') ||
+                 (event.start?.dateTime && !event.start?.date); // Timed events are usually more important
+        })
+        .slice(0, 3); // Top 3 priority events
+
+      // Build the summary HTML
+      let summaryHTML = `
+        <div class="week-greeting">Hey ${firstName}! 👋</div>
+        <div class="week-insights">
+          Here's your upcoming week overview:<br>
+          • ${insights.join('<br>• ')}
+        </div>
+      `;
+
+      if (priorityEvents.length > 0) {
+        summaryHTML += `<div class="priority-events">`;
+        summaryHTML += `<div style="font-size: 12px; font-weight: 600; margin-bottom: 8px; opacity: 0.8;">Key Events:</div>`;
+        
+        priorityEvents.forEach(event => {
+          const eventDate = new Date(event.start?.dateTime || event.start?.date || event.date);
+          const dayName = dayNames[eventDate.getDay()];
+          const isToday = eventDate.toDateString() === today.toDateString();
+          const dayLabel = isToday ? 'Today' : dayName;
+          
+          summaryHTML += `
+            <div class="priority-event">
+              <span class="event-day">${dayLabel}:</span>
+              <span class="event-title">${event.summary || event.title || 'Untitled Event'}</span>
+            </div>
+          `;
+        });
+        
+        summaryHTML += `</div>`;
+      }
+
+      return summaryHTML;
     }
 
     async function loadCommerceData(userId) {
@@ -594,6 +876,30 @@
 
     function openGmail() {
       window.open('https://gmail.com', '_blank');
+    }
+
+    function refreshEmails() {
+      console.log('🔄 Refreshing email intelligence...');
+      const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+      loadEmailIntelligence(userId);
+    }
+
+    function refreshCalendar() {
+      console.log('🔄 Refreshing calendar overview...');
+      const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+      loadCalendarEvents(userId);
+    }
+
+    function openSpecificEmail(emailId) {
+      console.log('📧 Opening email:', emailId);
+      // Could open specific email or navigate to decoder with this email highlighted
+      if (window.parent) {
+        window.parent.postMessage({
+          action: 'switchTab', 
+          tab: 'decoder',
+          emailId: emailId
+        }, '*');
+      }
     }
 
     function snoozeAll() {
