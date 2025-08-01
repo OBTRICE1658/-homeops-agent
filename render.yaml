@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: homeops-backend
+    name: -homeops-agent
     env: node
     buildCommand: npm install
     startCommand: node quick-server.js
@@ -13,7 +13,7 @@ services:
       - key: GMAIL_CLIENT_SECRET
         sync: false
       - key: GMAIL_REDIRECT_URI
-        value: https://homeops.ai/auth/google/callback
+        value: https://homeops-agent.onrender.com/auth/google/callback
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
