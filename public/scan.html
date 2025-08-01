@@ -570,6 +570,23 @@
         const gmailConnected = urlParams.get('gmail_connected') === 'true';
         const manualStart = urlParams.get('manual_start') === 'true';
         const devMode = urlParams.get('dev_mode') === 'true';
+        const userEmail = urlParams.get('userEmail');
+        
+        // CRITICAL: Store user email in localStorage for API calls
+        if (userEmail) {
+            localStorage.setItem('homeops_user_id', userEmail);
+            localStorage.setItem('homeops_user_email', userEmail);
+            console.log('✅ User email stored in localStorage:', userEmail);
+        } else {
+            console.warn('⚠️ No userEmail found in URL parameters - using fallback');
+            // If no userEmail provided, try to get from existing localStorage or use demo
+            const existingUserId = localStorage.getItem('homeops_user_id');
+            if (!existingUserId) {
+                const fallbackUserId = 'demo-user-' + Date.now();
+                localStorage.setItem('homeops_user_id', fallbackUserId);
+                console.log('🔄 Set fallback user ID:', fallbackUserId);
+            }
+        }
         
         // Show development mode notice if applicable
         if (devMode) {

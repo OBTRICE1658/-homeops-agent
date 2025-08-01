@@ -441,6 +441,7 @@
 
     async function loadEmailIntelligence(userId) {
       try {
+        console.log('📧 Loading email intelligence for user:', userId);
         const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=20&days=1`);
         const data = await response.json();
         

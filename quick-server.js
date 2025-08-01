@@ -1006,13 +1006,13 @@ async function handleOAuthCallback(req, res) {
       console.error('❌ Error storing tokens:', storeError.message);
     }
     
-    // Redirect based on state
+    // Redirect based on state with user email for localStorage setup
     if (state === 'onboarding') {
       console.log('🎯 Redirecting to scan (onboarding flow)');
-      res.redirect('/scan');
+      res.redirect(`/scan?userEmail=${encodeURIComponent(userEmail)}`);
     } else {
       console.log('🎯 Redirecting to calibrate (normal flow)');
-      res.redirect('/calibrate');
+      res.redirect(`/calibrate?userEmail=${encodeURIComponent(userEmail)}`);
     }
   } catch (error) {
     console.error('❌ Token exchange failed:', error.message);
