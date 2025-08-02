@@ -767,82 +767,50 @@
 
     async function loadCommerceData(userId) {
       try {
-        // Try to get real commerce data from email intelligence
-        let deals = [];
-        let dealCount = 0;
+        console.log('🛍️ Loading commerce intelligence for user:', userId);
         
-        try {
-          const response = await fetch(`/api/email-intelligence?userId=${userId}&filter=commerce&limit=5`);
-          const data = await response.json();
+        // Use the new dedicated commerce intelligence API
+        const response = await fetch(`/api/commerce-intelligence?userId=${userId}&limit=5`);
+        const data = await response.json();
+        
+        console.log('🛍️ Commerce intelligence data:', data);
+        
+        if (data.success) {
+          const totalDeals = data.deals.length + data.packages.length + data.priceDrops.length;
+          document.getElementById('deals-count').textContent = totalDeals;
           
-          if (data.success && data.insights) {
-            // Look for commerce-related insights
-            const commerceInsights = data.insights.filter(insight => 
-              insight.category === 'Commerce' ||
-              insight.type === 'deal' ||
-              (insight.title && (
-                insight.title.toLowerCase().includes('deal') ||
-                insight.title.toLowerCase().includes('sale') ||
-                insight.title.toLowerCase().includes('offer') ||
-                insight.title.toLowerCase().includes('discount') ||
-                insight.title.toLowerCase().includes('%')
-              )) ||
-              (insight.description && (
-                insight.description.toLowerCase().includes('deal') ||
-                insight.description.toLowerCase().includes('sale') ||
-                insight.description.toLowerCase().includes('discount')
-              ))
-            );
+          // Generate smart insight based on actual data
+          let insight = 'No active deals found in your inbox.';
+          
+          if (data.deals.length > 0) {
+            const deal = data.deals[0];
+            if (deal.discount) {
+              insight = `${deal.brand}: ${deal.discount}% off ${deal.category || 'items'}`;
+            } else if (deal.savings) {
+              insight = `${deal.brand}: Save $${deal.savings} - ${deal.description || 'limited time'}`;
+            } else {
+              insight = deal.title;
+            }
             
-            deals = commerceInsights.slice(0, 3);
-            dealCount = deals.length;
+            if (totalDeals > 1) {
+              insight += ` and ${totalDeals - 1} more deals available`;
+            }
+          } else if (data.packages.length > 0) {
+            const pkg = data.packages[0];
+            insight = `Package from ${pkg.carrier}: ${pkg.status}`;
+            if (pkg.estimatedDelivery) {
+              insight += ` - arriving ${pkg.estimatedDelivery}`;
+            }
           }
-        } catch (apiError) {
-          console.log('Commerce API not available, using static data');
-        }
-        
-        // Fallback to realistic mock data if no real deals found
-        if (dealCount === 0) {
-          const mockDeals = [
-            'Amazon: Prime Day deals ending tonight',
-            'Nike: 25% off running gear',
-            'Starbucks: Buy one get one free',
-            'Target: Weekly specials on essentials',
-            'Best Buy: Tech deals up to 40% off'
-          ];
           
-          // Randomize and pick 2-3 deals to seem realistic
-          const shuffled = mockDeals.sort(() => 0.5 - Math.random());
-          deals = shuffled.slice(0, Math.floor(Math.random() * 2) + 2); // 2-3 deals
-          dealCount = deals.length;
+          document.getElementById('commerce-insight').textContent = insight;
+          
+          // Store commerce data for detailed view
+          window.homeOpsCommerceData = data;
+          
+        } else {
+          throw new Error('Invalid commerce intelligence response');
         }
-        
-        document.getElementById('deals-count').textContent = dealCount;
-        
-        // Generate insight
-        let insight = 'No active deals found in your inbox.';
-        if (dealCount > 0) {
-          if (deals.length > 0 && typeof deals[0] === 'string') {
-            // Mock data format
-            insight = deals[0];
-            if (dealCount > 1) {
-              insight += ` and ${dealCount - 1} more deals available.`;
-            }
-          } else {
-            // Real data format
-            const firstDeal = deals[0];
-            insight = firstDeal.title || firstDeal.description || 'Personalized deals detected';
-            if (dealCount > 1) {
-              insight += ` and ${dealCount - 1} more deals found in your emails.`;
-            }
-          }
-        }
-        
-        document.getElementById('commerce-insight').textContent = insight;
-        
-        // Store deals for other functions
-        window.homeOpsDeals = deals;
-        
       } catch (error) {
         console.error('Commerce loading error:', error);
         document.getElementById('deals-count').textContent = '?';
@@ -872,7 +840,119 @@
     }
 
     function openDeals() {
-      alert('Commerce intelligence coming soon!');
+      const commerceData = window.homeOpsCommerceData;
+      
+      if (!commerceData) {
+        alert('Loading commerce data... Please try again in a moment.');
+        return;
+      }
+      
+      // Create a detailed commerce modal
+      let modalContent = '<div style="max-height: 400px; overflow-y: auto;">';
+      
+      // Deals section
+      if (commerceData.deals.length > 0) {
+        modalContent += '<h3 style="color: #667eea; margin-bottom: 15px;">🎯 Active Deals</h3>';
+        commerceData.deals.forEach(deal => {
+          modalContent += `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+              <div style="font-weight: 600; margin-bottom: 5px;">${deal.title}</div>
+              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                ${deal.brand} ${deal.discount ? `- ${deal.discount}% off` : ''} ${deal.savings ? `Save $${deal.savings}` : ''}
+              </div>
+              <div style="font-size: 11px; color: #888;">${deal.description || ''}</div>
+              ${deal.expiry ? `<div style="font-size: 11px; color: #f56565; margin-top: 5px;">Expires: ${deal.expiry}</div>` : ''}
+            </div>
+          `;
+        });
+      }
+      
+      // Packages section
+      if (commerceData.packages.length > 0) {
+        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">📦 Package Tracking</h3>';
+        commerceData.packages.forEach(pkg => {
+          modalContent += `
+            <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+              <div style="font-weight: 600; margin-bottom: 5px;">${pkg.title}</div>
+              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                ${pkg.carrier} - ${pkg.status}
+              </div>
+              ${pkg.trackingNumber ? `<div style="font-size: 11px; color: #888;">Tracking: ${pkg.trackingNumber}</div>` : ''}
+              ${pkg.estimatedDelivery ? `<div style="font-size: 11px; color: #059669; margin-top: 5px;">Estimated delivery: ${pkg.estimatedDelivery}</div>` : ''}
+            </div>
+          `;
+        });
+      }
+      
+      // Price drops section  
+      if (commerceData.priceDrops.length > 0) {
+        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">💰 Price Drops</h3>';
+        commerceData.priceDrops.forEach(drop => {
+          modalContent += `
+            <div style="background: #fef7f0; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+              <div style="font-weight: 600; margin-bottom: 5px;">${drop.title}</div>
+              <div style="font-size: 12px; color: #666;">
+                ${drop.product} - ${drop.oldPrice ? `Was $${drop.oldPrice}` : ''} ${drop.newPrice ? `Now $${drop.newPrice}` : ''}
+              </div>
+              ${drop.savings ? `<div style="font-size: 11px; color: #059669; margin-top: 5px;">Save $${drop.savings}</div>` : ''}
+            </div>
+          `;
+        });
+      }
+      
+      // Recommendations section
+      if (commerceData.recommendations.length > 0) {
+        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">💡 Smart Recommendations</h3>';
+        commerceData.recommendations.forEach(rec => {
+          modalContent += `
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #166534;">${rec}</div>
+            </div>
+          `;
+        });
+      }
+      
+      // Total savings
+      if (commerceData.totalSavings > 0) {
+        modalContent += `
+          <div style="background: #667eea; color: white; border-radius: 8px; padding: 15px; margin-top: 20px; text-align: center;">
+            <div style="font-size: 14px; font-weight: 600;">Total Potential Savings</div>
+            <div style="font-size: 24px; font-weight: 700; margin-top: 5px;">$${commerceData.totalSavings}</div>
+          </div>
+        `;
+      }
+      
+      modalContent += '</div>';
+      
+      // Display in a simple modal (you could enhance this with a proper modal library)
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); z-index: 1000; display: flex; 
+        align-items: center; justify-content: center; padding: 20px;
+      `;
+      
+      const modalDialog = document.createElement('div');
+      modalDialog.style.cssText = `
+        background: white; border-radius: 16px; padding: 20px; 
+        max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
+      `;
+      
+      modalDialog.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="margin: 0; color: #2d3748;">🛍️ Smart Shopping</h2>
+          <button onclick="this.closest('[style*=fixed]').remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+        ${modalContent}
+      `;
+      
+      modal.appendChild(modalDialog);
+      document.body.appendChild(modal);
+      
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+      });
     }
 
     function openGmail() {
@@ -919,11 +999,32 @@
     }
 
     function viewDeals() {
-      alert('Opening personalized deals...');
+      openDeals(); // Use the new detailed commerce modal
     }
 
     function trackPackages() {
-      alert('Package tracking feature coming soon!');
+      const commerceData = window.homeOpsCommerceData;
+      
+      if (!commerceData || commerceData.packages.length === 0) {
+        alert('No packages found in your recent emails.');
+        return;
+      }
+      
+      let trackingInfo = 'Your Active Packages:\n\n';
+      commerceData.packages.forEach((pkg, index) => {
+        trackingInfo += `${index + 1}. ${pkg.title}\n`;
+        trackingInfo += `   Carrier: ${pkg.carrier}\n`;
+        trackingInfo += `   Status: ${pkg.status}\n`;
+        if (pkg.trackingNumber) {
+          trackingInfo += `   Tracking: ${pkg.trackingNumber}\n`;
+        }
+        if (pkg.estimatedDelivery) {
+          trackingInfo += `   Delivery: ${pkg.estimatedDelivery}\n`;
+        }
+        trackingInfo += '\n';
+      });
+      
+      alert(trackingInfo);
     }
 
     function orderUber() {

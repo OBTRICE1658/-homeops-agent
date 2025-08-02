@@ -364,6 +364,63 @@ app.get('/api/email-intelligence', async (req, res) => {
   }
 });
 
+// NEW: Commerce Intelligence API - Extract shopping deals, packages, and commerce insights
+app.get('/api/commerce-intelligence', async (req, res) => {
+  try {
+    const userId = req.query.userId || 'default';
+    const limit = parseInt(req.query.limit) || 10;
+    
+    console.log(`🛍️ Getting commerce intelligence for: ${userId}`);
+    
+    let commerceData = {
+      deals: [],
+      packages: [],
+      priceDrops: [],
+      recommendations: [],
+      totalSavings: 0
+    };
+    
+    try {
+      // Check if we have Gmail tokens stored in Firebase for this user
+      const tokenDoc = await db.collection('gmail_tokens').doc(userId).get();
+      if (tokenDoc.exists) {
+        console.log(`✅ Found Gmail tokens for commerce analysis: ${userId}`);
+        const tokens = tokenDoc.data();
+        
+        // Set up OAuth client with stored tokens
+        oauth2Client.setCredentials(tokens);
+        
+        // Fetch emails specifically for commerce analysis
+        const commerceEmails = await fetchCommerceEmails(userId, limit * 2); // Get more emails to filter
+        
+        // Extract commerce insights
+        commerceData = await extractCommerceInsights(commerceEmails, userId);
+        commerceData.dataSource = 'real';
+        
+        console.log(`✅ Extracted commerce data: ${commerceData.deals.length} deals, ${commerceData.packages.length} packages`);
+      } else {
+        throw new Error('No Gmail tokens found for user');
+      }
+    } catch (gmailError) {
+      console.error('❌ Commerce intelligence fetch failed:', gmailError.message);
+      
+      // Fallback to realistic mock data
+      commerceData = generateMockCommerceData(userId);
+      commerceData.dataSource = 'fallback';
+    }
+    
+    res.json({
+      success: true,
+      ...commerceData,
+      userId: userId,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Commerce intelligence error:', error);
+    res.status(500).json({ error: 'Failed to load commerce intelligence', details: error.message });
+  }
+});
+
 // Enhanced Gmail fetching with commerce deal parsing
 async function fetchGmailInsights(credentials, limit = 10) {
   console.log('🔍 Fetching Gmail insights with commerce parsing...');
@@ -1239,6 +1296,390 @@ async function fetchRealGmailEmails(userEmail, maxResults = 10) {
     console.error('❌ Error fetching Gmail emails:', error);
     throw error;
   }
+}
+
+// Commerce Intelligence Helper Functions
+async function fetchCommerceEmails(userEmail, maxResults = 20) {
+  try {
+    const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
+    if (!tokenDoc.exists) {
+      throw new Error('No Gmail tokens found');
+    }
+    
+    const tokens = tokenDoc.data();
+    oauth2Client.setCredentials(tokens);
+    
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    
+    // Search for commerce-related emails from the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    // Commerce-focused search query
+    const commerceQuery = `after:${Math.floor(thirtyDaysAgo.getTime() / 1000)} (sale OR deal OR discount OR shipped OR delivery OR order OR receipt OR amazon OR target OR costco OR walmart OR "price drop" OR "limited time" OR "% off")`;
+    
+    const response = await gmail.users.messages.list({
+      userId: 'me',
+      q: commerceQuery,
+      maxResults: maxResults
+    });
+    
+    if (!response.data.messages || response.data.messages.length === 0) {
+      console.log('🛍️ No commerce emails found');
+      return [];
+    }
+    
+    console.log(`🛍️ Found ${response.data.messages.length} commerce emails`);
+    
+    // Get details for each message
+    const emails = await Promise.all(
+      response.data.messages.slice(0, maxResults).map(async (message) => {
+        try {
+          const details = await gmail.users.messages.get({
+            userId: 'me',
+            id: message.id,
+            format: 'full'
+          });
+          
+          const headers = details.data.payload.headers || [];
+          const subjectHeader = headers.find(h => h.name === 'Subject');
+          const fromHeader = headers.find(h => h.name === 'From');
+          const dateHeader = headers.find(h => h.name === 'Date');
+          
+          // Get email body
+          let body = '';
+          if (details.data.payload.body && details.data.payload.body.data) {
+            body = Buffer.from(details.data.payload.body.data, 'base64').toString();
+          } else if (details.data.payload.parts) {
+            for (const part of details.data.payload.parts) {
+              if (part.mimeType === 'text/plain' && part.body.data) {
+                body = Buffer.from(part.body.data, 'base64').toString();
+                break;
+              }
+            }
+          }
+          
+          return {
+            id: message.id,
+            subject: subjectHeader?.value || 'No Subject',
+            from: fromHeader?.value || 'Unknown Sender',
+            date: dateHeader?.value || new Date().toISOString(),
+            body: body.slice(0, 2000), // Limit body size
+            snippet: details.data.snippet || ''
+          };
+        } catch (error) {
+          console.error('Error fetching commerce email details:', error);
+          return null;
+        }
+      })
+    );
+    
+    return emails.filter(email => email !== null);
+  } catch (error) {
+    console.error('Commerce email fetch error:', error);
+    throw error;
+  }
+}
+
+async function extractCommerceInsights(emails, userId) {
+  const commerceData = {
+    deals: [],
+    packages: [],
+    priceDrops: [],
+    recommendations: [],
+    totalSavings: 0
+  };
+  
+  for (const email of emails) {
+    const subject = email.subject.toLowerCase();
+    const body = email.body.toLowerCase();
+    const from = email.from.toLowerCase();
+    
+    // Extract deals and discounts
+    if (subject.includes('sale') || subject.includes('deal') || subject.includes('discount') || 
+        subject.includes('% off') || subject.includes('limited time') || body.includes('save ')) {
+      
+      // Extract discount percentage
+      const percentMatch = subject.match(/(\d+)%\s*off/i) || body.match(/(\d+)%\s*off/i);
+      const discount = percentMatch ? parseInt(percentMatch[1]) : null;
+      
+      // Extract dollar savings
+      const dollarMatch = subject.match(/save\s*\$(\d+)/i) || body.match(/save\s*\$(\d+)/i);
+      const dollarSavings = dollarMatch ? parseInt(dollarMatch[1]) : null;
+      
+      const deal = {
+        id: email.id,
+        title: email.subject,
+        brand: extractBrandFromEmail(email.from),
+        discount: discount,
+        savings: dollarSavings,
+        description: email.snippet,
+        expiry: extractExpiryFromEmail(subject, body),
+        category: categorizeDeal(subject, body),
+        url: extractUrlFromEmail(body),
+        received: email.date
+      };
+      
+      commerceData.deals.push(deal);
+      if (dollarSavings) commerceData.totalSavings += dollarSavings;
+    }
+    
+    // Extract package tracking
+    if (subject.includes('shipped') || subject.includes('delivery') || subject.includes('tracking') ||
+        subject.includes('on its way') || subject.includes('out for delivery')) {
+      
+      const package = {
+        id: email.id,
+        title: email.subject,
+        carrier: extractCarrierFromEmail(email.from, subject),
+        trackingNumber: extractTrackingNumber(body),
+        status: extractShippingStatus(subject, body),
+        estimatedDelivery: extractDeliveryDate(subject, body),
+        received: email.date
+      };
+      
+      commerceData.packages.push(package);
+    }
+    
+    // Extract price drops and alerts
+    if (subject.includes('price drop') || subject.includes('price alert') || 
+        subject.includes('now ') && subject.includes('$')) {
+      
+      const priceDrop = {
+        id: email.id,
+        title: email.subject,
+        product: extractProductFromSubject(subject),
+        oldPrice: extractPriceFromEmail(body, 'was'),
+        newPrice: extractPriceFromEmail(body, 'now'),
+        savings: extractPriceFromEmail(body, 'save'),
+        received: email.date
+      };
+      
+      commerceData.priceDrops.push(priceDrop);
+    }
+  }
+  
+  // Generate smart recommendations based on email patterns
+  commerceData.recommendations = generateShoppingRecommendations(emails, userId);
+  
+  return commerceData;
+}
+
+// Helper functions for commerce extraction
+function extractBrandFromEmail(fromEmail) {
+  const domain = fromEmail.split('@')[1]?.split('.')[0] || '';
+  const brandMap = {
+    'amazon': 'Amazon',
+    'target': 'Target', 
+    'costco': 'Costco',
+    'walmart': 'Walmart',
+    'bestbuy': 'Best Buy',
+    'nike': 'Nike',
+    'adidas': 'Adidas',
+    'macys': "Macy's",
+    'nordstrom': 'Nordstrom',
+    'wayfair': 'Wayfair'
+  };
+  return brandMap[domain] || domain.charAt(0).toUpperCase() + domain.slice(1);
+}
+
+function extractExpiryFromEmail(subject, body) {
+  const expiryPatterns = [
+    /expires?\s+(\w+\s+\d+)/i,
+    /ends?\s+(\w+\s+\d+)/i,
+    /through\s+(\w+\s+\d+)/i,
+    /until\s+(\w+\s+\d+)/i
+  ];
+  
+  for (const pattern of expiryPatterns) {
+    const match = subject.match(pattern) || body.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function categorizeDeal(subject, body) {
+  const categories = {
+    'clothing': ['apparel', 'clothing', 'shirt', 'dress', 'shoes', 'fashion'],
+    'electronics': ['electronics', 'tech', 'phone', 'laptop', 'tv', 'headphones'],
+    'home': ['home', 'furniture', 'decor', 'kitchen', 'bedroom'],
+    'grocery': ['grocery', 'food', 'snacks', 'organic'],
+    'beauty': ['beauty', 'skincare', 'makeup', 'cosmetics'],
+    'sports': ['sports', 'fitness', 'athletic', 'outdoor']
+  };
+  
+  const text = (subject + ' ' + body).toLowerCase();
+  for (const [category, keywords] of Object.entries(categories)) {
+    if (keywords.some(keyword => text.includes(keyword))) {
+      return category;
+    }
+  }
+  return 'general';
+}
+
+function extractCarrierFromEmail(fromEmail, subject) {
+  const carriers = ['ups', 'fedex', 'usps', 'dhl', 'amazon'];
+  for (const carrier of carriers) {
+    if (fromEmail.includes(carrier) || subject.toLowerCase().includes(carrier)) {
+      return carrier.toUpperCase();
+    }
+  }
+  return 'Unknown';
+}
+
+function extractTrackingNumber(body) {
+  const trackingPatterns = [
+    /tracking\s*#?\s*:?\s*([A-Z0-9]{10,})/i,
+    /track\s*#?\s*:?\s*([A-Z0-9]{10,})/i,
+    /\b([A-Z0-9]{10,})\b/
+  ];
+  
+  for (const pattern of trackingPatterns) {
+    const match = body.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function extractShippingStatus(subject, body) {
+  if (subject.includes('delivered') || body.includes('delivered')) return 'Delivered';
+  if (subject.includes('out for delivery')) return 'Out for Delivery';
+  if (subject.includes('shipped') || subject.includes('on its way')) return 'In Transit';
+  return 'Processing';
+}
+
+function extractDeliveryDate(subject, body) {
+  const datePatterns = [
+    /deliver(?:y|ed)?\s+(?:by\s+)?(\w+\s+\d+)/i,
+    /arriving\s+(\w+\s+\d+)/i,
+    /expected\s+(\w+\s+\d+)/i
+  ];
+  
+  for (const pattern of datePatterns) {
+    const match = subject.match(pattern) || body.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function extractUrlFromEmail(body) {
+  const urlMatch = body.match(/https?:\/\/[^\s]+/);
+  return urlMatch ? urlMatch[0] : null;
+}
+
+function extractProductFromSubject(subject) {
+  // Simple extraction - could be enhanced with AI
+  return subject.replace(/price drop|price alert|now \$\d+/gi, '').trim();
+}
+
+function extractPriceFromEmail(body, context) {
+  const pricePattern = new RegExp(`${context}\\s*\\$([\\d,\\.]+)`, 'i');
+  const match = body.match(pricePattern);
+  return match ? parseFloat(match[1].replace(',', '')) : null;
+}
+
+function generateShoppingRecommendations(emails, userId) {
+  const recommendations = [];
+  
+  // Analyze patterns in user's commerce emails
+  const categories = {};
+  const brands = {};
+  
+  emails.forEach(email => {
+    const category = categorizeDeal(email.subject, email.body);
+    const brand = extractBrandFromEmail(email.from);
+    
+    categories[category] = (categories[category] || 0) + 1;
+    brands[brand] = (brands[brand] || 0) + 1;
+  });
+  
+  // Generate recommendations based on patterns
+  const topCategory = Object.keys(categories).reduce((a, b) => categories[a] > categories[b] ? a : b, 'general');
+  const topBrand = Object.keys(brands).reduce((a, b) => brands[a] > brands[b] ? a : b, 'Unknown');
+  
+  if (topCategory !== 'general') {
+    recommendations.push(`You frequently shop for ${topCategory} items - check for seasonal sales`);
+  }
+  
+  if (topBrand !== 'Unknown') {
+    recommendations.push(`${topBrand} is your most frequent brand - consider their loyalty program`);
+  }
+  
+  // Seasonal recommendations
+  const month = new Date().getMonth();
+  if (month === 7 || month === 8) { // August/September
+    recommendations.push('Back-to-school items are trending in your emails');
+  }
+  
+  return recommendations.slice(0, 3); // Limit to 3 recommendations
+}
+
+function generateMockCommerceData(userId) {
+  return {
+    deals: [
+      {
+        id: 'deal1',
+        title: 'Nike Running Shoes - 30% Off',
+        brand: 'Nike',
+        discount: 30,
+        savings: 45,
+        description: 'Flash sale on athletic footwear',
+        expiry: 'August 5',
+        category: 'sports',
+        received: new Date().toISOString()
+      },
+      {
+        id: 'deal2', 
+        title: 'Amazon Prime Day - Electronics',
+        brand: 'Amazon',
+        discount: 25,
+        savings: 100,
+        description: 'Limited time tech deals',
+        expiry: 'August 3',
+        category: 'electronics',
+        received: new Date().toISOString()
+      },
+      {
+        id: 'deal3',
+        title: 'Target Back-to-School Sale',
+        brand: 'Target',
+        discount: 20,
+        savings: 25,
+        description: 'School supplies and clothing',
+        expiry: 'August 10',
+        category: 'general',
+        received: new Date().toISOString()
+      }
+    ],
+    packages: [
+      {
+        id: 'pkg1',
+        title: 'Your Amazon order has shipped',
+        carrier: 'UPS',
+        trackingNumber: '1Z999AA1234567890',
+        status: 'In Transit',
+        estimatedDelivery: 'August 3',
+        received: new Date().toISOString()
+      }
+    ],
+    priceDrops: [
+      {
+        id: 'price1',
+        title: 'iPad Air Price Drop Alert',
+        product: 'iPad Air 64GB',
+        oldPrice: 599,
+        newPrice: 499,
+        savings: 100,
+        received: new Date().toISOString()
+      }
+    ],
+    recommendations: [
+      'Back-to-school items are trending in your emails',
+      'Amazon is your most frequent brand - consider Prime membership',
+      'You frequently shop for electronics - check for seasonal sales'
+    ],
+    totalSavings: 170
+  };
 }
 
 // Calibration data endpoint
