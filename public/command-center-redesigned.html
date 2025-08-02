@@ -37,6 +37,31 @@
       background: rgba(0, 0, 0, 0.2);
       border-radius: 16px;
       backdrop-filter: blur(20px);
+      position: relative;
+    }
+
+    .header-refresh-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
 
     .hero-title {
@@ -136,6 +161,373 @@
       transition: all 0.2s ease;
       text-decoration: none;
       display: inline-block;
+    }
+
+    /* Mental Load Summary Styling - Simple Chief of Staff Briefing */
+    .mental-load-summary {
+      margin-top: 16px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .chief-briefing {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .briefing-greeting {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .date-range-display {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .load-meter-container {
+      margin: 16px 0;
+    }
+
+    .load-meter {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .load-meter-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .load-meter-fill.low {
+      background: linear-gradient(90deg, #4caf50, #66bb6a);
+    }
+
+    .load-meter-fill.medium {
+      background: linear-gradient(90deg, #ffc107, #ffca28);
+    }
+
+    .load-meter-fill.high {
+      background: linear-gradient(90deg, #ff6b6b, #ff8a80);
+    }
+
+    .load-meter-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .meter-value {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .recommendation {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 3px solid rgba(255, 255, 255, 0.4);
+      padding: 10px 12px;
+      margin-top: 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .overview-button {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .overview-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .mental-load-overview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .overview-modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .overview-header h3 {
+      margin: 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .close-overview {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .close-overview:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .overview-body {
+      padding: 20px 24px;
+    }
+
+    .overview-greeting {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .overview-assessment {
+      margin-bottom: 24px;
+    }
+
+    .assessment-light, .assessment-moderate, .assessment-heavy, .assessment-very-heavy {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .assessment-light { background: #f0f9ff; border-left: 4px solid #10b981; }
+    .assessment-moderate { background: #fffbeb; border-left: 4px solid #f59e0b; }
+    .assessment-heavy { background: #fef2f2; border-left: 4px solid #ef4444; }
+    .assessment-very-heavy { background: #fdf2f8; border-left: 4px solid #ec4899; }
+
+    .assessment-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .assessment-text {
+      flex: 1;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .overview-breakdown, .overview-insights, .overview-recommendations {
+      margin-bottom: 24px;
+    }
+
+    .overview-breakdown h4, .overview-insights h4, .overview-recommendations h4 {
+      margin: 0 0 12px 0;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .breakdown-item {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .breakdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .breakdown-title {
+      font-weight: 500;
+      color: #374151;
+      font-size: 13px;
+    }
+
+    .breakdown-score {
+      font-weight: 600;
+      color: #111827;
+      font-size: 13px;
+    }
+
+    .breakdown-bar {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .breakdown-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .breakdown-fill.low { background: #10b981; }
+    .breakdown-fill.medium { background: #f59e0b; }
+    .breakdown-fill.high { background: #ef4444; }
+
+    .breakdown-detail {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .overview-insights ul, .overview-recommendations ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #374151;
+    }
+
+    .overview-insights li, .overview-recommendations li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .overview-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .copy-overview-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .copy-overview-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    .date-filter-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .date-filter-content {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      color: #333;
+    }
+
+    .date-filter-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2d3748;
+    }
+
+    .date-preset {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .date-preset:hover {
+      background: #edf2f7;
+      border-color: #667eea;
+    }
+
+    .date-preset.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .chief-greeting {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      font-style: italic;
+      opacity: 0.9;
     }
 
     .action-btn:hover {
@@ -282,12 +674,34 @@
 <body>
   <div class="command-center">
     <div class="hero-header">
+      <button class="header-refresh-btn" onclick="loadDashboardData()">
+        <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+        Refresh
+      </button>
       <div class="time-greeting" id="greeting">Good morning!</div>
       <div class="hero-title">HomeOps Command Center</div>
       <div class="hero-subtitle">Your personalized daily dashboard</div>
     </div>
 
     <div class="action-grid">
+      <!-- Mental Load Summary Card - TOP PRIORITY -->
+      <div class="action-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <i data-lucide="brain" class="card-icon"></i>
+          <div class="card-title">Mental Load Summary</div>
+        </div>
+        <div class="card-content">
+          <div class="chief-greeting">Your weekly cognitive briefing...</div>
+          <div class="mental-load-summary" id="mental-load-content">
+            <div class="loading-summary">Analyzing your mental bandwidth...</div>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <div class="action-btn" onclick="event.stopPropagation(); showDateFilter()">Change Dates</div>
+          <div class="action-btn" onclick="event.stopPropagation(); refreshMentalLoad()">Refresh</div>
+        </div>
+      </div>
+
       <!-- Email Intelligence Card -->
       <div class="action-card" onclick="openEmailDetails()">
         <div class="card-header">
@@ -342,23 +756,6 @@
           <div class="action-btn" onclick="event.stopPropagation(); trackPackages()">Track Packages</div>
         </div>
       </div>
-
-      <!-- Quick Actions Card -->
-      <div class="action-card">
-        <div class="card-header">
-          <i data-lucide="zap" class="card-icon"></i>
-          <div class="card-title">Quick Actions</div>
-        </div>
-        <div class="card-content">
-          <div class="insight-text">Your most-used shortcuts based on patterns</div>
-        </div>
-        <div class="quick-actions">
-          <div class="action-btn" onclick="orderUber()">Book Uber</div>
-          <div class="action-btn" onclick="orderFood()">Order Lunch</div>
-          <div class="action-btn" onclick="checkWeather()">Weather</div>
-          <div class="action-btn" onclick="setReminder()">Set Reminder</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -404,34 +801,36 @@
       document.getElementById('top-emails-list').innerHTML = '<div class="loading-emails">🧠 AI is scanning for important emails...</div>';
       document.getElementById('weekly-summary').innerHTML = '<div class="loading-summary">🗓️ AI is analyzing your upcoming week...</div>';
       document.getElementById('commerce-insight').textContent = 'Finding deals...';
+      document.getElementById('mental-load-content').innerHTML = '<div class="loading-summary">Analyzing your mental bandwidth...</div>';
       
       try {
         // Load all data in parallel for better performance
         const loadPromises = [
           loadEmailIntelligence(userId).catch(e => console.error('Email load failed:', e)),
           loadCalendarEvents(userId).catch(e => console.error('Calendar load failed:', e)),
-          loadCommerceData(userId).catch(e => console.error('Commerce load failed:', e))
+          loadCommerceData(userId).catch(e => console.error('Commerce load failed:', e)),
+          loadMentalLoadSummary(userId).catch(e => console.error('Mental load summary failed:', e))
         ];
         
         await Promise.allSettled(loadPromises);
         
         console.log('✅ Dashboard data loading completed');
         
-        // Add refresh functionality
-        setTimeout(() => {
-          const refreshBtn = document.createElement('div');
-          refreshBtn.className = 'action-btn';
-          refreshBtn.textContent = '🔄 Refresh';
-          refreshBtn.style.position = 'fixed';
-          refreshBtn.style.top = '20px';
-          refreshBtn.style.right = '20px';
-          refreshBtn.style.zIndex = '1000';
-          refreshBtn.onclick = () => {
-            console.log('🔄 Manual refresh triggered');
-            loadDashboardData();
-          };
-          document.body.appendChild(refreshBtn);
-        }, 2000);
+        // Static refresh button now in header instead of dynamic one
+        // setTimeout(() => {
+        //   const refreshBtn = document.createElement('div');
+        //   refreshBtn.className = 'action-btn';
+        //   refreshBtn.textContent = '🔄 Refresh';
+        //   refreshBtn.style.position = 'fixed';
+        //   refreshBtn.style.top = '20px';
+        //   refreshBtn.style.right = '20px';
+        //   refreshBtn.style.zIndex = '1000';
+        //   refreshBtn.onclick = () => {
+        //     console.log('🔄 Manual refresh triggered');
+        //     loadDashboardData();
+        //   };
+        //   document.body.appendChild(refreshBtn);
+        // }, 2000);
         
       } catch (error) {
         console.error('Dashboard loading error:', error);
@@ -516,6 +915,7 @@
           
           // Store important emails for other functions
           window.homeOpsImportantEmails = importantEmails;
+          window.homeOpsEmailData = data; // Store full email data for mental load calculation
           
         } else {
           throw new Error('Invalid email intelligence response');
@@ -818,6 +1218,740 @@
       }
     }
 
+    async function loadMentalLoadSummary(userId, dateRange = null) {
+      try {
+        console.log('🧠 Generating mental load summary for user:', userId);
+        
+        const mentalLoadContent = document.getElementById('mental-load-content');
+        
+        // Simulate analyzing email patterns, calendar density, etc.
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Generate intelligent mental load insights with date range
+        const loadAnalysis = generateMentalLoadAnalysis(dateRange);
+        mentalLoadContent.innerHTML = loadAnalysis;
+        
+        // Refresh Lucide icons for the new content
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+        
+      } catch (error) {
+        console.error('Mental load summary error:', error);
+        document.getElementById('mental-load-content').innerHTML = `
+          <div class="loading-summary">❌ Unable to analyze mental load</div>
+        `;
+      }
+    }
+
+    function generateMentalLoadAnalysis(dateRange = null) {
+      try {
+        const firstName = localStorage.getItem('homeops_user_name')?.split(' ')[0] || 'there';
+        const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+        
+        // Set default date range to last 7 days
+        if (!dateRange) {
+          const endDate = new Date();
+          const startDate = new Date();
+          startDate.setDate(endDate.getDate() - 7);
+          dateRange = { start: startDate, end: endDate, label: 'Last 7 days' };
+        }
+        
+        // Get comprehensive mental load data
+        const mentalLoadData = calculateComprehensiveMentalLoad(userId, dateRange);
+      
+      // Build observations array
+      let observations = [];
+      
+      // Calendar events
+      if (mentalLoadData.calendarLoad.count === 0) {
+        observations.push("you had zero meetings");
+      } else if (mentalLoadData.calendarLoad.count <= 3) {
+        observations.push(`you had ${mentalLoadData.calendarLoad.count} calendar events`);
+      } else if (mentalLoadData.calendarLoad.count <= 8) {
+        observations.push(`you had a decent meeting load (${mentalLoadData.calendarLoad.count} events)`);
+      } else {
+        observations.push(`your calendar was packed with ${mentalLoadData.calendarLoad.count} events`);
+      }
+      
+      // Important emails
+      if (mentalLoadData.emailLoad.count === 0) {
+        observations.push("your inbox was clean");
+      } else if (mentalLoadData.emailLoad.count <= 2) {
+        observations.push(`you had ${mentalLoadData.emailLoad.count} important emails`);
+      } else {
+        observations.push(`your inbox was heavy with ${mentalLoadData.emailLoad.count} important emails`);
+      }
+      
+      // Chat interactions
+      if (mentalLoadData.chatLoad.count === 0) {
+        observations.push("you didn't use the AI assistant much");
+      } else if (mentalLoadData.chatLoad.count <= 5) {
+        observations.push(`you had ${mentalLoadData.chatLoad.count} AI conversations`);
+      } else {
+        observations.push(`you were actively using the AI assistant (${mentalLoadData.chatLoad.count} chats)`);
+      }
+      
+      // Task management
+      if (mentalLoadData.taskLoad.count === 0) {
+        observations.push("you weren't adding tasks");
+      } else if (mentalLoadData.taskLoad.count <= 3) {
+        observations.push(`you added ${mentalLoadData.taskLoad.count} tasks`);
+      } else {
+        observations.push(`you were busy creating tasks (${mentalLoadData.taskLoad.count} added)`);
+      }
+      
+      // Commerce/shopping
+      if (mentalLoadData.commerceLoad.count > 0) {
+        observations.push(`you were shopping (${mentalLoadData.commerceLoad.count} purchases/deals)`);
+      }
+      
+      // Context clues from usage patterns
+      if (mentalLoadData.contextLoad.insights.length > 0) {
+        observations.push(...mentalLoadData.contextLoad.insights);
+      }
+      
+      // Calculate total score and assessment
+      const totalScore = mentalLoadData.totalScore;
+      const percentage = Math.round((totalScore / 15) * 100); // Adjusted max to 15
+      
+      let assessment, recommendation, meterClass;
+      
+      if (totalScore <= 3) {
+        assessment = "You were cruising";
+        recommendation = "Perfect time for strategic work or planning ahead.";
+        meterClass = "low";
+      } else if (totalScore <= 7) {
+        assessment = "You were managing well";
+        recommendation = "Good balance - keep the momentum going.";
+        meterClass = "medium";
+      } else if (totalScore <= 11) {
+        assessment = "You were feeling the load";
+        recommendation = "Consider batching similar tasks and blocking focus time.";
+        meterClass = "high";
+      } else {
+        assessment = "You were in deep work mode";
+        recommendation = "Heavy activity detected - make sure to schedule recovery time.";
+        meterClass = "high";
+      }
+      
+      // Store breakdown data for the overview button
+      const breakdownData = {
+        calendar: { score: mentalLoadData.calendarLoad.score, max: 4, count: mentalLoadData.calendarLoad.count, label: 'events' },
+        emails: { score: mentalLoadData.emailLoad.score, max: 3, count: mentalLoadData.emailLoad.count, label: 'important' },
+        chats: { score: mentalLoadData.chatLoad.score, max: 3, count: mentalLoadData.chatLoad.count, label: 'conversations' },
+        tasks: { score: mentalLoadData.taskLoad.score, max: 2, count: mentalLoadData.taskLoad.count, label: 'added' },
+        commerce: { score: mentalLoadData.commerceLoad.score, max: 2, count: mentalLoadData.commerceLoad.count, label: 'items' },
+        context: { score: mentalLoadData.contextLoad.score, max: 1, count: 0, label: 'usage patterns' }
+      };
+      
+      // Store globally for the overview button
+      window.currentMentalLoadData = {
+        breakdown: breakdownData,
+        dateRange: dateRange.label,
+        totalScore: totalScore
+      };
+      
+        return `
+        <div class="chief-briefing">
+          <div class="briefing-greeting">Hey ${firstName}, here's your mental load:</div>
+          <div class="date-range-display">
+            <i data-lucide="calendar-range" style="width: 11px; height: 11px; margin-right: 4px; vertical-align: -1px;"></i>
+            ${dateRange.label} (${formatDateRange(dateRange.start, dateRange.end)})
+          </div>
+          <div style="margin-bottom: 12px; line-height: 1.4;">
+            ${observations.join(', ')}. ${assessment}.
+          </div>
+          
+          <div class="load-meter-container">
+            <div class="load-meter">
+              <div class="load-meter-fill ${meterClass}" style="width: ${percentage}%"></div>
+            </div>
+            <div class="load-meter-label">
+              <span>Mental Load</span>
+              <span class="meter-value">${totalScore}/15</span>
+            </div>
+          </div>
+          
+          <div class="recommendation">
+            <strong>What to do:</strong> ${recommendation}
+          </div>
+          
+          <div style="margin-top: 12px;">
+            <button class="overview-button" onclick="getMentalLoadOverview()">
+              <i data-lucide="bar-chart-3" style="width: 12px; height: 12px; margin-right: 4px;"></i>
+              Get Mental Load Overview
+            </button>
+          </div>
+        </div>
+      `;
+      
+      } catch (error) {
+        console.error('Error in generateMentalLoadAnalysis:', error);
+        return `<div class="loading-summary">❌ Unable to analyze mental load: ${error.message}</div>`;
+      }
+    }
+
+    function getEmailCountForDateRange(dateRange) {
+      // For now, use current data but in the future this would query historical data
+      const currentEmails = window.homeOpsImportantEmails?.length || 0;
+      
+      // Simulate historical variation based on date range
+      if (dateRange.label.includes('month ago')) {
+        return Math.max(0, currentEmails + Math.floor(Math.random() * 3) - 1);
+      } else if (dateRange.label.includes('weeks ago')) {
+        return Math.max(0, currentEmails + Math.floor(Math.random() * 2) - 1);
+      }
+      
+      return currentEmails;
+    }
+
+    function getEventCountForDateRange(dateRange) {
+      // For now, use current data but in the future this would query historical data
+      const currentEvents = window.homeOpsWeekEvents?.length || 0;
+      
+      // Simulate historical variation
+      if (dateRange.label.includes('month ago')) {
+        return Math.max(0, currentEvents + Math.floor(Math.random() * 5) - 2);
+      } else if (dateRange.label.includes('weeks ago')) {
+        return Math.max(0, currentEvents + Math.floor(Math.random() * 3) - 1);
+      }
+      
+      return currentEvents;
+    }
+
+    function getCommerceCountForDateRange(dateRange) {
+      // For now, use current data but in the future this would query historical data
+      const currentCommerce = (window.homeOpsCommerceData?.deals?.length || 0) + 
+                            (window.homeOpsCommerceData?.packages?.length || 0);
+      
+      // Simulate historical variation
+      if (dateRange.label.includes('month ago')) {
+        return Math.max(0, currentCommerce + Math.floor(Math.random() * 4) - 2);
+      } else if (dateRange.label.includes('weeks ago')) {
+        return Math.max(0, currentCommerce + Math.floor(Math.random() * 2) - 1);
+      }
+      
+      return currentCommerce;
+    }
+
+    function formatDateRange(start, end) {
+      const options = { month: 'short', day: 'numeric' };
+      return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
+    }
+
+    function calculateComprehensiveMentalLoad(userId, dateRange) {
+      // Get individual load components
+      const calendarLoad = getCalendarLoad(dateRange);
+      const emailLoad = getEmailLoad(dateRange);
+      const chatLoad = getChatInteractionCount(userId, dateRange);
+      const taskLoad = getTaskActivityCount(userId, dateRange);
+      const commerceLoad = getCommerceLoad(dateRange);
+      const contextLoad = analyzeContextualLoad(userId, dateRange);
+      
+      // Calculate total score (max 15)
+      const totalScore = calendarLoad.score + emailLoad.score + chatLoad.score + 
+                        taskLoad.score + commerceLoad.score + contextLoad.score;
+      
+      return {
+        totalScore,
+        calendarLoad,
+        emailLoad,
+        chatLoad,
+        taskLoad,
+        commerceLoad,
+        contextLoad
+      };
+    }
+
+    function getCalendarLoad(dateRange) {
+      const count = getEventCountForDateRange(dateRange);
+      let score = 0;
+      
+      if (count === 0) score = 0;
+      else if (count <= 3) score = 1;
+      else if (count <= 8) score = 2;
+      else if (count <= 15) score = 3;
+      else score = 4;
+      
+      return { count, score };
+    }
+
+    function getEmailLoad(dateRange) {
+      const count = getEmailCountForDateRange(dateRange);
+      let score = 0;
+      
+      if (count === 0) score = 0;
+      else if (count <= 2) score = 1;
+      else if (count <= 5) score = 2;
+      else score = 3;
+      
+      return { count, score };
+    }
+
+    function getChatInteractionCount(userId, dateRange) {
+      // Simulate chat interaction data - in reality this would query HomeOps chat logs
+      const chatSessions = localStorage.getItem(`homeops_chat_sessions_${userId}`) || '[]';
+      let count = 0;
+      
+      try {
+        const sessions = JSON.parse(chatSessions);
+        count = sessions.filter(session => {
+          const sessionDate = new Date(session.timestamp);
+          return sessionDate >= dateRange.start && sessionDate <= dateRange.end;
+        }).length;
+      } catch (e) {
+        // Fallback to simulated data based on time range
+        const daysDiff = Math.ceil((dateRange.end - dateRange.start) / (1000 * 60 * 60 * 24));
+        count = Math.floor(Math.random() * Math.min(daysDiff * 2, 15));
+      }
+      
+      let score = 0;
+      if (count === 0) score = 0;
+      else if (count <= 3) score = 1;
+      else if (count <= 8) score = 2;
+      else score = 3;
+      
+      return { count, score };
+    }
+
+    function getTaskActivityCount(userId, dateRange) {
+      // Simulate task activity data - in reality this would query task management system
+      const tasks = localStorage.getItem(`homeops_tasks_${userId}`) || '[]';
+      let count = 0;
+      
+      try {
+        const taskList = JSON.parse(tasks);
+        count = taskList.filter(task => {
+          const taskDate = new Date(task.created);
+          return taskDate >= dateRange.start && taskDate <= dateRange.end;
+        }).length;
+      } catch (e) {
+        // Fallback to simulated data
+        const daysDiff = Math.ceil((dateRange.end - dateRange.start) / (1000 * 60 * 60 * 24));
+        count = Math.floor(Math.random() * Math.min(daysDiff * 0.8, 10));
+      }
+      
+      let score = 0;
+      if (count === 0) score = 0;
+      else if (count <= 2) score = 1;
+      else score = 2;
+      
+      return { count, score };
+    }
+
+    function getCommerceLoad(dateRange) {
+      const count = getCommerceCountForDateRange(dateRange);
+      let score = 0;
+      
+      if (count === 0) score = 0;
+      else if (count <= 2) score = 1;
+      else score = 2;
+      
+      return { count, score };
+    }
+
+    function analyzeContextualLoad(userId, dateRange) {
+      // Analyze usage patterns and context clues
+      let insights = [];
+      let score = 0;
+      
+      // Check for intensive usage patterns
+      const pageViews = localStorage.getItem(`homeops_page_views_${userId}`) || '0';
+      const sessionTime = localStorage.getItem(`homeops_session_time_${userId}`) || '0';
+      
+      if (parseInt(pageViews) > 50) {
+        insights.push("you were heavily using HomeOps");
+        score = 1;
+      } else if (parseInt(sessionTime) > 3600) { // More than 1 hour
+        insights.push("you spent significant time in HomeOps");
+        score = 1;
+      }
+      
+      // Check for stress indicators in usage
+      const quickActions = localStorage.getItem(`homeops_quick_actions_${userId}`) || '0';
+      if (parseInt(quickActions) > 10) {
+        insights.push("you were frequently using quick actions");
+        score = 1;
+      }
+      
+      return { insights, score };
+    }
+
+    function getMentalLoadOverview() {
+      try {
+        if (!window.currentMentalLoadData) {
+          showToast('No mental load data available. Please refresh and try again.');
+          return;
+        }
+        
+        const { breakdown: breakdownData, dateRange: dateRangeLabel, totalScore } = window.currentMentalLoadData;
+        const firstName = localStorage.getItem('homeops_user_name')?.split(' ')[0] || 'there';
+        
+        // Create modal for the overview
+        const modal = document.createElement('div');
+        modal.className = 'mental-load-overview-modal';
+        modal.innerHTML = `
+          <div class="overview-modal-content">
+            <div class="overview-header">
+              <h3>Mental Load Overview</h3>
+              <button class="close-overview" onclick="this.parentElement.parentElement.parentElement.remove()">
+                <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+            
+            <div class="overview-body">
+              <div class="overview-greeting">
+                Hey ${firstName}, here's your detailed cognitive briefing for ${dateRangeLabel}:
+              </div>
+              
+              <div class="overview-assessment">
+                ${getOverallAssessment(totalScore)}
+              </div>
+              
+              <div class="overview-breakdown">
+                <h4>Load Analysis</h4>
+                ${generateBreakdownDisplay(breakdownData)}
+              </div>
+              
+              <div class="overview-insights">
+                <h4>Key Insights</h4>
+                ${generateInsights(breakdownData, totalScore)}
+              </div>
+              
+              <div class="overview-recommendations">
+                <h4>Recommendations</h4>
+                ${generateRecommendations(breakdownData, totalScore)}
+              </div>
+            </div>
+            
+            <div class="overview-footer">
+              <button class="copy-overview-btn" onclick="copyOverviewToClipboard()">
+                <i data-lucide="copy" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                Copy Summary
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+        
+      } catch (e) {
+        console.error('Error generating overview:', e);
+        showToast('Error generating overview. Please try again.');
+      }
+    }
+
+    function getOverallAssessment(totalScore) {
+      if (totalScore <= 3) {
+        return `
+          <div class="assessment-light">
+            <div class="assessment-icon">🟢</div>
+            <div class="assessment-text">
+              <strong>Light Load (${totalScore}/15)</strong><br>
+              You had a calm period with minimal cognitive demands. This is perfect for strategic thinking and planning ahead.
+            </div>
+          </div>
+        `;
+      } else if (totalScore <= 7) {
+        return `
+          <div class="assessment-moderate">
+            <div class="assessment-icon">🟡</div>
+            <div class="assessment-text">
+              <strong>Moderate Load (${totalScore}/15)</strong><br>
+              You had a balanced workload with manageable demands across different areas. Good equilibrium.
+            </div>
+          </div>
+        `;
+      } else if (totalScore <= 11) {
+        return `
+          <div class="assessment-heavy">
+            <div class="assessment-icon">🟠</div>
+            <div class="assessment-text">
+              <strong>Heavy Load (${totalScore}/15)</strong><br>
+              You were dealing with significant cognitive demands. Consider optimizing your workflow and batching tasks.
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="assessment-very-heavy">
+            <div class="assessment-icon">🔴</div>
+            <div class="assessment-text">
+              <strong>Very Heavy Load (${totalScore}/15)</strong><br>
+              You were in deep work mode with high cognitive demands. Make sure to schedule recovery time.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function generateBreakdownDisplay(breakdownData) {
+      return `
+        <div class="breakdown-grid">
+          ${Object.entries(breakdownData).map(([key, data]) => {
+            const percentage = Math.round((data.score / data.max) * 100);
+            const barClass = percentage >= 75 ? 'high' : percentage >= 50 ? 'medium' : 'low';
+            
+            return `
+              <div class="breakdown-item">
+                <div class="breakdown-header">
+                  <span class="breakdown-title">${capitalizeFirst(key)}</span>
+                  <span class="breakdown-score">${data.score}/${data.max}</span>
+                </div>
+                <div class="breakdown-bar">
+                  <div class="breakdown-fill ${barClass}" style="width: ${percentage}%"></div>
+                </div>
+                <div class="breakdown-detail">${data.count} ${data.label}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function generateInsights(breakdownData, totalScore) {
+      let insights = [];
+      
+      // Find highest load area
+      const areas = Object.entries(breakdownData).map(([name, data]) => ({
+        name: capitalizeFirst(name),
+        percentage: Math.round((data.score / data.max) * 100),
+        score: data.score,
+        count: data.count
+      }));
+      
+      const topArea = areas.reduce((prev, current) => 
+        current.percentage > prev.percentage ? current : prev
+      );
+      
+      if (topArea.percentage > 0) {
+        insights.push(`Your highest load area was <strong>${topArea.name}</strong> at ${topArea.percentage}% capacity`);
+      }
+      
+      // Activity patterns
+      if (breakdownData.chats.score >= 2) {
+        insights.push(`You were actively using AI assistance - great for productivity optimization`);
+      }
+      
+      if (breakdownData.tasks.score >= 1) {
+        insights.push(`You were in task creation mode, indicating planning and organization activity`);
+      }
+      
+      if (breakdownData.commerce.score >= 1) {
+        insights.push(`You had shopping/commerce activity, adding decision-making load`);
+      }
+      
+      return insights.length > 0 ? 
+        `<ul>${insights.map(insight => `<li>${insight}</li>`).join('')}</ul>` :
+        `<p>Your load was evenly distributed across activities.</p>`;
+    }
+
+    function generateRecommendations(breakdownData, totalScore) {
+      let recommendations = [];
+      
+      if (breakdownData.calendar.score >= 3) {
+        recommendations.push(`<strong>Calendar:</strong> Consider batching meetings and blocking focus time`);
+      }
+      
+      if (breakdownData.emails.score >= 2) {
+        recommendations.push(`<strong>Email:</strong> Schedule dedicated email processing windows (2-3 times daily)`);
+      }
+      
+      if (totalScore >= 10) {
+        recommendations.push(`<strong>Recovery:</strong> Schedule downtime and avoid overloading your schedule`);
+      }
+      
+      if (totalScore <= 4) {
+        recommendations.push(`<strong>Opportunity:</strong> Great time for strategic work or learning new skills`);
+      }
+      
+      if (breakdownData.tasks.score >= 2) {
+        recommendations.push(`<strong>Tasks:</strong> Consider using time-blocking to tackle your task list efficiently`);
+      }
+      
+      return recommendations.length > 0 ? 
+        `<ul>${recommendations.map(rec => `<li>${rec}</li>`).join('')}</ul>` :
+        `<p>Keep maintaining your current balanced approach.</p>`;
+    }
+
+    function capitalizeFirst(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function copyOverviewToClipboard() {
+      if (!window.currentMentalLoadData) return;
+      
+      const { breakdown: breakdownData, dateRange: dateRangeLabel, totalScore } = window.currentMentalLoadData;
+      const firstName = localStorage.getItem('homeops_user_name')?.split(' ')[0] || 'there';
+      
+      // Generate text version for clipboard
+      let text = `Mental Load Overview - ${dateRangeLabel}\n\n`;
+      text += `Hey ${firstName}, here's your cognitive briefing:\n\n`;
+      
+      // Assessment
+      if (totalScore <= 3) text += `🟢 Light Load (${totalScore}/15) - Calm period, perfect for strategic work\n`;
+      else if (totalScore <= 7) text += `🟡 Moderate Load (${totalScore}/15) - Balanced workload\n`;
+      else if (totalScore <= 11) text += `🟠 Heavy Load (${totalScore}/15) - Significant demands, optimize workflow\n`;
+      else text += `🔴 Very Heavy Load (${totalScore}/15) - High demands, schedule recovery\n`;
+      
+      text += `\nBreakdown:\n`;
+      Object.entries(breakdownData).forEach(([key, data]) => {
+        const pct = Math.round((data.score / data.max) * 100);
+        text += `• ${capitalizeFirst(key)}: ${data.score}/${data.max} (${pct}%) - ${data.count} ${data.label}\n`;
+      });
+      
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Overview copied to clipboard! 📋');
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-size: 13px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      // Animate in
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      }, 100);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function showDateFilter() {
+      const modal = document.createElement('div');
+      modal.className = 'date-filter-modal';
+      
+      const today = new Date();
+      const datePresets = [
+        {
+          label: 'Last 7 days',
+          start: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000),
+          end: today
+        },
+        {
+          label: 'Last 14 days',
+          start: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000),
+          end: today
+        },
+        {
+          label: 'Last 30 days',
+          start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000),
+          end: today
+        },
+        {
+          label: '2 weeks ago',
+          start: new Date(today.getTime() - 21 * 24 * 60 * 60 * 1000),
+          end: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000)
+        },
+        {
+          label: '1 month ago',
+          start: new Date(today.getTime() - 37 * 24 * 60 * 60 * 1000),
+          end: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+        }
+      ];
+      
+      let presetsHTML = '';
+      datePresets.forEach((preset, index) => {
+        const isDefault = index === 0;
+        presetsHTML += `
+          <div class="date-preset ${isDefault ? 'active' : ''}" onclick="selectDateRange(${index})">
+            <div style="font-weight: 600; margin-bottom: 4px;">${preset.label}</div>
+            <div style="font-size: 12px; opacity: 0.7;">${formatDateRange(preset.start, preset.end)}</div>
+          </div>
+        `;
+      });
+      
+      modal.innerHTML = `
+        <div class="date-filter-content">
+          <div class="date-filter-title">
+            <i data-lucide="calendar" style="width: 20px; height: 20px; margin-right: 8px; vertical-align: -3px;"></i>
+            Select Time Period
+          </div>
+          ${presetsHTML}
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button onclick="this.closest('.date-filter-modal').remove()" style="flex: 1; padding: 10px; border: 2px solid #e2e8f0; background: white; border-radius: 8px; cursor: pointer;">Cancel</button>
+            <button onclick="applyDateFilter()" style="flex: 1; padding: 10px; border: 2px solid #667eea; background: #667eea; color: white; border-radius: 8px; cursor: pointer;">Apply</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Store presets globally for selection
+      window.homeOpsDatePresets = datePresets;
+      window.homeOpsSelectedDateRange = 0; // Default to first preset
+      
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+      
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+      });
+    }
+
+    function selectDateRange(index) {
+      // Remove active class from all presets
+      document.querySelectorAll('.date-preset').forEach(preset => {
+        preset.classList.remove('active');
+      });
+      
+      // Add active class to selected preset
+      document.querySelectorAll('.date-preset')[index].classList.add('active');
+      
+      // Store selection
+      window.homeOpsSelectedDateRange = index;
+    }
+
+    function applyDateFilter() {
+      const selectedIndex = window.homeOpsSelectedDateRange || 0;
+      const selectedRange = window.homeOpsDatePresets[selectedIndex];
+      
+      // Close modal
+      document.querySelector('.date-filter-modal').remove();
+      
+      // Update mental load with new date range
+      const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+      loadMentalLoadSummary(userId, selectedRange);
+    }
+
+    function refreshMentalLoad() {
+      console.log('🔄 Refreshing mental load summary...');
+      const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+      loadMentalLoadSummary(userId);
+    }
+
     function showError(message) {
       const errorDiv = document.createElement('div');
       errorDiv.className = 'error';
@@ -847,21 +1981,110 @@
         return;
       }
       
-      // Create a detailed commerce modal
-      let modalContent = '<div style="max-height: 400px; overflow-y: auto;">';
+      // Create a detailed commerce modal with better styling
+      let modalContent = '<div style="max-height: 500px; overflow-y: auto; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">';
       
       // Deals section
       if (commerceData.deals.length > 0) {
-        modalContent += '<h3 style="color: #667eea; margin-bottom: 15px;">🎯 Active Deals</h3>';
+        modalContent += `
+          <div style="display: flex; align-items: center; margin-bottom: 20px;">
+            <i data-lucide="tag" style="width: 20px; height: 20px; color: #667eea; margin-right: 8px;"></i>
+            <h3 style="color: #2d3748; margin: 0; font-size: 18px; font-weight: 600;">Active Deals</h3>
+          </div>
+        `;
+        
         commerceData.deals.forEach(deal => {
           modalContent += `
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-              <div style="font-weight: 600; margin-bottom: 5px;">${deal.title}</div>
-              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
-                ${deal.brand} ${deal.discount ? `- ${deal.discount}% off` : ''} ${deal.savings ? `Save $${deal.savings}` : ''}
+            <div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; flex: 1;">
+                  <i data-lucide="shopping-bag" style="width: 16px; height: 16px; color: #667eea; margin-right: 8px;"></i>
+                  <div style="font-weight: 700; font-size: 16px; color: #2d3748; line-height: 1.4;">${deal.title}</div>
+                </div>
+                ${deal.badge ? `
+                  <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;">
+                    ${deal.badge}
+                  </span>
+                ` : ''}
               </div>
-              <div style="font-size: 11px; color: #888;">${deal.description || ''}</div>
-              ${deal.expiry ? `<div style="font-size: 11px; color: #f56565; margin-top: 5px;">Expires: ${deal.expiry}</div>` : ''}
+              
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <i data-lucide="store" style="width: 14px; height: 14px; color: #666; margin-right: 6px;"></i>
+                <span style="font-size: 14px; color: #4a5568; font-weight: 500;">${deal.brand}</span>
+                ${deal.discount ? `
+                  <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 8px;">
+                    ${deal.discount}
+                  </span>
+                ` : ''}
+              </div>
+              
+              <!-- Enhanced Scoring Display -->
+              ${deal.compositeScore ? `
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 13px; color: #64748b; font-weight: 500;">Deal Quality Score</span>
+                    <span style="font-size: 14px; color: #1e293b; font-weight: 600;">${Math.round(deal.compositeScore * 100)}/100</span>
+                  </div>
+                  <div style="display: flex; gap: 8px; font-size: 12px;">
+                    <div style="display: flex; align-items: center;">
+                      <span style="color: #64748b;">Offer:</span>
+                      <span style="color: #059669; font-weight: 600; margin-left: 4px;">${Math.round((deal.offerScore || 0) * 100)}</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                      <span style="color: #64748b;">Email:</span>
+                      <span style="color: #059669; font-weight: 600; margin-left: 4px;">${Math.round((deal.emailQualityScore || 0) * 100)}</span>
+                    </div>
+                    ${deal.isDTC ? `
+                      <div style="display: flex; align-items: center;">
+                        <span style="color: #64748b;">DTC Boost:</span>
+                        <span style="color: #7c3aed; font-weight: 600; margin-left: 4px;">+10</span>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              ` : ''}
+              
+              ${deal.description ? `
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px; line-height: 1.4;">
+                  ${deal.description.substring(0, 120)}${deal.description.length > 120 ? '...' : ''}
+                </div>
+              ` : ''}
+              
+              ${deal.expires ? `
+                <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                  <i data-lucide="clock" style="width: 14px; height: 14px; color: #ef4444; margin-right: 6px;"></i>
+                  <span style="font-size: 13px; color: #ef4444; font-weight: 500;">Expires: ${deal.expires}</span>
+                  ${deal.emailFrequency ? `
+                    <span style="color: #64748b; margin-left: 12px; font-size: 12px;">
+                      (${deal.emailFrequency} email${deal.emailFrequency !== 1 ? 's' : ''} this week)
+                    </span>
+                  ` : ''}
+                </div>
+              ` : ''}
+              
+              <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                ${deal.url ? `
+                  <a href="${deal.url}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; background: #667eea; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+                    <i data-lucide="external-link" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                    View Deal
+                  </a>
+                ` : `
+                  <button onclick="searchForDeal('${deal.brand}', '${deal.title.replace(/'/g, '\\\'')}')" style="display: inline-flex; align-items: center; background: #667eea; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+                    <i data-lucide="search" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                    Find Deal
+                  </button>
+                `}
+                
+                <button onclick="saveDealForLater('${deal.id}', '${deal.title.replace(/'/g, '\\\'')}')" style="display: inline-flex; align-items: center; background: #10b981; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+                  <i data-lucide="bookmark" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                  Save
+                </button>
+                
+                <button onclick="shareDeal('${deal.brand}', '${deal.title.replace(/'/g, '\\\'')}')" style="display: inline-flex; align-items: center; background: #6366f1; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+                  <i data-lucide="share-2" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                  Share
+                </button>
+              </div>
             </div>
           `;
         });
@@ -869,16 +2092,39 @@
       
       // Packages section
       if (commerceData.packages.length > 0) {
-        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">📦 Package Tracking</h3>';
+        modalContent += `
+          <div style="display: flex; align-items: center; margin: 30px 0 20px 0;">
+            <i data-lucide="package" style="width: 20px; height: 20px; color: #667eea; margin-right: 8px;"></i>
+            <h3 style="color: #2d3748; margin: 0; font-size: 18px; font-weight: 600;">Package Tracking</h3>
+          </div>
+        `;
+        
         commerceData.packages.forEach(pkg => {
           modalContent += `
-            <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-              <div style="font-weight: 600; margin-bottom: 5px;">${pkg.title}</div>
-              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
-                ${pkg.carrier} - ${pkg.status}
+            <div style="background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <i data-lucide="truck" style="width: 16px; height: 16px; color: #0ea5e9; margin-right: 8px;"></i>
+                <div style="font-weight: 700; font-size: 16px; color: #2d3748;">${pkg.title}</div>
               </div>
-              ${pkg.trackingNumber ? `<div style="font-size: 11px; color: #888;">Tracking: ${pkg.trackingNumber}</div>` : ''}
-              ${pkg.estimatedDelivery ? `<div style="font-size: 11px; color: #059669; margin-top: 5px;">Estimated delivery: ${pkg.estimatedDelivery}</div>` : ''}
+              
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <i data-lucide="map-pin" style="width: 14px; height: 14px; color: #666; margin-right: 6px;"></i>
+                <span style="font-size: 14px; color: #4a5568;">${pkg.carrier} - ${pkg.status}</span>
+              </div>
+              
+              ${pkg.trackingNumber ? `
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <i data-lucide="hash" style="width: 14px; height: 14px; color: #666; margin-right: 6px;"></i>
+                  <span style="font-size: 13px; color: #6b7280; font-family: monospace;">${pkg.trackingNumber}</span>
+                </div>
+              ` : ''}
+              
+              ${pkg.estimatedDelivery ? `
+                <div style="display: flex; align-items: center;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px; color: #10b981; margin-right: 6px;"></i>
+                  <span style="font-size: 13px; color: #10b981; font-weight: 500;">Estimated delivery: ${pkg.estimatedDelivery}</span>
+                </div>
+              ` : ''}
             </div>
           `;
         });
@@ -886,15 +2132,38 @@
       
       // Price drops section  
       if (commerceData.priceDrops.length > 0) {
-        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">💰 Price Drops</h3>';
+        modalContent += `
+          <div style="display: flex; align-items: center; margin: 30px 0 20px 0;">
+            <i data-lucide="trending-down" style="width: 20px; height: 20px; color: #667eea; margin-right: 8px;"></i>
+            <h3 style="color: #2d3748; margin: 0; font-size: 18px; font-weight: 600;">Price Drops</h3>
+          </div>
+        `;
+        
         commerceData.priceDrops.forEach(drop => {
           modalContent += `
-            <div style="background: #fef7f0; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-              <div style="font-weight: 600; margin-bottom: 5px;">${drop.title}</div>
-              <div style="font-size: 12px; color: #666;">
-                ${drop.product} - ${drop.oldPrice ? `Was $${drop.oldPrice}` : ''} ${drop.newPrice ? `Now $${drop.newPrice}` : ''}
+            <div style="background: #fef7f0; border: 2px solid #fed7aa; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <i data-lucide="arrow-down" style="width: 16px; height: 16px; color: #f59e0b; margin-right: 8px;"></i>
+                <div style="font-weight: 700; font-size: 16px; color: #2d3748;">${drop.title}</div>
               </div>
-              ${drop.savings ? `<div style="font-size: 11px; color: #059669; margin-top: 5px;">Save $${drop.savings}</div>` : ''}
+              
+              <div style="font-size: 14px; color: #4a5568; margin-bottom: 8px;">
+                ${drop.product}
+              </div>
+              
+              <div style="display: flex; align-items: center; gap: 12px;">
+                ${drop.oldPrice ? `
+                  <span style="font-size: 14px; color: #6b7280; text-decoration: line-through;">Was $${drop.oldPrice}</span>
+                ` : ''}
+                ${drop.newPrice ? `
+                  <span style="font-size: 16px; color: #10b981; font-weight: 600;">Now $${drop.newPrice}</span>
+                ` : ''}
+                ${drop.savings ? `
+                  <span style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                    Save $${drop.savings}
+                  </span>
+                ` : ''}
+              </div>
             </div>
           `;
         });
@@ -902,11 +2171,32 @@
       
       // Recommendations section
       if (commerceData.recommendations.length > 0) {
-        modalContent += '<h3 style="color: #667eea; margin: 20px 0 15px 0;">💡 Smart Recommendations</h3>';
+        modalContent += `
+          <div style="display: flex; align-items: center; margin: 30px 0 20px 0;">
+            <i data-lucide="lightbulb" style="width: 20px; height: 20px; color: #667eea; margin-right: 8px;"></i>
+            <h3 style="color: #2d3748; margin: 0; font-size: 18px; font-weight: 600;">Smart Recommendations</h3>
+          </div>
+        `;
+        
         commerceData.recommendations.forEach(rec => {
+          // Handle both string and object formats for backwards compatibility
+          const displayText = typeof rec === 'string' ? rec : 
+            `${rec.brand} - ${rec.reason}`;
+          const isDTC = typeof rec === 'object' && rec.isDTC;
+          
           modalContent += `
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
-              <div style="font-size: 12px; color: #166534;">${rec}</div>
+            <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; flex: 1;">
+                  <i data-lucide="sparkles" style="width: 14px; height: 14px; color: #10b981; margin-right: 8px;"></i>
+                  <span style="font-size: 14px; color: #166534; font-weight: 500; line-height: 1.4;">${displayText}</span>
+                </div>
+                ${isDTC ? `
+                  <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px;">
+                    DTC
+                  </span>
+                ` : ''}
+              </div>
             </div>
           `;
         });
@@ -915,39 +2205,55 @@
       // Total savings
       if (commerceData.totalSavings > 0) {
         modalContent += `
-          <div style="background: #667eea; color: white; border-radius: 8px; padding: 15px; margin-top: 20px; text-align: center;">
-            <div style="font-size: 14px; font-weight: 600;">Total Potential Savings</div>
-            <div style="font-size: 24px; font-weight: 700; margin-top: 5px;">$${commerceData.totalSavings}</div>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; padding: 20px; margin-top: 24px; text-align: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+              <i data-lucide="piggy-bank" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+              <span style="font-size: 16px; font-weight: 600;">Total Potential Savings</span>
+            </div>
+            <div style="font-size: 32px; font-weight: 800; margin-top: 8px;">$${commerceData.totalSavings}</div>
           </div>
         `;
       }
       
       modalContent += '</div>';
       
-      // Display in a simple modal (you could enhance this with a proper modal library)
+      // Display in a modal with better styling
       const modal = document.createElement('div');
       modal.style.cssText = `
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: rgba(0,0,0,0.5); z-index: 1000; display: flex; 
+        background: rgba(0,0,0,0.6); z-index: 1000; display: flex; 
         align-items: center; justify-content: center; padding: 20px;
+        backdrop-filter: blur(4px);
       `;
       
       const modalDialog = document.createElement('div');
       modalDialog.style.cssText = `
-        background: white; border-radius: 16px; padding: 20px; 
-        max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
+        background: white; border-radius: 20px; padding: 24px; 
+        max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: 1px solid #e5e7eb;
       `;
       
       modalDialog.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h2 style="margin: 0; color: #2d3748;">🛍️ Smart Shopping</h2>
-          <button onclick="this.closest('[style*=fixed]').remove()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 2px solid #f1f5f9; padding-bottom: 16px;">
+          <div style="display: flex; align-items: center;">
+            <i data-lucide="shopping-bag" style="width: 24px; height: 24px; color: #667eea; margin-right: 12px;"></i>
+            <h2 style="margin: 0; color: #2d3748; font-size: 24px; font-weight: 700;">Smart Shopping</h2>
+          </div>
+          <button onclick="this.closest('[style*=fixed]').remove()" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+            <i data-lucide="x" style="width: 18px; height: 18px; color: #64748b;"></i>
+          </button>
         </div>
         ${modalContent}
       `;
       
       modal.appendChild(modalDialog);
       document.body.appendChild(modal);
+      
+      // Initialize Lucide icons in the modal
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
       
       // Close on background click
       modal.addEventListener('click', (e) => {
@@ -1044,6 +2350,124 @@
       if (reminder) {
         alert(`Reminder set: "${reminder}"`);
       }
+    }
+
+    // Smart Shopping Deal Actions
+    function searchForDeal(brand, dealTitle) {
+      const searchQuery = `${brand} ${dealTitle} sale deal`;
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+      window.open(searchUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    function saveDealForLater(dealId, dealTitle) {
+      // Save to localStorage for now (could be enhanced with backend storage)
+      let savedDeals = JSON.parse(localStorage.getItem('homeops_saved_deals') || '[]');
+      
+      const dealToSave = {
+        id: dealId,
+        title: dealTitle,
+        savedAt: new Date().toISOString(),
+        source: 'smart_shopping'
+      };
+      
+      // Check if already saved
+      const alreadySaved = savedDeals.some(deal => deal.id === dealId);
+      if (alreadySaved) {
+        alert('This deal is already saved!');
+        return;
+      }
+      
+      savedDeals.push(dealToSave);
+      localStorage.setItem('homeops_saved_deals', JSON.stringify(savedDeals));
+      
+      // Show success message
+      alert(`✅ Deal saved! "${dealTitle}" has been added to your saved deals.`);
+    }
+
+    function shareDeal(brand, dealTitle) {
+      const shareText = `🎯 Found a great deal: ${dealTitle} from ${brand}! Check out HomeOps Smart Shopping for personalized deals from your inbox.`;
+      
+      // Try native Web Share API first
+      if (navigator.share) {
+        navigator.share({
+          title: `${brand} Deal`,
+          text: shareText,
+          url: window.location.href
+        }).catch(err => {
+          console.log('Share failed:', err);
+          fallbackShare(shareText);
+        });
+      } else {
+        fallbackShare(shareText);
+      }
+    }
+
+    function fallbackShare(shareText) {
+      // Copy to clipboard as fallback
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert('📋 Deal details copied to clipboard! You can now paste and share.');
+        }).catch(() => {
+          promptShare(shareText);
+        });
+      } else {
+        promptShare(shareText);
+      }
+    }
+
+    function promptShare(shareText) {
+      const userChoice = prompt('Choose sharing method:\n\n1. Copy text below\n2. Share via email\n3. Share via SMS\n\nDeal details:', shareText);
+      
+      if (userChoice !== null) {
+        if (userChoice.includes('@')) {
+          // Looks like an email
+          const mailtoUrl = `mailto:${userChoice}?subject=Great Deal Found&body=${encodeURIComponent(shareText)}`;
+          window.open(mailtoUrl);
+        } else if (userChoice.match(/^\d{10}$/)) {
+          // Looks like a phone number
+          const smsUrl = `sms:${userChoice}?body=${encodeURIComponent(shareText)}`;
+          window.open(smsUrl);
+        }
+      }
+    }
+
+    // Enhanced package tracking
+    function trackSpecificPackage(trackingNumber, carrier) {
+      if (!trackingNumber) {
+        alert('No tracking number available for this package.');
+        return;
+      }
+      
+      const trackingUrls = {
+        'UPS': `https://www.ups.com/track?tracknum=${trackingNumber}`,
+        'FEDEX': `https://www.fedex.com/fedextrack/?tracknum=${trackingNumber}`,
+        'USPS': `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${trackingNumber}`,
+        'DHL': `https://www.dhl.com/us-en/home/tracking.html?trackingNumber=${trackingNumber}`,
+        'AMAZON': `https://track.amazon.com/tracking/${trackingNumber}`
+      };
+      
+      const trackingUrl = trackingUrls[carrier.toUpperCase()] || 
+                         `https://www.google.com/search?q=${encodeURIComponent(`track package ${trackingNumber} ${carrier}`)}`;
+      
+      window.open(trackingUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    // View saved deals
+    function viewSavedDeals() {
+      const savedDeals = JSON.parse(localStorage.getItem('homeops_saved_deals') || '[]');
+      
+      if (savedDeals.length === 0) {
+        alert('No saved deals yet. Start saving deals from Smart Shopping!');
+        return;
+      }
+      
+      let dealsList = 'Your Saved Deals:\n\n';
+      savedDeals.forEach((deal, index) => {
+        const savedDate = new Date(deal.savedAt).toLocaleDateString();
+        dealsList += `${index + 1}. ${deal.title}\n   Saved: ${savedDate}\n\n`;
+      });
+      
+      alert(dealsList);
     }
   </script>
 </body>

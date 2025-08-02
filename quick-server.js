@@ -364,60 +364,101 @@ app.get('/api/email-intelligence', async (req, res) => {
   }
 });
 
-// NEW: Commerce Intelligence API - Extract shopping deals, packages, and commerce insights
+// Import enhanced commerce intelligence
+const EnhancedCommerceIntelligence = require('./services/enhanced-commerce-intelligence');
+
+// Initialize enhanced commerce intelligence
+const enhancedCommerce = new EnhancedCommerceIntelligence(db);
+
+// NEW: Enhanced Commerce Intelligence API - DTC Brand Detection + Email Scoring
 app.get('/api/commerce-intelligence', async (req, res) => {
   try {
     const userId = req.query.userId || 'default';
     const limit = parseInt(req.query.limit) || 10;
     
-    console.log(`🛍️ Getting commerce intelligence for: ${userId}`);
+    console.log(`🛍️ Getting ENHANCED commerce intelligence for: ${userId}`);
     
     let commerceData = {
       deals: [],
       packages: [],
       priceDrops: [],
       recommendations: [],
-      totalSavings: 0
+      totalSavings: 0,
+      dataSource: 'enhanced_fallback'  // Changed to enhanced fallback by default
     };
     
     try {
       // Check if we have Gmail tokens stored in Firebase for this user
       const tokenDoc = await db.collection('gmail_tokens').doc(userId).get();
       if (tokenDoc.exists) {
-        console.log(`✅ Found Gmail tokens for commerce analysis: ${userId}`);
+        console.log(`✅ Found Gmail tokens for enhanced commerce analysis: ${userId}`);
         const tokens = tokenDoc.data();
         
         // Set up OAuth client with stored tokens
         oauth2Client.setCredentials(tokens);
         
-        // Fetch emails specifically for commerce analysis
-        const commerceEmails = await fetchCommerceEmails(userId, limit * 2); // Get more emails to filter
+        // Fetch promotional emails for enhanced analysis
+        const commerceEmails = await fetchPromotionalEmails(userId, limit * 3); // Get more emails for better analysis
         
-        // Extract commerce insights
-        commerceData = await extractCommerceInsights(commerceEmails, userId);
-        commerceData.dataSource = 'real';
-        
-        console.log(`✅ Extracted commerce data: ${commerceData.deals.length} deals, ${commerceData.packages.length} packages`);
+        if (commerceEmails && commerceEmails.length > 0) {
+          console.log(`📧 Analyzing ${commerceEmails.length} promotional emails for DTC brands...`);
+          
+          // Use enhanced commerce intelligence to generate smart cards
+          const enhancedDeals = await enhancedCommerce.generateEnhancedCommerceCards(
+            userId, 
+            commerceEmails, 
+            limit
+          );
+          
+          // Also get package tracking data
+          const packageData = await extractPackageTracking(commerceEmails);
+          
+          commerceData = {
+            deals: enhancedDeals,
+            packages: packageData,
+            priceDrops: [], // Could be enhanced later
+            recommendations: enhancedDeals.filter(deal => deal.isDTC).slice(0, 3), // Prioritize DTC for recommendations
+            totalSavings: enhancedDeals.reduce((sum, deal) => {
+              if (deal.discount && deal.discount.includes('$')) {
+                const amount = parseInt(deal.discount.match(/\$(\d+)/)?.[1] || 0);
+                return sum + amount;
+              }
+              return sum;
+            }, 0),
+            dataSource: 'enhanced'
+          };
+          
+          console.log(`✅ Enhanced analysis complete: ${enhancedDeals.length} deals, ${enhancedDeals.filter(d => d.isDTC).length} DTC brands`);
+        } else {
+          console.log('📭 No promotional emails found, using enhanced fallback data');
+          commerceData = generateEnhancedMockData(userId);
+          commerceData.dataSource = 'enhanced_fallback';
+        }
       } else {
         throw new Error('No Gmail tokens found for user');
       }
     } catch (gmailError) {
-      console.error('❌ Commerce intelligence fetch failed:', gmailError.message);
+      console.error('❌ Enhanced commerce intelligence fetch failed:', gmailError.message);
       
-      // Fallback to realistic mock data
-      commerceData = generateMockCommerceData(userId);
-      commerceData.dataSource = 'fallback';
-    }
-    
-    res.json({
+      // Fallback to enhanced mock data
+      commerceData = generateEnhancedMockData(userId);
+      commerceData.dataSource = 'enhanced_fallback';
+    }    res.json({
       success: true,
       ...commerceData,
       userId: userId,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Commerce intelligence error:', error);
-    res.status(500).json({ error: 'Failed to load commerce intelligence', details: error.message });
+    console.error('Enhanced commerce intelligence error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to load enhanced commerce intelligence', 
+      details: error.message,
+      deals: [],
+      packages: [],
+      recommendations: []
+    });
   }
 });
 
@@ -1614,72 +1655,273 @@ function generateShoppingRecommendations(emails, userId) {
   return recommendations.slice(0, 3); // Limit to 3 recommendations
 }
 
-function generateMockCommerceData(userId) {
+// Enhanced Commerce Intelligence Helper Functions
+
+async function fetchPromotionalEmails(userId, maxResults = 30) {
+  try {
+    const tokenDoc = await db.collection('gmail_tokens').doc(userId).get();
+    if (!tokenDoc.exists) {
+      throw new Error('No Gmail tokens found');
+    }
+    
+    const tokens = tokenDoc.data();
+    oauth2Client.setCredentials(tokens);
+    
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    
+    // Enhanced query to focus on promotional emails with deals
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const promotionalQuery = `after:${Math.floor(sevenDaysAgo.getTime() / 1000)} category:promotions (sale OR deal OR discount OR "% off" OR "limited time" OR exclusive OR offer OR flash OR save OR clearance)`;
+    
+    const response = await gmail.users.messages.list({
+      userId: 'me',
+      q: promotionalQuery,
+      maxResults: maxResults
+    });
+    
+    if (!response.data.messages || response.data.messages.length === 0) {
+      console.log('📧 No promotional emails found');
+      return [];
+    }
+    
+    console.log(`📧 Found ${response.data.messages.length} promotional emails`);
+    
+    // Get detailed email content
+    const emails = await Promise.all(
+      response.data.messages.slice(0, maxResults).map(async (message) => {
+        try {
+          const details = await gmail.users.messages.get({
+            userId: 'me',
+            id: message.id,
+            format: 'full'
+          });
+          
+          const headers = details.data.payload.headers;
+          const subject = headers.find(h => h.name === 'Subject')?.value || '';
+          const from = headers.find(h => h.name === 'From')?.value || '';
+          const date = headers.find(h => h.name === 'Date')?.value || '';
+          
+          // Extract snippet/body
+          let snippet = details.data.snippet || '';
+          
+          return {
+            id: message.id,
+            subject,
+            from,
+            date: new Date(date).toISOString(),
+            snippet,
+            threadId: details.data.threadId
+          };
+        } catch (error) {
+          console.error('Error fetching email details:', error);
+          return null;
+        }
+      })
+    );
+    
+    return emails.filter(email => email !== null);
+  } catch (error) {
+    console.error('❌ Enhanced promotional email fetch error:', error);
+    return [];
+  }
+}
+
+async function extractPackageTracking(emails) {
+  const packages = [];
+  
+  for (const email of emails) {
+    const subject = email.subject.toLowerCase();
+    const snippet = email.snippet.toLowerCase();
+    
+    // Look for shipping/delivery keywords
+    if (subject.includes('shipped') || subject.includes('delivered') || 
+        subject.includes('tracking') || subject.includes('delivery') ||
+        snippet.includes('package') || snippet.includes('order')) {
+      
+      // Extract carrier information
+      let carrier = 'Unknown';
+      if (snippet.includes('ups')) carrier = 'UPS';
+      else if (snippet.includes('fedex')) carrier = 'FedEx';
+      else if (snippet.includes('usps')) carrier = 'USPS';
+      else if (snippet.includes('amazon')) carrier = 'Amazon';
+      
+      // Extract status
+      let status = 'In Transit';
+      if (subject.includes('delivered')) status = 'Delivered';
+      else if (subject.includes('shipped')) status = 'Shipped';
+      else if (subject.includes('out for delivery')) status = 'Out for Delivery';
+      
+      packages.push({
+        id: `pkg_${email.id}`,
+        title: email.subject,
+        carrier,
+        status,
+        estimatedDelivery: extractDeliveryDate(snippet),
+        trackingNumber: extractTrackingNumber(snippet),
+        received: email.date
+      });
+    }
+  }
+  
+  return packages;
+}
+
+function extractDeliveryDate(text) {
+  // Look for delivery date patterns
+  const patterns = [
+    /arriving\s+([a-z]+ \d{1,2})/i,
+    /delivery\s+([a-z]+ \d{1,2})/i,
+    /by\s+([a-z]+ \d{1,2})/i
+  ];
+  
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return match[1];
+  }
+  
+  return null;
+}
+
+function extractTrackingNumber(text) {
+  // Look for tracking number patterns (basic implementation)
+  const trackingPatterns = [
+    /tracking[:\s]+([a-z0-9]{10,})/i,
+    /\b([0-9]{12,})\b/,
+    /\b(1Z[a-z0-9]{16})\b/i // UPS format
+  ];
+  
+  for (const pattern of trackingPatterns) {
+    const match = text.match(pattern);
+    if (match) return match[1];
+  }
+  
+  return null;
+}
+
+function generateEnhancedMockData(userId) {
   return {
     deals: [
       {
-        id: 'deal1',
-        title: 'Nike Running Shoes - 30% Off',
+        id: 'deal_nike_001',
         brand: 'Nike',
-        discount: 30,
-        savings: 45,
-        description: 'Flash sale on athletic footwear',
-        expiry: 'August 5',
-        category: 'sports',
-        received: new Date().toISOString()
+        isDTC: false,
+        discount: '30% OFF',
+        expires: 'Aug 5',
+        emailFrequency: 2,
+        offerScore: 0.87,
+        emailQualityScore: 0.91,
+        compositeScore: 0.89,
+        title: 'Flash Sale: 30% Off Running Shoes',
+        description: 'Limited time offer on our best-selling athletic footwear. Free shipping on orders over $75.',
+        badge: null,
+        url: 'https://nike.com/sale',
+        actions: ['View', 'Find Deal', 'Save', 'Share'],
+        timestamp: new Date().toISOString()
       },
       {
-        id: 'deal2', 
-        title: 'Amazon Prime Day - Electronics',
+        id: 'deal_allbirds_001',
+        brand: 'Allbirds',
+        isDTC: true,
+        discount: 'Save $25',
+        expires: 'Aug 8',
+        emailFrequency: 1,
+        offerScore: 0.85,
+        emailQualityScore: 0.94,
+        compositeScore: 0.90,
+        title: 'Sustainable Summer Sale - Tree Runners',
+        description: 'Our most comfortable shoes, now $25 off. Made from eucalyptus tree fiber.',
+        badge: 'DTC',
+        url: 'https://allbirds.com/products/tree-runners',
+        actions: ['View', 'Find Deal', 'Save', 'Share'],
+        timestamp: new Date().toISOString()
+      },
+      {
+        id: 'deal_everlane_001',
+        brand: 'Everlane',
+        isDTC: true,
+        discount: '20% OFF',
+        expires: 'Aug 7',
+        emailFrequency: 3,
+        offerScore: 0.78,
+        emailQualityScore: 0.88,
+        compositeScore: 0.83,
+        title: 'Choose What You Pay - Summer Essentials',
+        description: 'Radical transparency pricing on organic cotton tees and sustainable denim.',
+        badge: 'DTC',
+        url: 'https://everlane.com/choose-what-you-pay',
+        actions: ['View', 'Find Deal', 'Save', 'Share'],
+        timestamp: new Date().toISOString()
+      },
+      {
+        id: 'deal_amazon_001',
         brand: 'Amazon',
-        discount: 25,
-        savings: 100,
-        description: 'Limited time tech deals',
-        expiry: 'August 3',
-        category: 'electronics',
-        received: new Date().toISOString()
-      },
-      {
-        id: 'deal3',
-        title: 'Target Back-to-School Sale',
-        brand: 'Target',
-        discount: 20,
-        savings: 25,
-        description: 'School supplies and clothing',
-        expiry: 'August 10',
-        category: 'general',
-        received: new Date().toISOString()
+        isDTC: false,
+        discount: '25% OFF',
+        expires: 'Aug 6',
+        emailFrequency: 5,
+        offerScore: 0.72,
+        emailQualityScore: 0.65,
+        compositeScore: 0.69,
+        title: 'Prime Member Exclusive: Electronics Sale',
+        description: 'Limited time deals on tech gadgets, smart home devices, and more.',
+        badge: null,
+        url: 'https://amazon.com/deals',
+        actions: ['View', 'Find Deal', 'Save', 'Share'],
+        timestamp: new Date().toISOString()
       }
     ],
     packages: [
       {
-        id: 'pkg1',
-        title: 'Your Amazon order has shipped',
-        carrier: 'UPS',
-        trackingNumber: '1Z999AA1234567890',
+        id: 'pkg_001',
+        title: 'Your Allbirds order has shipped',
+        carrier: 'FedEx',
         status: 'In Transit',
-        estimatedDelivery: 'August 3',
+        estimatedDelivery: 'Aug 4',
+        trackingNumber: '7712345678901',
         received: new Date().toISOString()
       }
     ],
-    priceDrops: [
-      {
-        id: 'price1',
-        title: 'iPad Air Price Drop Alert',
-        product: 'iPad Air 64GB',
-        oldPrice: 599,
-        newPrice: 499,
-        savings: 100,
-        received: new Date().toISOString()
-      }
-    ],
+    priceDrops: [],
     recommendations: [
-      'Back-to-school items are trending in your emails',
-      'Amazon is your most frequent brand - consider Prime membership',
-      'You frequently shop for electronics - check for seasonal sales'
+      {
+        brand: 'Allbirds',
+        isDTC: true,
+        reason: 'High email quality score and sustainable brand focus'
+      },
+      {
+        brand: 'Everlane',
+        isDTC: true,
+        reason: 'Transparent pricing and ethical manufacturing'
+      }
     ],
-    totalSavings: 170
+    totalSavings: 70,
+    dataSource: 'enhanced_fallback'
   };
+}
+
+function generateMockCommerceData(userId) {
+  return generateEnhancedMockData(userId || 'mock_user_id');
+}
+
+// Add missing categorizeEmail function
+function categorizeEmail(subject, snippet, from) {
+  const schoolKeywords = ['school', 'teacher', 'assignment', 'grade', 'class', 'homework'];
+  const medicalKeywords = ['doctor', 'appointment', 'health', 'medical', 'prescription', 'clinic'];
+  const shoppingKeywords = ['order', 'shipped', 'delivery', 'purchase', 'sale', 'deal'];
+  const workKeywords = ['meeting', 'project', 'deadline', 'work', 'office', 'team'];
+  const familyKeywords = ['family', 'kids', 'children', 'parent', 'home', 'personal'];
+  
+  const text = `${subject} ${snippet} ${from}`.toLowerCase();
+  
+  if (schoolKeywords.some(keyword => text.includes(keyword))) return 'School';
+  if (medicalKeywords.some(keyword => text.includes(keyword))) return 'Medical';
+  if (shoppingKeywords.some(keyword => text.includes(keyword))) return 'Shopping';
+  if (workKeywords.some(keyword => text.includes(keyword))) return 'Work';
+  if (familyKeywords.some(keyword => text.includes(keyword))) return 'Family';
+  
+  return 'General';
 }
 
 // Calibration data endpoint
@@ -4685,514 +4927,215 @@ app.get('/api/calendar-events', async (req, res) => {
           orderBy: 'startTime',
         });
         
-        events = response.data.items || [];
-        dataSource = 'real';
-        console.log(`✅ Retrieved ${events.length} real Calendar events`);
-        
+        if (response.data.items && response.data.items.length > 0) {
+          events = response.data.items.map(event => ({
+            id: event.id,
+            title: event.summary || 'No Title',
+            start: event.start.dateTime || event.start.date,
+            end: event.end.dateTime || event.end.date,
+            description: event.description || '',
+            location: event.location || '',
+            allDay: !event.start.dateTime,
+            source: 'google-calendar'
+          }));
+          dataSource = 'real';
+          console.log(`✅ Retrieved ${events.length} real calendar events`);
+        }
       } else {
-        throw new Error('No tokens found for user');
+        throw new Error('No Calendar tokens found for user');
       }
     } catch (calendarError) {
       console.error('❌ Calendar fetch failed:', calendarError.message);
       
-      // Fallback to mock data
-      const dataManager = new HomeOpsDataManager(userId, null);
-      const calendarData = await dataManager.getCalendarInsights();
-      events = calendarData.upcomingEvents || [];
-      console.log(`📦 Using ${events.length} fallback calendar events`);
+      // Fallback to mock calendar events
+      events = [
+        {
+          id: 'mock-1',
+          title: 'Team Meeting',
+          start: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+          description: 'Weekly team sync',
+          location: 'Conference Room A',
+          allDay: false,
+          source: 'mock'
+        },
+        {
+          id: 'mock-2', 
+          title: 'Parent-Teacher Conference',
+          start: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+          description: 'Quarterly progress meeting',
+          location: 'School',
+          allDay: false,
+          source: 'mock'
+        }
+      ];
     }
-    
-    // Return formatted calendar events
-    res.json({
-      success: true,
-      events: events,
-      dataSource: dataSource,
-      weeklyLoad: 65, // Could be calculated from real events
-      upcomingCount: events.length,
-      message: `Calendar events retrieved successfully (${dataSource})`
-    });
-    
-  } catch (error) {
-    console.error('❌ Calendar events fetch error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.post('/api/calendar-events', async (req, res) => {
-  try {
-    const { userId, title, action, source } = req.body;
-    
-    if (!userId || !title || !action) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Missing required fields: userId, title, action' 
-      });
-    }
-    
-    // Get user profile
-    let profile = getUserProfile(userId);
-    if (!profile) {
-      profile = createNewUserProfile(userId, { name: 'User' });
-      userProfiles[userId] = profile;
-    }
-    
-    // Initialize calendar events array if it doesn't exist
-    if (!profile.calendarEvents) {
-      profile.calendarEvents = [];
-    }
-    
-    // Create new calendar event entry
-    const eventEntry = {
-      id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      title: title,
-      action: action, // 'add', 'prep_complete', 'reschedule'
-      source: source || 'manual',
-      timestamp: new Date().toISOString(),
-      status: 'active'
-    };
-    
-    // Add to user's calendar events
-    profile.calendarEvents.push(eventEntry);
-    profile.updatedAt = new Date().toISOString();
-    
-    console.log(`📅 Calendar action processed for ${userId}:`, {
-      title: title,
-      action: action,
-      source: source
-    });
-    
-    // In production, this would:
-    // 1. Integrate with Google Calendar API
-    // 2. Create actual calendar events
-    // 3. Set up notifications and reminders
-    // 4. Sync with other connected calendars
     
     res.json({ 
       success: true, 
-      message: `Event "${title}" ${action} successfully`,
-      eventId: eventEntry.id
+      events, 
+      dataSource,
+      count: events.length
     });
     
   } catch (error) {
-    console.error('❌ Calendar event creation error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('❌ Calendar events error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      events: []
+    });
   }
 });
 
-app.patch('/api/calendar-events', async (req, res) => {
-  try {
-    const { userId, eventTitle, action, newDateTime, displayTime, eventData } = req.body;
-    
-    if (!userId || !eventTitle || !action) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Missing required fields: userId, eventTitle, action' 
-      });
-    }
-    
-    // Get user profile
-    let profile = getUserProfile(userId);
-    if (!profile) {
-      profile = createNewUserProfile(userId, { name: 'User' });
-      userProfiles[userId] = profile;
-    }
-    
-    // Initialize calendar actions array if it doesn't exist
-    if (!profile.calendarActions) {
-      profile.calendarActions = [];
-    }
-    
-    let actionMessage = '';
-    let success = true;
-    
-    switch(action) {
-      case 'prep_complete':
-        // Mark preparation as complete
-        const prepAction = {
-          id: `prep_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          eventTitle: eventTitle,
-          action: 'prep_complete',
-          timestamp: new Date().toISOString(),
-          eventData: eventData
-        };
-        profile.calendarActions.push(prepAction);
-        actionMessage = `Preparation marked complete for "${eventTitle}"`;
-        break;
-        
-      case 'reschedule':
-        // Process rescheduling
-        if (!newDateTime || !displayTime) {
-          return res.status(400).json({ 
-            success: false, 
-            error: 'Missing reschedule data: newDateTime, displayTime' 
-          });
-        }
-        
-        const rescheduleAction = {
-          id: `reschedule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          eventTitle: eventTitle,
-          action: 'reschedule',
-          originalTime: eventData?.time || 'Unknown',
-          newDateTime: newDateTime,
-          displayTime: displayTime,
-          timestamp: new Date().toISOString(),
-          eventData: eventData
-        };
-        profile.calendarActions.push(rescheduleAction);
-        actionMessage = `Event "${eventTitle}" rescheduled to ${displayTime}`;
-        break;
-        
-      default:
-        return res.status(400).json({ 
-          success: false, 
-          error: `Unknown action: ${action}` 
-        });
-    }
-    
-    profile.updatedAt = new Date().toISOString();
-    
-    console.log(`📅 Calendar update processed for ${userId}:`, {
-      event: eventTitle,
-      action: action,
-      newTime: displayTime || 'N/A'
-    });
-    
-    // In production, this would:
-    // 1. Update Google Calendar events via API
-    // 2. Send confirmation notifications
-    // 3. Update related reminders and prep tasks
-    // 4. Sync changes across all connected platforms
-    
-    res.json({ 
-      success: success, 
-      message: actionMessage,
-      action: action,
-      eventTitle: eventTitle
-    });
-    
-  } catch (error) {
-    console.error('❌ Calendar event update error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
+// Helper functions
 function generateUserId(email) {
-  // Simple user ID generation based on email
-  return Buffer.from(email.toLowerCase()).toString('base64').replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+  return email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_');
 }
 
 function createNewUserProfile(userId, userData) {
   return {
     id: userId,
     name: userData.name || 'User',
-    email: userData.email,
+    email: userData.email || `${userId}@demo.com`,
     preferences: {
-      primaryFocus: 'family', // Default
-      emailBatching: true,
-      notifications: {
-        urgent: true,
-        daily: true,
-        weekly: false
-      },
-      insights: {
-        aiGenerated: true,
-        contextual: true,
-        predictive: false
-      }
+      primaryFocus: 'family',
+      alertThreshold: 'medium',
+      timeZone: 'America/New_York',
+      enabledIntegrations: ['gmail', 'calendar']
     },
-    mentalLoad: {
-      currentScore: 65,
-      trend: 'stable',
-      history: []
+    mentalLoadData: {
+      weeklyPatterns: {},
+      stressIndicators: [],
+      successMetrics: {}
+    },
+    personalizedInsights: [],
+    actionHistory: [],
+    connectedAccounts: {
+      gmail: null,
+      calendar: null,
+      slack: null
     },
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString()
+    updatedAt: new Date().toISOString()
   };
 }
 
-// AI-powered email summary generation with calendar event extraction
+// Enhanced Email Summary with Calendar Event Extraction
 async function generateEmailSummaryWithCalendar(subject, from, body, senderName) {
   try {
-    const prompt = `You are an email intelligence assistant. Analyze this email and provide a helpful summary.
-
-Email Details:
-Subject: ${subject}
-From: ${from}
-Content: ${body.substring(0, 1500)}
-
-Provide ONLY a conversational summary in plain text (no JSON, no code blocks, no formatting):
-- 2-3 sentences highlighting key points and any actions needed
-- If there are dates, appointments, or deadlines, mention them naturally
-- Focus on practical information that helps with mental load management
-- Be conversational and helpful
-
-Do NOT include any JSON formatting, brackets, or code blocks in your response.`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 300,
-      temperature: 0.3
-    });
-
-    const summaryText = response.choices[0].message.content.trim();
+    const summaryResult = await generateEmailSummary({
+      subject, from, body
+    }, senderName);
     
-    // Extract calendar events separately using a second AI call if needed
-    const calendarEvents = await extractCalendarEventsFromEmail(subject, body);
+    // Extract calendar events from email content
+    const calendarEvents = extractCalendarEventsFromEmail(subject, body, senderName);
     
     return {
-      summary: summaryText,
-      calendarEvents: calendarEvents || [],
-      hasCalendarEvents: calendarEvents && calendarEvents.length > 0
+      summary: summaryResult.summary || summaryResult,
+      calendarEvents: calendarEvents,
+      hasCalendarEvents: calendarEvents.length > 0
     };
-
   } catch (error) {
-    console.error('❌ AI summary generation failed:', error);
+    console.error('Email summary with calendar error:', error);
     return {
-      summary: `The email from ${senderName} is about: ${subject}. Please check the full email for details.`,
+      summary: `Email from ${senderName}: ${subject}`,
       calendarEvents: [],
       hasCalendarEvents: false
     };
   }
 }
 
-// Separate function to extract calendar events to avoid JSON parsing issues
-async function extractCalendarEventsFromEmail(subject, body) {
-  try {
-    const prompt = `Extract calendar events from this email. Look for dates, appointments, deadlines, or scheduled activities.
-
-Subject: ${subject}
-Content: ${body.substring(0, 1000)}
-
-If you find any calendar events, respond with ONLY valid JSON array:
-[
-  {
-    "title": "Event name",
-    "start": "2025-MM-DDTHH:mm:00",
-    "allDay": false,
-    "description": "Event details"
-  }
-]
-
-If no calendar events are found, respond with: []
-
-Important: Respond with ONLY the JSON array, no other text.`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 300,
-      temperature: 0.1
-    });
-
-    try {
-      const events = JSON.parse(response.choices[0].message.content.trim());
-      
-      // Add Google Calendar URLs to events
-      if (Array.isArray(events) && events.length > 0) {
-        return events.map(event => ({
-          ...event,
-          googleCalendarUrl: generateCalendarUrl(event)
-        }));
-      }
-      
-      return [];
-    } catch (parseError) {
-      console.log('📅 No calendar events found or parsing failed');
-      return [];
+function extractCalendarEventsFromEmail(subject, body, senderName) {
+  const events = [];
+  const text = `${subject} ${body}`.toLowerCase();
+  
+  // Look for common event patterns
+  const eventPatterns = [
+    // Conference/meeting patterns
+    {
+      regex: /(?:parent.teacher\s+)?conference[s]?\s+(?:on\s+)?([a-z]+\s+\d+)/i,
+      type: 'conference',
+      duration: 60
+    },
+    // Appointment patterns
+    {
+      regex: /appointment[s]?\s+(?:on\s+)?([a-z]+\s+\d+)/i,
+      type: 'appointment',
+      duration: 30
+    },
+    // Meeting patterns
+    {
+      regex: /meeting[s]?\s+(?:on\s+)?([a-z]+\s+\d+)/i,
+      type: 'meeting',
+      duration: 60
+    },
+    // Due date patterns
+    {
+      regex: /due\s+(?:on\s+)?([a-z]+\s+\d+)/i,
+      type: 'deadline',
+      duration: 0,
+      allDay: true
+    },
+    // Event patterns
+    {
+      regex: /(?:field\s+trip|trip|event)\s+(?:on\s+)?([a-z]+\s+\d+)/i,
+      type: 'event',
+      duration: 240
     }
-
-  } catch (error) {
-    console.error('❌ Calendar extraction failed:', error);
-    return [];
-  }
+  ];
+  
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  
+  eventPatterns.forEach(pattern => {
+    const match = text.match(pattern.regex);
+    if (match) {
+      const dateStr = match[1];
+      
+      // Parse the date
+      try {
+        const eventDate = new Date(`${dateStr}, ${currentYear}`);
+        
+        // If the date is in the past, try next year
+        if (eventDate < today) {
+          eventDate.setFullYear(currentYear + 1);
+        }
+        
+        // Create calendar event
+        const eventStart = new Date(eventDate);
+        if (!pattern.allDay) {
+          eventStart.setHours(15, 0, 0); // Default to 3 PM
+        }
+        
+        const eventEnd = new Date(eventStart);
+        if (pattern.duration > 0) {
+          eventEnd.setMinutes(eventEnd.getMinutes() + pattern.duration);
+        }
+        
+        events.push({
+          title: `${senderName} ${pattern.type.charAt(0).toUpperCase() + pattern.type.slice(1)}`,
+          start: eventStart.toISOString(),
+          end: pattern.allDay ? null : eventEnd.toISOString(),
+          description: `From email: ${subject}`,
+          location: senderName,
+          allDay: pattern.allDay || false
+        });
+      } catch (dateError) {
+        console.error('Date parsing error:', dateError);
+      }
+    }
+  });
+  
+  return events;
 }
 
-// Test Gmail Access endpoint
-app.get('/api/test-gmail', async (req, res) => {
-  try {
-    const userEmail = req.query.email || 'oliverhbaron@gmail.com'; // Default to your email
-    
-    console.log(`🧪 Testing Gmail access for: ${userEmail}`);
-    
-    // Get stored tokens from Firebase
-    const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
-    
-    if (!tokenDoc.exists) {
-      return res.json({ 
-        success: false, 
-        error: 'No Gmail tokens found. Please connect Gmail first.',
-        needsAuth: true
-      });
-    }
-    
-    const tokens = tokenDoc.data();
-    console.log('✅ Found stored tokens for:', userEmail);
-    
-    // Set up OAuth client with stored tokens
-    const testOAuth = new google.auth.OAuth2(
-      process.env.GMAIL_CLIENT_ID,
-      process.env.GMAIL_CLIENT_SECRET,
-      process.env.GMAIL_REDIRECT_URI
-    );
-    
-    testOAuth.setCredentials({
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      expiry_date: tokens.expiry_date
-    });
-    
-    const gmail = google.gmail({ version: 'v1', auth: testOAuth });
-    
-    // Test basic Gmail access
-    const profile = await gmail.users.getProfile({ userId: 'me' });
-    
-    // Get recent emails
-    const emailList = await gmail.users.messages.list({
-      userId: 'me',
-      maxResults: 5,
-      q: 'newer_than:7d'
-    });
-    
-    res.json({
-      success: true,
-      profile: {
-        email: profile.data.emailAddress,
-        totalMessages: profile.data.messagesTotal
-      },
-      recentEmails: emailList.data.messages?.length || 0,
-      message: 'Gmail access working!'
-    });
-    
-  } catch (error) {
-    console.error('❌ Gmail test error:', error);
-    res.json({
-      success: false,
-      error: error.message,
-      needsReauth: error.message.includes('invalid_grant') || error.message.includes('unauthorized')
-    });
-  }
-});
-
-// Real Gmail Email Summary endpoint - This is what you need!
-app.get('/api/email-summary', async (req, res) => {
-  try {
-    const { sender, userEmail = 'oliverhbaron@gmail.com' } = req.query;
-    
-    if (!sender) {
-      return res.status(400).json({ error: 'Sender parameter required' });
-    }
-    
-    console.log(`📧 Getting email summary from: ${sender} for user: ${userEmail}`);
-    
-    // Get stored tokens
-    const tokenDoc = await db.collection('gmail_tokens').doc(userEmail).get();
-    if (!tokenDoc.exists) {
-      return res.json({ 
-        success: false, 
-        error: 'Gmail not connected. Please authenticate first.',
-        needsAuth: true
-      });
-    }
-    
-    const tokens = tokenDoc.data();
-    
-    // Set up OAuth client
-    const gmailOAuth = new google.auth.OAuth2(
-      process.env.GMAIL_CLIENT_ID,
-      process.env.GMAIL_CLIENT_SECRET,
-      process.env.GMAIL_REDIRECT_URI
-    );
-    
-    gmailOAuth.setCredentials({
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      expiry_date: tokens.expiry_date
-    });
-    
-    const gmail = google.gmail({ version: 'v1', auth: gmailOAuth });
-    
-    // Search for emails from specific sender
-    const searchQuery = `from:${sender} newer_than:30d`;
-    const emailList = await gmail.users.messages.list({
-      userId: 'me',
-      q: searchQuery,
-      maxResults: 1
-    });
-    
-    if (!emailList.data.messages || emailList.data.messages.length === 0) {
-      return res.json({
-        success: false,
-        message: `No recent emails found from ${sender} in the last 30 days`
-      });
-    }
-    
-    // Get the most recent email
-    const message = emailList.data.messages[0];
-    const email = await gmail.users.messages.get({
-      userId: 'me',
-      id: message.id,
-      format: 'full'
-    });
-    
-    const headers = email.data.payload.headers;
-    const subject = headers.find(h => h.name === 'Subject')?.value || '';
-    const from = headers.find(h => h.name === 'From')?.value || '';
-    const date = headers.find(h => h.name === 'Date')?.value || '';
-    
-    // Extract email body
-    let body = '';
-    if (email.data.payload.body?.data) {
-      body = Buffer.from(email.data.payload.body.data, 'base64').toString();
-    } else if (email.data.payload.parts) {
-      for (const part of email.data.payload.parts) {
-        if (part.mimeType === 'text/plain' && part.body?.data) {
-          body += Buffer.from(part.body.data, 'base64').toString();
-        } else if (part.mimeType === 'text/html' && part.body?.data && !body) {
-          // Use HTML content if no plain text available
-          const htmlBody = Buffer.from(part.body.data, 'base64').toString();
-          // Basic HTML to text conversion
-          body = htmlBody
-            .replace(/<[^>]*>/g, ' ')          // Remove HTML tags
-            .replace(/&nbsp;/g, ' ')           // Replace non-breaking spaces
-            .replace(/&amp;/g, '&')            // Replace HTML entities
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/\s+/g, ' ')              // Collapse multiple spaces
-            .trim();
-        }
-      }
-    }
-    
-    // Generate AI summary with calendar extraction
-    const summary = await generateEmailSummaryWithCalendar(subject, from, body, sender);
-    
-    res.json({
-      success: true,
-      email: {
-        subject,
-        from,
-        date: new Date(date).toLocaleDateString(),
-        body: body.substring(0, 1000) + (body.length > 1000 ? '...' : '')
-      },
-      summary: summary.summary,
-      calendarEvents: summary.calendarEvents || [],
-      hasCalendarEvents: (summary.calendarEvents || []).length > 0
-    });
-    
-  } catch (error) {
-    console.error('❌ Email summary error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
+// Server startup
 app.listen(PORT, () => {
-  console.log(`🚀 HomeOps server running at http://localhost:${PORT}`);
-  console.log(`🔍 Test API: http://localhost:${PORT}/api/test`);
-  console.log(`📧 Calibration: http://localhost:${PORT}/api/calibration-data`);
-  console.log(`🎯 Direct test: http://localhost:${PORT}/api-test-direct.html`);
+  console.log(`🚀 HomeOps Server running on port ${PORT}`);
+  console.log(`📊 Dashboard: http://localhost:${PORT}/app`);
+  console.log(`🎯 Onboarding: http://localhost:${PORT}/onboard`);
+  console.log(`⚙️ Calibration: http://localhost:${PORT}/calibrate`);
+  console.log(`📧 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

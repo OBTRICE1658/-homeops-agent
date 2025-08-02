@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Flow Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-step.success {
+            border-color: #4caf50;
+            background: #f1f8e9;
+        }
+        .test-step.error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔬 OAuth → Data Flow Test</h1>
+        
+        <div class="info">
+            <strong>Testing the complete flow:</strong>
+            <br>1. OAuth Sign-in → userEmail stored in localStorage
+            <br>2. Command Center → uses userEmail for API calls
+            <br>3. Real Gmail data → personalized insights
+        </div>
+
+        <div class="test-step" id="step1">
+            <h3>Step 1: Check localStorage User ID</h3>
+            <p>Current user ID in localStorage:</p>
+            <pre id="userIdDisplay">Loading...</pre>
+            <button onclick="checkLocalStorage()">Refresh Check</button>
+            <button onclick="simulateOAuth()">Simulate OAuth User</button>
+        </div>
+
+        <div class="test-step" id="step2">
+            <h3>Step 2: Test API Call with User ID</h3>
+            <p>Test /api/email-intelligence with current user:</p>
+            <pre id="apiResponse">Click "Test API" to check...</pre>
+            <button onclick="testAPI()">Test API</button>
+        </div>
+
+        <div class="test-step" id="step3">
+            <h3>Step 3: Test Command Center Data Loading</h3>
+            <p>Test if command center can load real data:</p>
+            <pre id="commandCenterTest">Click "Test Command Center" to check...</pre>
+            <button onclick="testCommandCenter()">Test Command Center</button>
+        </div>
+
+        <div class="test-step" id="step4">
+            <h3>Step 4: OAuth Flow Test</h3>
+            <p>Simulate the complete OAuth flow:</p>
+            <button onclick="startOAuthTest()">Start OAuth Flow Test</button>
+            <button onclick="window.open('/auth/gmail?state=onboarding', '_blank')">Real OAuth Test</button>
+        </div>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const userId = localStorage.getItem('homeops_user_id');
+            const userEmail = localStorage.getItem('homeops_user_email');
+            
+            const display = document.getElementById('userIdDisplay');
+            const step1 = document.getElementById('step1');
+            
+            if (userId) {
+                display.textContent = `User ID: ${userId}\nUser Email: ${userEmail || 'Not set'}`;
+                step1.className = 'test-step success';
+            } else {
+                display.textContent = 'No user ID found in localStorage';
+                step1.className = 'test-step error';
+            }
+        }
+
+        function simulateOAuth() {
+            const testEmail = `test-user-${Date.now()}@gmail.com`;
+            localStorage.setItem('homeops_user_id', testEmail);
+            localStorage.setItem('homeops_user_email', testEmail);
+            
+            console.log('✅ Simulated OAuth for:', testEmail);
+            checkLocalStorage();
+        }
+
+        async function testAPI() {
+            const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+            const display = document.getElementById('apiResponse');
+            const step2 = document.getElementById('step2');
+            
+            display.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=5`);
+                const data = await response.json();
+                
+                display.textContent = `✅ API Response for ${userId}:\n${JSON.stringify(data, null, 2)}`;
+                step2.className = 'test-step success';
+            } catch (error) {
+                display.textContent = `❌ API Error: ${error.message}`;
+                step2.className = 'test-step error';
+            }
+        }
+
+        async function testCommandCenter() {
+            const display = document.getElementById('commandCenterTest');
+            const step3 = document.getElementById('step3');
+            
+            display.textContent = 'Testing command center data loading...';
+            
+            try {
+                // Simulate command center's loadEmailIntelligence function
+                const userId = localStorage.getItem('homeops_user_id') || 'demo-user';
+                console.log('📧 Loading email intelligence for user:', userId);
+                
+                const response = await fetch(`/api/email-intelligence?userId=${userId}&limit=20&days=1`);
+                const data = await response.json();
+                
+                const summary = {
+                    userId: userId,
+                    success: data.success,
+                    dataSource: data.dataSource || 'unknown',
+                    insightCount: data.insights ? data.insights.length : 0,
+                    sampleInsight: data.insights && data.insights[0] ? {
+                        title: data.insights[0].title,
+                        from: data.insights[0].from,
+                        category: data.insights[0].category
+                    } : null
+                };
+                
+                display.textContent = `✅ Command Center Test:\n${JSON.stringify(summary, null, 2)}`;
+                step3.className = 'test-step success';
+            } catch (error) {
+                display.textContent = `❌ Command Center Error: ${error.message}`;
+                step3.className = 'test-step error';
+            }
+        }
+
+        function startOAuthTest() {
+            alert(`OAuth Flow Test Steps:
+
+1. Click "Real OAuth Test" to start Gmail OAuth
+2. Complete Google sign-in
+3. You'll be redirected to /scan?userEmail=YOUR_EMAIL
+4. scan.html will store your email in localStorage
+5. Navigate to /app to see your personalized command center
+6. Check if your real Gmail data appears
+
+Expected Result: Your actual emails show up in "Top 5 Important Emails"`);
+        }
+
+        // Run initial check
+        checkLocalStorage();
+    </script>
+</body>
+</html>
