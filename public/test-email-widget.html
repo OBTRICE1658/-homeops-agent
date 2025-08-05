@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Email Widget</title>
+</head>
+<body>
+    <h1>Test Email Widget</h1>
+    <button onclick="clearStorage()">Clear Storage</button>
+    <button onclick="testEmailQuery()">Test Feldman ENT Query</button>
+    <div id="results"></div>
+
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            console.log('✅ localStorage cleared');
+            document.getElementById('results').innerHTML = '<p>Storage cleared!</p>';
+        }
+
+        async function testEmailQuery() {
+            console.log('🔍 Testing email query...');
+            
+            // Clear storage first
+            localStorage.clear();
+            
+            // Set the correct userId
+            let userId = 'oliverhbaron@gmail.com';
+            localStorage.setItem('homeops_user_id', userId);
+            
+            console.log('🔍 Using userId:', userId);
+            
+            try {
+                const response = await fetch('/api/chat-enhanced', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: "Can you summarize the last email I got from Feldman ENT",
+                        userId: userId,
+                        conversationId: 'test_widget_' + Date.now()
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('🔍 API Response:', data);
+                console.log('🔍 Insights:', data.insights);
+                
+                document.getElementById('results').innerHTML = `
+                    <h3>API Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

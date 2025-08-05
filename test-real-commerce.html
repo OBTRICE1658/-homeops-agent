@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real Email-Based Commerce Intelligence</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .commerce-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .commerce-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        .commerce-meta {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🛍️ Real Email-Based Commerce Intelligence Test</h1>
+        <p>Testing the new email triangulation approach for commerce recommendations instead of fake AI-generated ones.</p>
+        
+        <div id="status" class="status info">
+            Ready to test real email scanning for commerce intelligence...
+        </div>
+        
+        <h3>Test Commerce Queries:</h3>
+        <button class="test-button" onclick="testCommerce('I need to find some good deals on electronics')">Test: Electronics Deals</button>
+        <button class="test-button" onclick="testCommerce('Looking for Amazon orders and shipping updates')">Test: Amazon Orders</button>
+        <button class="test-button" onclick="testCommerce('Any Target sales or coupons available?')">Test: Target Sales</button>
+        <button class="test-button" onclick="testCommerce('Check my recent purchases and receipts')">Test: Purchase History</button>
+        <button class="test-button" onclick="testCommerce('What about my emotional wellbeing today?')">Test: Non-Commerce (Mental Health)</button>
+        
+        <div id="results" class="response-area">
+            Test results will appear here...
+        </div>
+        
+        <div id="commerce-display"></div>
+    </div>
+
+    <script>
+        async function testCommerce(message) {
+            const statusEl = document.getElementById('status');
+            const resultsEl = document.getElementById('results');
+            const commerceEl = document.getElementById('commerce-display');
+            
+            statusEl.className = 'status info';
+            statusEl.textContent = `Testing: "${message}"...`;
+            resultsEl.textContent = 'Sending request...';
+            commerceEl.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/chat-enhanced', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        userId: 'test-user-commerce',
+                        conversationId: 'commerce-test-' + Date.now()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = 'Email scanning completed successfully!';
+                    
+                    // Display the response
+                    resultsEl.textContent = JSON.stringify(data, null, 2);
+                    
+                    // Display commerce recommendations if any
+                    if (data.commerceRecommendations && data.commerceRecommendations.length > 0) {
+                        commerceEl.innerHTML = '<h3>🛍️ Real Email-Based Commerce Intelligence:</h3>';
+                        data.commerceRecommendations.forEach(item => {
+                            commerceEl.innerHTML += `
+                                <div class="commerce-item">
+                                    <div class="commerce-title">${item.icon || '🛍️'} ${item.title}</div>
+                                    <div>${item.description}</div>
+                                    <div class="commerce-meta">
+                                        ${item.price ? '$' + item.price : ''} 
+                                        ${item.brand ? '• ' + item.brand : ''} 
+                                        ${item.status ? '• ' + item.status : ''}
+                                        ${item.source === 'email-scan' ? '📧 From Email' : ''}
+                                    </div>
+                                    ${item.actionRequired ? `<div><strong>Action:</strong> ${item.actionRequired}</div>` : ''}
+                                    ${item.emailFrom ? `<div><em>Source:</em> ${item.emailFrom}</div>` : ''}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        commerceEl.innerHTML = '<div class="status info">No commerce intelligence found in emails for this query.</div>';
+                    }
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Error: ' + (data.error || 'Unknown error');
+                    resultsEl.textContent = JSON.stringify(data, null, 2);
+                }
+                
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = 'Network error: ' + error.message;
+                resultsEl.textContent = error.stack || error.message;
+            }
+        }
+        
+        // Test non-commerce query on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testCommerce('I need to find some good deals on electronics');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps Enhanced Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .chat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .chat-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 85%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .inbox-panel {
+            width: 35%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        
+        .inbox-panel.collapsed {
+            transform: translateX(-100%);
+        }
+        
+        .inbox-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .inbox-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .inbox-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .inbox-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .inbox-search {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .search-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .inbox-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .email-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+        
+        .email-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .email-item.urgent {
+            border-left-color: #ff6b6b;
+        }
+        
+        .email-item.school {
+            border-left-color: #4ecdc4;
+        }
+        
+        .email-item.commerce {
+            border-left-color: #45b7d1;
+        }
+        
+        .email-sender {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .email-subject {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .email-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            max-width: 70%;
+            line-height: 1.5;
+        }
+        
+        .message.user .message-content {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+        
+        .email-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .email-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .email-preview-subject {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .email-preview-date {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .email-preview-content {
+            font-size: 13px;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+        
+        .calendar-suggestion {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calendar-suggestion-text {
+            font-size: 13px;
+        }
+        
+        .add-calendar-btn {
+            background: #4caf50;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        
+        .add-calendar-btn:hover {
+            background: #45a049;
+        }
+        
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            min-height: 24px;
+            max-height: 120px;
+            transition: all 0.2s;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .chat-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .send-btn {
+            background: #667eea;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .send-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .quick-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .typing-indicator.active {
+            opacity: 1;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            30% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90%;
+                flex-direction: column;
+            }
+            
+            .inbox-panel {
+                width: 100%;
+                height: 40%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .inbox-panel.collapsed {
+                transform: translateY(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-overlay" id="chatOverlay">
+        <button class="close-btn" onclick="closeChatOverlay()">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+        
+        <div class="chat-container">
+            <!-- Inbox Panel -->
+            <div class="inbox-panel" id="inboxPanel">
+                <div class="inbox-header">
+                    <h3>📧 Smart Inbox</h3>
+                    <button class="inbox-toggle" onclick="toggleInboxPanel()">
+                        <i data-lucide="panel-left-close" style="width: 16px; height: 16px;"></i>
+                    </button>
+                </div>
+                
+                <div class="inbox-search">
+                    <input type="text" class="search-input" placeholder="Search emails, dates, senders..." id="emailSearch">
+                </div>
+                
+                <div class="inbox-content" id="inboxContent">
+                    <!-- Email items will be populated here -->
+                    <div class="email-item school" onclick="insertEmailQuery('school')">
+                        <div class="email-sender">KISD School District</div>
+                        <div class="email-subject">Parent-Teacher Conference Scheduling</div>
+                        <div class="email-meta">
+                            <span>2 days ago</span>
+                            <span>🏫 Education</span>
+                        </div>
+                    </div>
+                    
+                    <div class="email-item commerce" onclick="insertEmailQuery('deals')">
+                        <div class="email-sender">Amazon</div>
+                        <div class="email-subject">Daily Deals & Household Essentials</div>
+                        <div class="email-meta">
+                            <span>Yesterday</span>
+                            <span>🛒 Commerce</span>
+                        </div>
+                    </div>
+                    
+                    <div class="email-item urgent" onclick="insertEmailQuery('urgent')">
+                        <div class="email-sender">Bank Alert</div>
+                        <div class="email-subject">Payment Due Reminder</div>
+                        <div class="email-meta">
+                            <span>3 hours ago</span>
+                            <span>⚠️ Urgent</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">🤖 HomeOps Assistant</div>
+                    <div class="chat-actions">
+                        <button class="action-btn" onclick="refreshInbox()">
+                            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+                            Refresh
+                        </button>
+                        <button class="action-btn" onclick="toggleInboxPanel()">
+                            <i data-lucide="mail" style="width: 14px; height: 14px;"></i>
+                            Inbox
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message">
+                        <div class="message-avatar">
+                            <i data-lucide="bot" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div class="message-content">
+                            <div>Hi! I'm your HomeOps assistant. I can help you with:</div>
+                            <br>
+                            <div>📧 <strong>Email Intelligence:</strong> "Show me emails from KISD school"</div>
+                            <div>📅 <strong>Calendar Integration:</strong> "Add school conference to my calendar"</div>
+                            <div>🛒 <strong>Commerce Insights:</strong> "When did I last buy toilet paper?"</div>
+                            <div>📊 <strong>Smart Summaries:</strong> "Summarize this week's important emails"</div>
+                            <br>
+                            <div>What would you like to know?</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message-avatar">
+                        <i data-lucide="bot" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                        <span>Assistant is thinking</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="insertQuickQuery('Show me emails from KISD school')">📚 School Emails</div>
+                        <div class="quick-action" onclick="insertQuickQuery('Any deals on household items?')">🛒 Recent Deals</div>
+                        <div class="quick-action" onclick="insertQuickQuery('When did I last buy toilet paper?')">🧻 Purchase History</div>
+                        <div class="quick-action" onclick="insertQuickQuery('Summarize today&#39;s important emails')">📊 Email Summary</div>
+                    </div>
+                    
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="messageInput" 
+                            placeholder="Ask about emails, add to calendar, check purchase history..."
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isInboxCollapsed = false;
+        let currentUserId = 'user123'; // This should be dynamic based on actual user
+        
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Auto-resize textarea
+            const messageInput = document.getElementById('messageInput');
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+            
+            // Enter to send message
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Email search functionality
+            const emailSearch = document.getElementById('emailSearch');
+            emailSearch.addEventListener('input', function() {
+                filterEmails(this.value);
+            });
+            
+            // Load initial inbox data
+            loadInboxData();
+        });
+        
+        function openChatOverlay() {
+            document.getElementById('chatOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeChatOverlay() {
+            document.getElementById('chatOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function toggleInboxPanel() {
+            const panel = document.getElementById('inboxPanel');
+            isInboxCollapsed = !isInboxCollapsed;
+            panel.classList.toggle('collapsed', isInboxCollapsed);
+        }
+        
+        function insertQuickQuery(query) {
+            document.getElementById('messageInput').value = query;
+            sendMessage();
+        }
+        
+        function insertEmailQuery(type) {
+            let query = '';
+            switch(type) {
+                case 'school':
+                    query = 'Show me recent emails from KISD school district';
+                    break;
+                case 'deals':
+                    query = 'What deals or sales have I received recently?';
+                    break;
+                case 'urgent':
+                    query = 'Show me urgent emails and bills that need attention';
+                    break;
+            }
+            document.getElementById('messageInput').value = query;
+        }
+        
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Clear input and reset height
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        message: message
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Hide typing indicator
+                hideTypingIndicator();
+                
+                // Add assistant response
+                addMessage(data.response, 'assistant', data);
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                hideTypingIndicator();
+                addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+            }
+        }
+        
+        function addMessage(content, sender, data = null) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = sender === 'user' ? 
+                '<i data-lucide="user" style="width: 20px; height: 20px;"></i>' :
+                '<i data-lucide="bot" style="width: 20px; height: 20px;"></i>';
+            
+            let messageContent = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div>${content}</div>
+            `;
+            
+            // Add email previews if available
+            if (data && data.emailContext) {
+                messageContent += `
+                    <div class="email-preview">
+                        <div class="email-preview-header">
+                            <div class="email-preview-subject">${data.emailContext.subject || 'Email Summary'}</div>
+                            <div class="email-preview-date">${data.emailContext.date || 'Recent'}</div>
+                        </div>
+                        <div class="email-preview-content">${data.emailContext.summary || data.emailContext}</div>
+                    </div>
+                `;
+            }
+            
+            // Add calendar suggestions if available
+            if (data && data.calendarSuggestion) {
+                messageContent += `
+                    <div class="calendar-suggestion">
+                        <div class="calendar-suggestion-text">${data.calendarSuggestion.text}</div>
+                        <button class="add-calendar-btn" onclick="addToCalendar('${data.calendarSuggestion.event}')">
+                            Add to Calendar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            messageContent += `
+                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            
+            messageDiv.innerHTML = messageContent;
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Reinitialize icons for new content
+            lucide.createIcons();
+        }
+        
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('active');
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('active');
+        }
+        
+        async function loadInboxData() {
+            try {
+                // This would normally fetch from your email API
+                const response = await fetch('/api/email-summary');
+                const data = await response.json();
+                
+                // Update inbox with real data
+                updateInboxDisplay(data);
+                
+            } catch (error) {
+                console.error('Error loading inbox:', error);
+            }
+        }
+        
+        function updateInboxDisplay(emailData) {
+            // This function would update the inbox panel with real email data
+            // For now, using mock data as shown in the HTML
+        }
+        
+        function refreshInbox() {
+            loadInboxData();
+            addMessage('📧 Refreshing your inbox...', 'assistant');
+        }
+        
+        function filterEmails(searchTerm) {
+            const emailItems = document.querySelectorAll('.email-item');
+            emailItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const matches = text.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+        
+        async function addToCalendar(eventData) {
+            try {
+                const response = await fetch('/api/calendar/add-event', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        event: eventData
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('✅ Event added to your calendar successfully!', 'assistant');
+                } else {
+                    addMessage('❌ Failed to add event to calendar. Please try again.', 'assistant');
+                }
+                
+            } catch (error) {
+                console.error('Calendar error:', error);
+                addMessage('❌ Error adding to calendar. Please try again.', 'assistant');
+            }
+        }
+        
+        // Global function to open chat overlay (can be called from other pages)
+        window.openHomeOpsChat = openChatOverlay;
+    </script>
+</body>
+</html>

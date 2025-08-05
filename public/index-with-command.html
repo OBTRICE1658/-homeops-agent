@@ -707,9 +707,8 @@
 <body>
   <div class="mobile-app">
     <!-- Header -->
-    <div class="mobile-header">
-      <div class="logo">HomeOps</div>
-      <div style="font-size: 14px; color: rgba(255,255,255,0.8);">Works!</div>
+    <div class="mobile-header" style="display: none;">
+      <!-- Hidden - will use the chat iframe header instead -->
     </div>
     
     <!-- Content Area -->
@@ -717,8 +716,9 @@
       <!-- Chat View -->
       <div id="chat-mobile" class="mobile-view">
         <iframe src="/clean-chat-test.html" 
-                style="width: 100%; height: calc(100vh - 140px); border: none; background: transparent; margin: 0; padding: 0; position: absolute; top: 0; left: 0;"
-                onload="this.style.opacity='1'">
+                style="width: 100%; height: 100%; border: none; background: transparent; margin: 0; padding: 0; border-radius: 0; overflow: hidden;"
+                onload="this.style.opacity='1'; console.log('📱 Chat iframe loaded successfully');"
+                onerror="console.error('❌ Chat iframe failed to load');">
         </iframe>
       </div>
       
@@ -1023,6 +1023,88 @@
           initializeIcons();
         }
       }, 50);
+    }
+    
+    // Header button functions
+    window.refreshApp = function() {
+      console.log('🔄 Refreshing app...');
+      // Add haptic feedback
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(20);
+        }
+      } catch (e) {}
+      
+      // Refresh the current view
+      const activeView = document.querySelector('.mobile-view.active');
+      if (activeView) {
+        const viewId = activeView.id;
+        if (viewId === 'email-mobile') {
+          loadDecoderCards();
+        } else if (viewId === 'calendar-mobile') {
+          initializeCalendarView();
+        } else if (viewId === 'chat-mobile') {
+          // Reload the chat iframe
+          const iframe = activeView.querySelector('iframe');
+          if (iframe) {
+            iframe.src = iframe.src;
+          }
+        }
+      }
+    }
+    
+    window.toggleSmartInbox = function() {
+      console.log('📧 Toggling Smart Inbox...');
+      // Add haptic feedback
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(30);
+        }
+      } catch (e) {}
+      
+      // Switch to chat view and trigger inbox
+      showView('chat-mobile', document.querySelector('[onclick*="chat-mobile"]'));
+      
+      // Wait for iframe to load and trigger inbox with retry mechanism
+      let attempts = 0;
+      const maxAttempts = 10;
+      
+      function tryToggleInbox() {
+        attempts++;
+        const iframe = document.querySelector('#chat-mobile iframe');
+        
+        if (iframe && iframe.contentDocument) {
+          try {
+            // Try to call the function directly in the iframe
+            const iframeWindow = iframe.contentWindow;
+            if (iframeWindow && iframeWindow.toggleInboxPanel) {
+              console.log('📧 Calling iframe toggle function directly');
+              iframeWindow.toggleInboxPanel();
+              return;
+            }
+          } catch (e) {
+            console.log('Direct iframe call failed, trying postMessage');
+          }
+        }
+        
+        // Fallback to postMessage
+        if (iframe && iframe.contentWindow) {
+          try {
+            iframe.contentWindow.postMessage({type: 'toggleInbox'}, '*');
+            console.log('📧 Sent postMessage to iframe');
+          } catch (e) {
+            console.log('PostMessage failed:', e);
+          }
+        }
+        
+        // Retry if needed
+        if (attempts < maxAttempts) {
+          setTimeout(tryToggleInbox, 200);
+        }
+      }
+      
+      // Start trying after a short delay
+      setTimeout(tryToggleInbox, 300);
     }
     
     // Create global alias for compatibility
