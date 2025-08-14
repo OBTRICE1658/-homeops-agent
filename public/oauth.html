@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Connect Gmail</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .oauth-container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .brand-mark {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .gmail-connect {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .connect-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+        }
+
+        .gmail-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .gmail-btn:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .privacy-note {
+            background: #e6fffa;
+            border: 1px solid #b2f5ea;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .privacy-note h4 {
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .privacy-note p {
+            color: #4a5568;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .skip-btn {
+            color: #718096;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .skip-btn:hover {
+            color: #4a5568;
+        }
+
+        @media (max-width: 640px) {
+            .oauth-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="oauth-container">
+        <div class="brand-mark">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 3L4 12v16h6v-8h4v8h6v-8h4v8h4V12L16 3z" fill="white" opacity="0.9"/>
+                <path d="M16 3L28 12h-4L16 6L8 12H4L16 3z" fill="white"/>
+                <circle cx="16" cy="15" r="1.5" fill="rgba(102,126,234,0.8)"/>
+                <circle cx="12" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="16" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="20" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <path d="M14 18h4v1h-4z" fill="rgba(102,126,234,0.6)"/>
+            </svg>
+        </div>
+
+        <h1>Connect Your Gmail</h1>
+        <p class="subtitle">Let's connect your inbox so we can start learning your patterns and reducing your mental load.</p>
+
+        <div class="gmail-connect">
+            <div class="connect-title">Gmail Account</div>
+            <a href="#" class="gmail-btn" onclick="connectGmail()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Connect Gmail & Start Learning
+            </a>
+        </div>
+
+        <div class="privacy-note">
+            <h4>🔒 Your Privacy Matters</h4>
+            <p>We only read email metadata (sender, subject, date) to understand patterns. Your email content stays completely private and is never accessed or stored.</p>
+        </div>
+
+        <button class="skip-btn" onclick="skipOAuth()">Skip for now (you can connect later)</button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        function connectGmail() {
+            // For demo purposes, simulate OAuth flow
+            console.log('Starting Gmail OAuth...');
+            
+            // Show loading state
+            const btn = document.querySelector('.gmail-btn');
+            btn.innerHTML = '<div style="width: 20px; height: 20px; border: 2px solid #ccc; border-top: 2px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div> Connecting...';
+            btn.style.pointerEvents = 'none';
+            
+            // Add spin animation
+            const style = document.createElement('style');
+            style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+            
+            // Simulate OAuth process
+            setTimeout(() => {
+                // Store OAuth success
+                sessionStorage.setItem('oauth_connected', 'gmail');
+                sessionStorage.setItem('oauth_timestamp', new Date().toISOString());
+                
+                // Redirect to calibration
+                window.location.href = '/calibrate';
+            }, 2000);
+        }
+        
+        function skipOAuth() {
+            // Mark as skipped but continue flow
+            sessionStorage.setItem('oauth_skipped', 'true');
+            window.location.href = '/calibrate';
+        }
+        
+        // Check if user data exists
+        const userData = sessionStorage.getItem('onboarding_userData');
+        if (userData) {
+            const user = JSON.parse(userData);
+            console.log('User proceeding to OAuth:', user.firstName);
+        }
+    </script>
+</body>
+</html>

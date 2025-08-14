@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Tell Us About Your Family | HomeOps</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .step-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        
+        .step-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .step-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        
+        .step-subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-input::placeholder {
+            color: #64748b;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #3b82f6;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+        
+        .checkbox-label {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .continue-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+        }
+        
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        @media (max-width: 768px) {
+            .step-container { padding: 30px 25px; }
+            .checkbox-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="step-container">
+        <div class="step-header">
+            <div class="step-number">Step 1 of 4</div>
+            <h1 class="step-title">Tell Us About Your Family</h1>
+            <p class="step-subtitle">Help us understand your priorities so we can surface what matters most to you.</p>
+        </div>
+        
+        <form id="familyForm">
+            <div class="form-section">
+                <label class="form-label" for="firstName">What should we call you?</label>
+                <input 
+                    type="text" 
+                    id="firstName" 
+                    class="form-input" 
+                    placeholder="Your first name"
+                    required
+                >
+            </div>
+            
+            <div class="form-section">
+                <label class="form-label" for="familySize">How many people in your household?</label>
+                <input 
+                    type="number" 
+                    id="familySize" 
+                    class="form-input" 
+                    placeholder="e.g., 4"
+                    min="1"
+                    max="15"
+                    required
+                >
+            </div>
+            
+            <div class="form-section">
+                <label class="form-label">What are your main priorities? (Select all that apply)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-kids" value="kids">
+                        <label class="checkbox-label" for="priority-kids">Kids' schedules & school</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-bills" value="bills">
+                        <label class="checkbox-label" for="priority-bills">Bills & financial deadlines</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-travel" value="travel">
+                        <label class="checkbox-label" for="priority-travel">Travel & reservations</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-health" value="health">
+                        <label class="checkbox-label" for="priority-health">Health & medical appointments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-work" value="work">
+                        <label class="checkbox-label" for="priority-work">Work & professional</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="priority-home" value="home">
+                        <label class="checkbox-label" for="priority-home">Home services & maintenance</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="continue-btn">
+                <span>Continue to Privacy & Security</span>
+                <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        lucide.createIcons();
+        
+        document.getElementById('familyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                familySize: document.getElementById('familySize').value,
+                priorities: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value)
+            };
+            
+            // Store in localStorage for now
+            localStorage.setItem('homeops_onboarding', JSON.stringify(formData));
+            
+            // Navigate to step 2
+            window.location.href = '/onboard/step2';
+        });
+        
+        console.log('🎯 STEP 1: Family Profile Setup');
+    </script>
+</body>
+</html>

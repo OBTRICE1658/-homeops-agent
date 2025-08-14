@@ -9,15 +9,16 @@ echo "⏰ Adding deployment timestamp: $TIMESTAMP"
 
 # Create a simple deployment marker
 echo "DEPLOYMENT_TIMESTAMP=$TIMESTAMP" > DEPLOY_TIMESTAMP.txt
-echo "BRANCH=calendar-rebuild-safe" >> DEPLOY_TIMESTAMP.txt
-echo "ONBOARDING_FLOW=enabled" >> DEPLOY_TIMESTAMP.txt
+echo "BRANCH=enhanced-chat-overlay-restored" >> DEPLOY_TIMESTAMP.txt
+echo "HOMEOPS_AGENT=enabled" >> DEPLOY_TIMESTAMP.txt
+echo "AGENT_INTERFACE=live" >> DEPLOY_TIMESTAMP.txt
 
 # Commit the change
 git add DEPLOY_TIMESTAMP.txt
-git commit -m "🚀 Force deploy: $TIMESTAMP - Enable onboarding flow"
+git commit -m "🚀 HOMEOPS AGENT LIVE: $TIMESTAMP - Agent interface deployed"
 
 # Push to trigger deployment
-git push origin calendar-rebuild-safe
+git push origin enhanced-chat-overlay-restored
 
 echo ""
 echo "✅ Force deployment triggered!"

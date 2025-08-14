@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps.ai - The Mental Load Operating System for High Performing Families</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: #f7f6f3;
+            min-height: 100vh;
+            color: #37352f;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            min-height: calc(100vh - 32px);
+            display: flex;
+            flex-direction: column;
+        }
+        .hero {
+            padding: 40px 24px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex-shrink: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+        .tagline {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 32px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+        .content {
+            padding: 32px 24px 40px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex: 1;
+        }
+        .feature {
+            text-align: center;
+            padding: 0;
+        }
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            color: #2383e2;
+            margin: 0 auto 12px;
+            stroke-width: 1.5;
+            display: block;
+        }
+        .feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #37352f;
+        }
+        .feature p {
+            font-size: 0.9rem;
+            color: #6b6b6b;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .cta-section {
+            text-align: center;
+            padding-bottom: 24px;
+        }
+        @media (max-width: 768px) {
+            body { padding: 8px; }
+            .container { 
+                min-height: calc(100vh - 16px);
+                border-radius: 8px;
+            }
+            .hero { 
+                padding: 32px 20px; 
+            }
+            .content { 
+                padding: 24px 20px 32px 20px; 
+            }
+            h1 { 
+                font-size: 2rem; 
+            }
+            .subtitle { 
+                font-size: 1rem; 
+            }
+            .tagline {
+                font-size: 0.9rem;
+            }
+            .feature h3 { 
+                font-size: 1rem; 
+            }
+            .feature p { 
+                font-size: 0.85rem; 
+            }
+            .btn { 
+                padding: 14px 28px; 
+                font-size: 0.95rem; 
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+        @media (min-width: 769px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 32px;
+            }
+            .feature {
+                text-align: left;
+            }
+            .feature-icon {
+                margin: 0 0 16px 0;
+                width: 48px;
+                height: 48px;
+            }
+            .content {
+                padding: 48px 40px 60px 40px;
+            }
+            .hero {
+                padding: 60px 40px;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+            .subtitle {
+                font-size: 1.25rem;
+            }
+            .feature h3 {
+                font-size: 1.25rem;
+                margin-bottom: 12px;
+            }
+            .feature p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>HomeOps.ai</h1>
+            <p class="subtitle">The Mental Load Operating System</p>
+            <p class="tagline">for High Performing Families</p>
+        </div>
+        
+        <div class="content">
+            <div class="features">
+                <div class="feature">
+                    <i data-lucide="brain" class="feature-icon"></i>
+                    <h3>AI Email Intelligence</h3>
+                    <p>Automatically processes, categorizes, and prioritizes your emails with advanced AI - no more email overwhelm</p>
+                </div>
+                <div class="feature">
+                    <i data-lucide="activity" class="feature-icon"></i>
+                    <h3>Mental Load Analytics</h3>
+                    <p>Track cognitive bandwidth usage across tasks, identify energy drains, and optimize your mental resources</p>
+                </div>
+                <div class="feature">
+                    <i data-lucide="zap" class="feature-icon"></i>
+                    <h3>Smart Automation</h3>
+                    <p>Eliminate decision fatigue with intelligent task routing, automated responses, and predictive recommendations</p>
+                </div>
+            </div>
+            
+            <div class="cta-section">
+                <button class="btn" onclick="window.location.href='/onboard-questionnaire-new.html'">
+                    Start Your Transformation
+                    <i data-lucide="arrow-right" style="margin-left: 8px; width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

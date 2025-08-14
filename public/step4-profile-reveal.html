@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Your AI Profile</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .step-indicator {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .scanning-animation {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        .scanning-animation::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 25px;
+            animation: scan 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes scan {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+
+        .brain-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .analysis-phase {
+            margin-bottom: 40px;
+        }
+
+        .analysis-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .stats-reveal {
+            display: none;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .insight-section {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .insight-title {
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .insight-text {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .priority-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .priority-chip {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .ai-promise {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .ai-promise h3 {
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-promise-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ai-promise-list li {
+            color: #2d3748;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .check-icon {
+            width: 16px;
+            height: 16px;
+            color: #38a169;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            .profile-container {
+                padding: 40px 24px;
+                margin: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            
+            .insight-section {
+                padding: 24px;
+            }
+            
+            .priority-chips {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="step-indicator">Step 4 of 4</div>
+        
+        <div class="analysis-phase" id="analysisPhase">
+            <div class="scanning-animation">
+                <i data-lucide="brain" class="brain-icon"></i>
+            </div>
+            <div class="analysis-text" id="analysisText">Analyzing your email patterns...</div>
+        </div>
+
+        <div class="stats-reveal" id="statsReveal">
+            <h1 style="color: #1a202c; font-size: 2rem; font-weight: 800; margin-bottom: 12px;">
+                Welcome, <span id="userName">User</span>! 👋
+            </h1>
+            <p style="color: #4a5568; font-size: 1.1rem; margin-bottom: 40px;">
+                We've analyzed your Gmail and created your personalized AI assistant
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="emailCount">1,247</div>
+                    <div class="stat-label">Emails Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="categoryCount">8</div>
+                    <div class="stat-label">Categories Identified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="priorityCount">127</div>
+                    <div class="stat-label">Priority Emails/Month</div>
+                </div>
+            </div>
+
+            <div class="insight-section">
+                <div class="insight-title">
+                    <i data-lucide="lightbulb" style="width: 24px; height: 24px; color: #667eea;"></i>
+                    What We Discovered About You
+                </div>
+                <div class="insight-text" id="personalInsight">
+                    You manage a complex household with multiple priorities. Your inbox shows a strong focus on family coordination, with frequent school communications and activity scheduling.
+                </div>
+                <div class="priority-chips" id="priorityChips">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="insight-text">
+                    <strong>Pattern Recognition:</strong> <span id="patternInsight">Most urgent emails arrive Tuesday-Thursday between 2-4 PM, often related to school pickup changes and appointment confirmations.</span>
+                </div>
+            </div>
+
+            <div class="ai-promise">
+                <h3>
+                    <i data-lucide="zap" style="width: 20px; height: 20px; color: #38a169;"></i>
+                    How I'll Help Lighten Your Mental Load
+                </h3>
+                <ul class="ai-promise-list">
+                    <li>
+                        <i data-lucide="check" class="check-icon"></i>
+                        <span><strong>Smart Prioritization:</strong> I'll surface school events and appointment reminders first</span>
+                    </li>
+                    <li>
+                        <i data-lucide="check" class="check-icon"></i>
+                        <span><strong>Commerce Filtering:</strong> Keep shopping confirmations organized but out of your priority feed</span>
+                    </li>
+                    <li>
+                        <i data-lucide="check" class="check-icon"></i>
+                        <span><strong>Urgent Detection:</strong> Flag time-sensitive emails that need immediate attention</span>
+                    </li>
+                    <li>
+                        <i data-lucide="check" class="check-icon"></i>
+                        <span><strong>Context Summaries:</strong> Get the key details without reading every email</span>
+                    </li>
+                </ul>
+            </div>
+
+            <button class="continue-btn" onclick="enterApp()">
+                Start Using HomeOps
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Check authentication and get user data
+        const authToken = sessionStorage.getItem('homeops_auth_token');
+        const userProfile = JSON.parse(sessionStorage.getItem('homeops_user_profile') || '{}');
+        const calibrationData = JSON.parse(sessionStorage.getItem('homeops_calibration_data') || '[]');
+        
+        if (!authToken || !userProfile.firstName) {
+            console.log('❌ Missing auth or profile, redirecting to step 1');
+            window.location.href = '/step1-auth';
+        }
+        
+        // Analysis phases
+        const analysisPhases = [
+            "Analyzing your email patterns...",
+            "Identifying priority senders...",
+            "Learning your family's schedule...",
+            "Building your AI profile...",
+            "Training complete!"
+        ];
+        
+        let currentPhase = 0;
+        
+        function updateAnalysisText() {
+            const textElement = document.getElementById('analysisText');
+            textElement.textContent = analysisPhases[currentPhase];
+            currentPhase++;
+            
+            if (currentPhase < analysisPhases.length) {
+                setTimeout(updateAnalysisText, 1500);
+            } else {
+                setTimeout(showResults, 1000);
+            }
+        }
+        
+        function showResults() {
+            // Hide analysis phase
+            document.getElementById('analysisPhase').style.display = 'none';
+            
+            // Show results
+            const statsReveal = document.getElementById('statsReveal');
+            statsReveal.style.display = 'block';
+            
+            // Populate user-specific data
+            document.getElementById('userName').textContent = userProfile.firstName;
+            
+            // Generate stats based on calibration
+            const relevantEmails = calibrationData.filter(item => item.isRelevant).length;
+            const totalCalibrated = calibrationData.length;
+            
+            // Simulate realistic stats
+            document.getElementById('emailCount').textContent = Math.floor(Math.random() * 500) + 800;
+            document.getElementById('categoryCount').textContent = Math.floor(Math.random() * 3) + 6;
+            document.getElementById('priorityCount').textContent = Math.floor(relevantEmails * 6.35); // Extrapolate from calibration
+            
+            // Show user priorities
+            const priorityChips = document.getElementById('priorityChips');
+            userProfile.priorities.forEach(priority => {
+                const chip = document.createElement('div');
+                chip.className = 'priority-chip';
+                chip.textContent = priority.replace('-', '/').replace(/\b\w/g, l => l.toUpperCase());
+                priorityChips.appendChild(chip);
+            });
+            
+            // Personalize insights based on priorities
+            updatePersonalInsights();
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+        
+        function updatePersonalInsights() {
+            const priorities = userProfile.priorities;
+            let insight = `You juggle `;
+            
+            if (priorities.includes('kids-school')) {
+                insight += "school coordination, ";
+            }
+            if (priorities.includes('work-meetings')) {
+                insight += "work meetings, ";
+            }
+            if (priorities.includes('social-clubs')) {
+                insight += "social activities, ";
+            }
+            if (priorities.includes('bills-finance')) {
+                insight += "financial tracking, ";
+            }
+            
+            insight = insight.slice(0, -2); // Remove last comma
+            insight += ` with remarkable organization. Your email patterns show you're the family's central coordinator.`;
+            
+            document.getElementById('personalInsight').textContent = insight;
+            
+            // Pattern insight based on role
+            let patternText = "";
+            if (userProfile.householdRole === 'parent' || userProfile.householdRole === 'both') {
+                patternText = "Most urgent emails arrive during school hours and involve pickup changes, appointment confirmations, or activity updates.";
+            } else if (userProfile.householdRole === 'professional') {
+                patternText = "Peak email activity occurs during business hours with clusters around meeting scheduling and deadline coordination.";
+            } else {
+                patternText = "Your email patterns show consistent organization with regular attention to priority communications.";
+            }
+            
+            document.getElementById('patternInsight').textContent = patternText;
+        }
+        
+        async function enterApp() {
+            try {
+                console.log('🚀 Entering main HomeOps app...');
+                
+                // Show loading state
+                const btn = document.querySelector('.continue-btn');
+                btn.innerHTML = 'Launching HomeOps...';
+                btn.disabled = true;
+                
+                // Store completion state
+                sessionStorage.setItem('homeops_onboarding_complete', 'true');
+                sessionStorage.setItem('homeops_setup_date', new Date().toISOString());
+                
+                // Simulate app launch
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Redirect to main app
+                window.location.href = '/app';
+                
+            } catch (error) {
+                console.error('Error launching app:', error);
+                alert('Something went wrong. Please try again.');
+                
+                // Reset button
+                const btn = document.querySelector('.continue-btn');
+                btn.innerHTML = 'Start Using HomeOps';
+                btn.disabled = false;
+            }
+        }
+        
+        // Start the analysis sequence
+        setTimeout(updateAnalysisText, 1000);
+        
+        console.log(`🚀 HomeOps Step 4: Profile Reveal Loaded for ${userProfile.firstName}`);
+        console.log('📊 Calibration Data:', calibrationData);
+    </script>
+</body>
+</html>

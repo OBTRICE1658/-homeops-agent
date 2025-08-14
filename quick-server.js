@@ -5259,11 +5259,19 @@ function extractCalendarEventsFromEmail(subject, body, senderName) {
   return events;
 }
 
-// Server startup
+// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 HomeOps Server running on port ${PORT}`);
-  console.log(`📊 Dashboard: http://localhost:${PORT}/app`);
-  console.log(`🎯 Onboarding: http://localhost:${PORT}/onboard`);
-  console.log(`⚙️ Calibration: http://localhost:${PORT}/calibrate`);
-  console.log(`📧 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🚀 HomeOps Mental Load Operating System running on port ${PORT}`);
+  console.log('📧 Enhanced Chat Overlay System Active:');
+  console.log(`   🏠 Main App: http://localhost:${PORT}/app`);
+  console.log(`   💬 Enhanced Chat Demo: http://localhost:${PORT}/enhanced-chat-demo.html`);
+  console.log(`   📧 Smart Inbox Overlay: http://localhost:${PORT}/enhanced-chat-overlay.html`);
+  console.log(`   🎯 Clean Chat Interface: http://localhost:${PORT}/clean-chat-test.html`);
+  console.log('');
+  console.log('🎯 API Endpoints:');
+  console.log(`   💬 Chat API: http://localhost:${PORT}/api/chat`);
+  console.log(`   📧 Email Summary: http://localhost:${PORT}/api/email-summary`);
+  console.log(`   📅 Calendar Events: http://localhost:${PORT}/api/calendar/add-event`);
+  console.log('');
+  console.log('✨ Features: Enhanced Chat Overlay, Smart Inbox, Email Intelligence, Calendar Integration');
 });

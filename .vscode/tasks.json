@@ -6,7 +6,7 @@
 			"type": "shell",
 			"command": "node",
 			"args": [
-				"quick-server.js"
+				"working-server.js"
 			],
 			"group": "build",
 			"isBackground": true,

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Calibrate Your AI</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .calibration-container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 75%;
+            transition: width 0.5s ease;
+        }
+        
+        .step-indicator {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .brand-mark {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+        }
+
+        .agent-logo {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+
+        .step-title {
+            color: #2d3748;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .step-subtitle {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .progress-indicator {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-text {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .progress-count {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .email-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .email-card:hover {
+            border-color: #c6d5f5;
+        }
+
+        .email-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .email-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .email-sender {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .email-date {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .category-tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .email-summary {
+            color: #2d3748;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .email-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: 2px solid;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .relevant-btn {
+            border-color: #38a169;
+            color: #38a169;
+        }
+
+        .relevant-btn:hover {
+            background: #38a169;
+            color: white;
+        }
+
+        .irrelevant-btn {
+            border-color: #e53e3e;
+            color: #e53e3e;
+        }
+
+        .irrelevant-btn:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: #4a5568;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .complete-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .complete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            .calibration-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .email-card {
+                padding: 20px;
+            }
+            
+            .email-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .email-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calibration-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="step-indicator">Step 3 of 4</div>
+        
+        <div class="brand-mark">
+            <svg class="agent-logo" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 3L4 12v16h6v-8h4v8h6v-8h4v8h4V12L16 3z" fill="white" opacity="0.9"/>
+                <path d="M16 3L28 12h-4L16 6L8 12H4L16 3z" fill="white"/>
+                <circle cx="16" cy="15" r="1.5" fill="rgba(102,126,234,0.8)"/>
+                <circle cx="12" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="16" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="20" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <path d="M14 18h4v1h-4z" fill="rgba(102,126,234,0.6)"/>
+            </svg>
+        </div>
+        
+        <h1>HomeOps</h1>
+        
+        <div class="step-title">Calibrate your AI</div>
+        <div class="step-subtitle">Help us understand what emails matter most to you</div>
+        
+        <div class="progress-indicator">
+            <span class="progress-text">Calibration Progress</span>
+            <span class="progress-count" id="progressCount">0 / 20</span>
+        </div>
+
+        <div id="emailContainer">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Analyzing your recent emails...</span>
+            </div>
+        </div>
+
+        <button class="complete-btn" onclick="completeCalibration()" id="completeBtn" style="display: none;">Continue to AI Profile</button>
+    </div>
+
+    <script>
+        let currentEmailIndex = 0;
+        let calibrationData = [];
+        let mockEmails = [];
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Check authentication and profile
+        const authToken = sessionStorage.getItem('homeops_auth_token');
+        const userProfile = JSON.parse(sessionStorage.getItem('homeops_user_profile') || '{}');
+        
+        if (!authToken || !userProfile.firstName) {
+            console.log('❌ Missing auth or profile, redirecting to step 1');
+            window.location.href = '/step1-auth';
+        }
+        
+        // Generate mock emails based on user priorities
+        function generateMockEmails() {
+            const emailTemplates = [
+                {
+                    sender: "Lincoln Elementary School",
+                    date: "2 hours ago",
+                    category: "School",
+                    summary: "Parent-teacher conferences are next week. Soccer mom Sarah needs to schedule her appointment for Thursday at 3:30 PM. Priority because this affects pickup timing."
+                },
+                {
+                    sender: "Amazon",
+                    date: "5 hours ago",
+                    category: "Commerce",
+                    summary: "Your order of kids' soccer cleats has shipped and will arrive tomorrow. Track package #1Z999AA10123456789 for delivery updates."
+                },
+                {
+                    sender: "Dr. Peterson's Office",
+                    date: "1 day ago",
+                    category: "Health",
+                    summary: "Reminder: Emma's annual checkup is scheduled for Friday at 2:00 PM. Please arrive 15 minutes early to complete paperwork."
+                },
+                {
+                    sender: "Target",
+                    date: "6 hours ago",
+                    category: "Commerce",
+                    summary: "Weekly ad featuring back-to-school supplies. 20% off backpacks and lunch boxes. Sale ends Sunday - might be worth checking for school supplies."
+                },
+                {
+                    sender: "Westside Soccer Club",
+                    date: "3 hours ago",
+                    category: "Activities",
+                    summary: "Practice moved to Field B this Saturday due to field maintenance. Game schedules remain unchanged. Snack duty roster attached."
+                },
+                {
+                    sender: "work@company.com",
+                    date: "4 hours ago",
+                    category: "Work",
+                    summary: "Monthly team meeting moved to Tuesday 10 AM via Zoom. Project deadline discussion and Q3 planning on the agenda."
+                },
+                {
+                    sender: "PTA Newsletter",
+                    date: "8 hours ago",
+                    category: "School",
+                    summary: "Volunteer opportunities for the fall festival. They need help with the book fair booth and cake walk. Sign up by Friday."
+                },
+                {
+                    sender: "Netflix",
+                    date: "1 day ago",
+                    category: "Entertainment",
+                    summary: "New episodes of your favorite shows are now available. Continue watching your series or discover something new in our recommendations."
+                },
+                {
+                    sender: "Bank of America",
+                    date: "2 days ago",
+                    category: "Finance",
+                    summary: "Your credit card statement is ready. $1,247.82 total with automatic payment scheduled for next Tuesday. Review charges online."
+                },
+                {
+                    sender: "Pottery Barn Kids",
+                    date: "1 day ago",
+                    category: "Commerce",
+                    summary: "Fall collection preview: new bedroom furniture and organization solutions. Free shipping on orders over $99 this weekend only."
+                }
+            ];
+            
+            // Add 10 more emails to reach 20 total
+            const additionalEmails = [
+                {
+                    sender: "Kroger",
+                    date: "4 hours ago",
+                    category: "Commerce",
+                    summary: "Digital coupons loaded to your account. Save $15 on groceries this week including organic produce and household essentials."
+                },
+                {
+                    sender: "Little League",
+                    date: "6 hours ago",
+                    category: "Activities",
+                    summary: "Season championship tournament bracket posted. Your team plays Thursday 6 PM at Central Park. Concession volunteer signup attached."
+                },
+                {
+                    sender: "Dental Office",
+                    date: "1 day ago",
+                    category: "Health",
+                    summary: "Time for Jake's 6-month cleaning! Several appointment slots available next week. Call or book online at your convenience."
+                },
+                {
+                    sender: "HOA Board",
+                    date: "2 days ago",
+                    category: "Community",
+                    summary: "Monthly neighborhood meeting this Thursday 7 PM at the clubhouse. Playground equipment updates and holiday lighting discussion."
+                },
+                {
+                    sender: "Spotify",
+                    date: "3 hours ago",
+                    category: "Entertainment",
+                    summary: "Your Discover Weekly playlist is ready with 30 new songs. Plus check out our new podcast recommendations just for you."
+                },
+                {
+                    sender: "Walgreens",
+                    date: "5 hours ago",
+                    category: "Health",
+                    summary: "Prescription ready for pickup. Jake's allergy medication is available at the Maple Street location. Closes at 9 PM tonight."
+                },
+                {
+                    sender: "Birthday Party Invite",
+                    date: "7 hours ago",
+                    category: "Social",
+                    summary: "Emma's friend Madison is having a birthday party Saturday 2-5 PM at Chuck E. Cheese. RSVP by Wednesday. Gift suggestions included."
+                },
+                {
+                    sender: "Gas Company",
+                    date: "3 days ago",
+                    category: "Utilities",
+                    summary: "October gas bill available for review. Budget billing available to spread costs evenly throughout the year. Enroll online."
+                },
+                {
+                    sender: "Library",
+                    date: "1 day ago",
+                    category: "Community",
+                    summary: "Fall reading program kickoff next week. Kids can earn prizes for completing books. Registration starts Monday at 10 AM."
+                },
+                {
+                    sender: "Insurance Agent",
+                    date: "2 days ago",
+                    category: "Finance",
+                    summary: "Annual policy review available. Schedule a call to discuss coverage updates and potential savings on your home and auto insurance."
+                }
+            ];
+            
+            return [...emailTemplates, ...additionalEmails];
+        }
+        
+        function showCurrentEmail() {
+            if (currentEmailIndex >= mockEmails.length) {
+                showCalibrationComplete();
+                return;
+            }
+            
+            const email = mockEmails[currentEmailIndex];
+            const container = document.getElementById('emailContainer');
+            
+            container.innerHTML = `
+                <div class="email-card">
+                    <div class="email-header">
+                        <div class="email-meta">
+                            <span class="email-sender">${email.sender}</span>
+                            <span class="email-date">${email.date}</span>
+                        </div>
+                        <div class="category-tag">${email.category}</div>
+                    </div>
+                    <div class="email-summary">${email.summary}</div>
+                    <div class="email-actions">
+                        <button class="action-btn relevant-btn" onclick="rateEmail(true)">
+                            <i data-lucide="thumbs-up" style="width: 16px; height: 16px;"></i>
+                            Relevant
+                        </button>
+                        <button class="action-btn irrelevant-btn" onclick="rateEmail(false)">
+                            <i data-lucide="thumbs-down" style="width: 16px; height: 16px;"></i>
+                            Not Important
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Update progress
+            document.getElementById('progressCount').textContent = `${currentEmailIndex} / ${mockEmails.length}`;
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+        
+        function rateEmail(isRelevant) {
+            const email = mockEmails[currentEmailIndex];
+            
+            // Store calibration data
+            calibrationData.push({
+                emailIndex: currentEmailIndex,
+                sender: email.sender,
+                category: email.category,
+                isRelevant: isRelevant,
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log(`📊 Rated ${email.sender}: ${isRelevant ? 'Relevant' : 'Not Important'}`);
+            
+            // Move to next email
+            currentEmailIndex++;
+            
+            // Short delay for UX
+            setTimeout(() => {
+                showCurrentEmail();
+            }, 300);
+        }
+        
+        function showCalibrationComplete() {
+            const container = document.getElementById('emailContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; background: #f7fafc; border-radius: 16px; border: 1px solid #e2e8f0;">
+                    <i data-lucide="check-circle" style="width: 48px; height: 48px; color: #38a169; margin-bottom: 16px;"></i>
+                    <h3 style="color: #2d3748; margin-bottom: 8px;">Calibration Complete!</h3>
+                    <p style="color: #4a5568;">Your AI is now trained to understand your priorities.</p>
+                </div>
+            `;
+            
+            document.getElementById('completeBtn').style.display = 'block';
+            document.getElementById('progressCount').textContent = `${mockEmails.length} / ${mockEmails.length}`;
+            
+            // Store calibration data
+            sessionStorage.setItem('homeops_calibration_data', JSON.stringify(calibrationData));
+            
+            lucide.createIcons();
+        }
+        
+        async function completeCalibration() {
+            try {
+                console.log('📋 Saving calibration data:', calibrationData);
+                
+                // Show loading state
+                const btn = document.getElementById('completeBtn');
+                btn.innerHTML = 'Processing your preferences...';
+                btn.disabled = true;
+                
+                // Simulate API call to save calibration data
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Redirect to step 4
+                window.location.href = '/step4-profile-reveal';
+                
+            } catch (error) {
+                console.error('Error saving calibration:', error);
+                alert('Something went wrong. Please try again.');
+                
+                // Reset button
+                const btn = document.getElementById('completeBtn');
+                btn.innerHTML = 'Continue to AI Profile';
+                btn.disabled = false;
+            }
+        }
+        
+        // Initialize the calibration
+        setTimeout(() => {
+            mockEmails = generateMockEmails();
+            showCurrentEmail();
+        }, 2000);
+        
+        console.log(`🚀 HomeOps Step 3: Calibration Loaded for ${userProfile.firstName}`);
+    </script>
+</body>
+</html>

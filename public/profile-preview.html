@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Your Profile</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 30px 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar i {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        .greeting {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subgreeting {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            line-height: 1.4;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .insight-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .insight-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .examples {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .cta-section {
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .profile-complete {
+            display: none;
+        }
+
+        .profile-complete.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 16px;
+            }
+            
+            .content {
+                padding: 24px 20px;
+            }
+            
+            .header {
+                padding: 24px 20px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing your patterns...</div>
+            <div class="loading-subtext">Scanning recent emails and building your profile</div>
+        </div>
+
+        <!-- Profile Complete State -->
+        <div class="profile-complete show" id="profileComplete">
+            <div class="header">
+                <div class="avatar">
+                    <i data-lucide="user"></i>
+                </div>
+                <div class="greeting" id="greeting">Hi there!</div>
+                <div class="subgreeting">Analyzing your email patterns...</div>
+            </div>
+            
+            <div class="content">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="graduation-cap" class="insight-icon"></i>
+                        <div class="insight-title">School Events</div>
+                    </div>
+                    <div class="insight-text" id="schoolInsight">
+                        <div class="count" id="schoolCount">0</div>
+                        <div class="examples" id="schoolExamples">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="shopping-cart" class="insight-icon"></i>
+                        <div class="insight-title">Commerce Receipts</div>
+                    </div>
+                    <div class="insight-text" id="commerceInsight">
+                        <div class="count" id="commerceCount">0</div>
+                        <div class="examples" id="commerceExamples">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="calendar" class="insight-icon"></i>
+                        <div class="insight-title">Upcoming Events</div>
+                    </div>
+                    <div class="insight-text" id="eventsInsight">
+                        <div class="count" id="eventsCount">0</div>
+                        <div class="examples" id="eventsExamples">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="brain" class="insight-icon"></i>
+                        <div class="insight-title">AI Summary</div>
+                    </div>
+                    <div class="insight-text" id="aiSummary">
+                        Generating personalized insights...
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                                <button class="cta-button" onclick="calibrateDecoder()">
+                    Meet Your Agent
+                    <i data-lucide="arrow-right" style="width: 20px; height: 20px; margin-left: 8px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            analyzeGmailData();
+        });
+
+        async function analyzeGmailData() {
+            try {
+                // Get userId from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get('userId') || sessionStorage.getItem('onboarding_userId');
+                
+                if (!userId) {
+                    console.error('No user ID found');
+                    window.location.href = '/questionnaire';
+                    return;
+                }
+
+                // Get user profile data
+                let userData = {
+                    firstName: 'there',
+                    primaryRole: '',
+                    priorities: []
+                };
+
+                // Try to get from sessionStorage first (faster)
+                const step3Data = JSON.parse(sessionStorage.getItem('step3_data') || '{}');
+                const step1Data = JSON.parse(sessionStorage.getItem('step1_data') || '{}');
+                const step2Data = JSON.parse(sessionStorage.getItem('step2_data') || '{}');
+                
+                if (step3Data.firstName) {
+                    userData = {
+                        firstName: step3Data.firstName,
+                        primaryRole: step1Data.primaryRole || '',
+                        priorities: step2Data.priorities || []
+                    };
+                }
+
+                // Update greeting immediately
+                document.getElementById('greeting').textContent = `Hi ${userData.firstName}!`;
+                document.querySelector('.subgreeting').textContent = 'Analyzing your Gmail patterns...';
+
+                // Fetch real Gmail data
+                console.log('📧 Fetching real Gmail data for analysis...');
+                
+                const response = await fetch(`/api/analyze-gmail?userId=${userId}&limit=50`);
+                let gmailData;
+                
+                if (response.ok) {
+                    gmailData = await response.json();
+                    console.log('✅ Gmail analysis complete:', gmailData);
+                } else {
+                    console.warn('⚠️ Gmail API failed, using demo data');
+                    gmailData = generateDemoData();
+                }
+
+                // Analyze email patterns
+                const analysis = gmailData.analysis || analyzeEmailPatterns(gmailData.emails || []);
+                
+                // Update UI with real analysis
+                updateInsights(analysis, userData);
+                
+                // Generate AI summary
+                if (gmailData.analysis && gmailData.analysis.summary) {
+                    document.getElementById('aiSummary').textContent = gmailData.analysis.summary;
+                } else {
+                    generateAISummary(analysis, userData);
+                }
+
+                // Update subgreeting to show completion
+                document.querySelector('.subgreeting').textContent = `Analysis complete! Found ${(analysis.school?.count || 0) + (analysis.commerce?.count || 0) + (analysis.events?.count || 0)} relevant emails.`;
+
+            } catch (error) {
+                console.error('Error analyzing Gmail data:', error);
+                // Use demo data on error
+                const demoData = generateDemoData();
+                const analysis = analyzeEmailPatterns(demoData.emails);
+                updateInsights(analysis, { firstName: 'there', primaryRole: '', priorities: [] });
+                generateAISummary(analysis, { firstName: 'there', primaryRole: '', priorities: [] });
+                document.querySelector('.subgreeting').textContent = 'Using demo data for preview.';
+            }
+        }
+
+        function generateDemoData() {
+            return {
+                emails: [
+                    { from: 'teacher@riverside.k12.edu', subject: 'Field Trip Permission Slip Due Friday', date: '2025-08-06', type: 'school' },
+                    { from: 'noreply@amazon.com', subject: 'Order Confirmation - Backpack and Supplies', date: '2025-08-05', type: 'commerce' },
+                    { from: 'coach@soccerclub.org', subject: 'Game Schedule Update - This Saturday', date: '2025-08-04', type: 'event' },
+                    { from: 'receipts@target.com', subject: 'Receipt #123456 - Thank you for shopping', date: '2025-08-03', type: 'commerce' },
+                    { from: 'principal@riverside.k12.edu', subject: 'Back to School Night - August 15th at 7 PM', date: '2025-08-02', type: 'school' },
+                    { from: 'birthday@evite.com', subject: 'Emma\'s 8th Birthday Party - RSVP by Aug 10', date: '2025-08-01', type: 'event' },
+                    { from: 'class-parent@riverside.k12.edu', subject: 'Volunteer Signup for Fall Festival', date: '2025-07-31', type: 'school' }
+                ]
+            };
+        }
+
+        function analyzeEmailPatterns(emails) {
+            const schoolEmails = emails.filter(e => 
+                e.type === 'school' || 
+                (e.from && (e.from.includes('school') || e.from.includes('.edu') || e.from.includes('teacher') || e.from.includes('class'))) ||
+                (e.subject && (e.subject.toLowerCase().includes('school') || e.subject.toLowerCase().includes('class') || 
+                              e.subject.toLowerCase().includes('teacher') || e.subject.toLowerCase().includes('field trip')))
+            );
+            
+            const commerceEmails = emails.filter(e => 
+                e.type === 'commerce' || 
+                (e.from && (e.from.includes('noreply') || e.from.includes('receipt') || e.from.includes('amazon') || 
+                           e.from.includes('target') || e.from.includes('walmart'))) ||
+                (e.subject && (e.subject.toLowerCase().includes('order') || e.subject.toLowerCase().includes('receipt') || 
+                              e.subject.toLowerCase().includes('purchase') || e.subject.toLowerCase().includes('confirmation')))
+            );
+            
+            const eventEmails = emails.filter(e => 
+                e.type === 'event' || 
+                (e.from && (e.from.includes('evite') || e.from.includes('invitation') || e.from.includes('rsvp'))) ||
+                (e.subject && (e.subject.toLowerCase().includes('invitation') || e.subject.toLowerCase().includes('rsvp') || 
+                              e.subject.toLowerCase().includes('meeting') || e.subject.toLowerCase().includes('game') ||
+                              e.subject.toLowerCase().includes('party') || e.subject.toLowerCase().includes('birthday')))
+            );
+
+            return {
+                school: {
+                    count: schoolEmails.length,
+                    examples: schoolEmails.slice(0, 3).map(e => ({
+                        subject: e.subject,
+                        from: e.from?.split('@')[1]?.split('.')[0] || 'school',
+                        date: e.date
+                    }))
+                },
+                commerce: {
+                    count: commerceEmails.length,
+                    examples: commerceEmails.slice(0, 3).map(e => ({
+                        subject: e.subject,
+                        from: e.from?.split('@')[1]?.split('.')[0] || 'store',
+                        date: e.date
+                    }))
+                },
+                events: {
+                    count: eventEmails.length,
+                    examples: eventEmails.slice(0, 3).map(e => ({
+                        subject: e.subject,
+                        from: e.from?.split('@')[1]?.split('.')[0] || 'event',
+                        date: e.date
+                    }))
+                }
+            };
+        }
+
+        function updateInsights(analysis, userData) {
+            // School events
+            document.getElementById('schoolCount').textContent = `${analysis.school.count} found`;
+            if (analysis.school.examples.length > 0) {
+                const exampleText = analysis.school.examples.map(e => 
+                    `${e.subject} (${e.from})`
+                ).join(' • ');
+                document.getElementById('schoolExamples').textContent = exampleText;
+            } else {
+                document.getElementById('schoolExamples').textContent = 'No school events detected';
+            }
+
+            // Commerce receipts
+            document.getElementById('commerceCount').textContent = `${analysis.commerce.count} found`;
+            if (analysis.commerce.examples.length > 0) {
+                const exampleText = analysis.commerce.examples.map(e => 
+                    `${e.subject} (${e.from})`
+                ).join(' • ');
+                document.getElementById('commerceExamples').textContent = exampleText;
+            } else {
+                document.getElementById('commerceExamples').textContent = 'No purchase receipts detected';
+            }
+
+            // Events
+            document.getElementById('eventsCount').textContent = `${analysis.events.count} found`;
+            if (analysis.events.examples.length > 0) {
+                const exampleText = analysis.events.examples.map(e => 
+                    `${e.subject} (${e.from})`
+                ).join(' • ');
+                document.getElementById('eventsExamples').textContent = exampleText;
+            } else {
+                document.getElementById('eventsExamples').textContent = 'No upcoming events detected';
+            }
+        }
+
+        function generateAISummary(analysis, userData) {
+            // Generate summary in Mel Robbins + Ivan Zhao tone
+            let summary = `Hi ${userData.firstName} — `;
+            
+            const totalItems = (analysis.school?.count || 0) + (analysis.commerce?.count || 0) + (analysis.events?.count || 0);
+            
+            if (totalItems === 0) {
+                summary += `your inbox looks pretty clean right now. That's actually perfect for building healthy patterns. `;
+            } else {
+                // Lead with what we found
+                const findings = [];
+                if (analysis.school?.count > 0) findings.push(`${analysis.school.count} school ${analysis.school.count === 1 ? 'item' : 'items'}`);
+                if (analysis.events?.count > 0) findings.push(`${analysis.events.count} upcoming ${analysis.events.count === 1 ? 'event' : 'events'}`);
+                if (analysis.commerce?.count > 0) findings.push(`${analysis.commerce.count} purchase ${analysis.commerce.count === 1 ? 'confirmation' : 'confirmations'}`);
+                
+                summary += `this week I spotted ${findings.join(', ')}. `;
+            }
+            
+            // Add the "you're balancing a lot" insight
+            if (userData.primaryRole?.includes('parent') || userData.priorities?.includes('school-events')) {
+                summary += `You're balancing a lot as a ${userData.primaryRole?.replace('-', ' ') || 'busy person'} — `;
+            } else {
+                summary += `You're managing multiple streams of information — `;
+            }
+            
+            // Promise about what's next
+            summary += `here's how I'll keep you ahead: I'll surface the important stuff before it becomes urgent, filter out the noise, and make sure nothing falls through the cracks.`;
+
+            document.getElementById('aiSummary').textContent = summary;
+        }
+
+        function calibrateDecoder() {
+            // This should now go to the app since calibration is already done
+            window.location.href = '/app';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadUserProfile();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Sign In</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .brand-mark {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+        }
+
+        .agent-logo {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a202c;
+        }
+
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .value-prop {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .value-prop h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .value-prop ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .value-prop li {
+            color: #4a5568;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .check-icon {
+            width: 16px;
+            height: 16px;
+            color: #38a169;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .google-sign-in-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .google-sign-in-btn:hover {
+            background: #3367d6;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(66, 133, 244, 0.3);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .privacy-note {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .privacy-note p {
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .privacy-note strong {
+            color: #1a202c;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            .auth-container {
+                padding: 40px 24px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="brand-mark">
+            <svg class="agent-logo" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 3L4 12v16h6v-8h4v8h6v-8h4v8h4V12L16 3z" fill="white" opacity="0.9"/>
+                <path d="M16 3L28 12h-4L16 6L8 12H4L16 3z" fill="white"/>
+                <circle cx="16" cy="15" r="1.5" fill="rgba(102,126,234,0.8)"/>
+                <circle cx="12" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="16" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="20" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <path d="M14 18h4v1h-4z" fill="rgba(102,126,234,0.6)"/>
+            </svg>
+        </div>
+        
+        <h1>HomeOps</h1>
+        <p class="subtitle">Your AI assistant for managing family life and reducing mental load</p>
+
+        <div class="value-prop">
+            <h3>
+                <i data-lucide="brain" style="width: 20px; height: 20px; color: #667eea;"></i>
+                How this works
+            </h3>
+            <ul>
+                <li>
+                    <i data-lucide="check" class="check-icon"></i>
+                    <span>We analyze your Gmail to understand your family's patterns</span>
+                </li>
+                <li>
+                    <i data-lucide="check" class="check-icon"></i>
+                    <span>AI prioritizes school events, appointments, and important emails</span>
+                </li>
+                <li>
+                    <i data-lucide="check" class="check-icon"></i>
+                    <span>Get intelligent summaries and never miss what matters</span>
+                </li>
+                <li>
+                    <i data-lucide="check" class="check-icon"></i>
+                    <span>Reduce decision fatigue with automated task routing</span>
+                </li>
+            </ul>
+        </div>
+
+        <button class="google-sign-in-btn" onclick="signInWithGoogle()">
+            <svg class="google-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="white"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="white"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="white"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="white"/>
+            </svg>
+            Sign in with Google
+        </button>
+
+        <div class="privacy-note">
+            <p><strong>Privacy Promise:</strong> We never send emails. We only read to help you focus on what matters. Gmail access is read-only.</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        async function signInWithGoogle() {
+            try {
+                console.log('🔐 Starting Google OAuth flow...');
+                
+                // For now, simulate OAuth success and redirect to step 2
+                // In production, this would trigger actual Google OAuth
+                
+                // Simulate loading state
+                const btn = document.querySelector('.google-sign-in-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `
+                    <div style="width: 20px; height: 20px; border: 2px solid white; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    Connecting...
+                `;
+                btn.disabled = true;
+                
+                // Add spin animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Simulate OAuth flow
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Store auth success state
+                sessionStorage.setItem('homeops_auth_token', 'mock_gmail_token_' + Date.now());
+                sessionStorage.setItem('homeops_auth_email', 'user@gmail.com');
+                
+                // Redirect to step 2
+                window.location.href = '/step2-questionnaire';
+                
+            } catch (error) {
+                console.error('OAuth error:', error);
+                alert('Authentication failed. Please try again.');
+                
+                // Reset button
+                const btn = document.querySelector('.google-sign-in-btn');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        // Check if already authenticated
+        const existingToken = sessionStorage.getItem('homeops_auth_token');
+        if (existingToken) {
+            console.log('👤 User already authenticated, redirecting...');
+            window.location.href = '/step2-questionnaire';
+        }
+        
+        console.log('🚀 HomeOps Step 1: Google Auth Loaded');
+    </script>
+</body>
+</html>

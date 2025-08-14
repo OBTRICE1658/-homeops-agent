@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>HomeOps - Your Profile</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --vh: 1vh;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 20px;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 32px 24px 24px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar i {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .greeting {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subgreeting {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .insight-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .insight-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .cta-section {
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .profile-complete {
+            display: none;
+        }
+
+        .profile-complete.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 16px;
+            }
+            
+            .content {
+                padding: 24px 20px;
+            }
+            
+            .header {
+                padding: 24px 20px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing your patterns...</div>
+            <div class="loading-subtext">Scanning recent emails and building your profile</div>
+        </div>
+
+        <!-- Profile Complete State -->
+        <div class="profile-complete" id="profileComplete">
+            <div class="header">
+                <div class="avatar">
+                    <i data-lucide="user"></i>
+                </div>
+                <div class="greeting" id="greeting">Hi there!</div>
+                <div class="subgreeting">Here's what we've picked up so far...</div>
+            </div>
+            
+            <div class="content">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="mail" class="insight-icon"></i>
+                        <div class="insight-title">Email Intelligence</div>
+                    </div>
+                    <div class="insight-text" id="emailInsight">
+                        Most of your emails are from school and commerce brands
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="calendar" class="insight-icon"></i>
+                        <div class="insight-title">Mental Load Pattern</div>
+                    </div>
+                    <div class="insight-text" id="mentalLoadInsight">
+                        You're managing ~1 urgent event per week
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <i data-lucide="activity" class="insight-icon"></i>
+                        <div class="insight-title">Inbox Volume</div>
+                    </div>
+                    <div class="insight-text" id="volumeInsight">
+                        Your inbox volume is 88 emails/day (28% are actionable)
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <button class="cta-button" onclick="calibrateDecoder()">
+                    Calibrate Email Decoder
+                    <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpZmCU8QbWaOaFMVCvKlDr2jIkHU9fQ0U",
+            authDomain: "homeops-web.firebaseapp.com",
+            projectId: "homeops-web",
+            storageBucket: "homeops-web.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadUserProfile() {
+            try {
+                const userId = sessionStorage.getItem('homeops_user_id');
+                if (!userId) {
+                    console.error('No user ID found');
+                    window.location.href = '/questionnaire';
+                    return;
+                }
+
+                // Get user profile data
+                const userDoc = await db.collection('user_profiles').doc(userId).get();
+                if (!userDoc.exists) {
+                    console.error('User profile not found');
+                    window.location.href = '/questionnaire';
+                    return;
+                }
+
+                const userData = userDoc.data();
+                console.log('User data:', userData);
+
+                // Simulate email analysis (in real app, this would call your email analysis API)
+                await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second loading
+
+                // Generate personalized insights
+                generateInsights(userData);
+                
+                // Show profile
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('profileComplete').classList.add('show');
+                
+                lucide.createIcons();
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Error loading your profile. Please try again.');
+            }
+        }
+
+        function generateInsights(userData) {
+            const firstName = userData.firstName || 'there';
+            document.getElementById('greeting').textContent = `Hi ${firstName}!`;
+
+            // Generate insights based on user data
+            const helpAreas = userData.helpAreas || [];
+            const role = userData.role || '';
+            const householdSize = userData.householdSize || '';
+            const inboxExperience = userData.inboxExperience || '';
+
+            // Email insight based on help areas
+            let emailInsight = "Most of your emails are from ";
+            if (helpAreas.includes('school_logistics')) {
+                emailInsight += "school and educational organizations";
+            } else if (helpAreas.includes('work')) {
+                emailInsight += "work and professional networks";
+            } else if (helpAreas.includes('purchases')) {
+                emailInsight += "commerce and shopping brands";
+            } else {
+                emailInsight += "various lifestyle and family services";
+            }
+
+            // Mental load insight based on role and household size
+            let mentalLoadInsight = "You're managing ";
+            if (role.includes('primary_parent') && parseInt(householdSize) >= 3) {
+                mentalLoadInsight += "~3-4 urgent family events per week";
+            } else if (role.includes('co_parent')) {
+                mentalLoadInsight += "~2-3 coordination tasks per week";
+            } else {
+                mentalLoadInsight += "~1-2 urgent events per week";
+            }
+
+            // Volume insight based on inbox experience
+            let volumeInsight = "Your inbox volume is ";
+            if (inboxExperience === 'drowning') {
+                volumeInsight += "120+ emails/day (45% are actionable)";
+            } else if (inboxExperience === 'managing') {
+                volumeInsight += "75-90 emails/day (35% are actionable)";
+            } else if (inboxExperience === 'empty_inbox') {
+                volumeInsight += "40-60 emails/day (60% are actionable)";
+            } else {
+                volumeInsight += "88 emails/day (28% are actionable)";
+            }
+
+            // Update the insights
+            document.getElementById('emailInsight').textContent = emailInsight;
+            document.getElementById('mentalLoadInsight').textContent = mentalLoadInsight;
+            document.getElementById('volumeInsight').textContent = volumeInsight;
+        }
+
+        function calibrateDecoder() {
+            window.location.href = '/calibrate';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadUserProfile();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Tell Us About Yourself</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .onboard-container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 33%;
+            transition: width 0.5s ease;
+        }
+        
+        .step-indicator {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .brand-mark {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            position: relative;
+        }
+
+        .agent-logo {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            color: #1a202c;
+        }
+
+        .brand-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .headline {
+            color: #2d3748;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .subheadline {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .questionnaire {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .question-group {
+            margin-bottom: 30px;
+        }
+
+        .question-title {
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .question-subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .checkbox-item:hover {
+            border-color: #cbd5e0;
+            background: #f8fafc;
+        }
+
+        .checkbox-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .priority-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .priority-item {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .priority-item:hover {
+            border-color: #cbd5e0;
+        }
+
+        .priority-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .priority-item .priority-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .priority-item .priority-desc {
+            font-size: 0.8rem;
+            color: #718096;
+            line-height: 1.3;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .onboard-container {
+                padding: 30px 20px;
+                border-radius: 16px;
+                max-width: 100%;
+                margin: 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .headline {
+                font-size: 1rem;
+            }
+            
+            .subheadline {
+                font-size: 0.9rem;
+                margin-bottom: 25px;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .priority-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .onboard-container {
+                padding: 20px 15px;
+                margin: 5px;
+                border-radius: 12px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .brand-mark {
+                width: 56px;
+                height: 56px;
+                margin-bottom: 20px;
+            }
+            
+            .agent-logo {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboard-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="step-indicator">Step 2 of 4</div>
+        
+        <div class="brand-mark">
+            <svg class="agent-logo" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 3L4 12v16h6v-8h4v8h6v-8h4v8h4V12L16 3z" fill="white" opacity="0.9"/>
+                <path d="M16 3L28 12h-4L16 6L8 12H4L16 3z" fill="white"/>
+                <circle cx="16" cy="15" r="1.5" fill="rgba(102,126,234,0.8)"/>
+                <circle cx="12" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="16" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <circle cx="20" cy="22" r="1" fill="rgba(102,126,234,0.7)"/>
+                <path d="M14 18h4v1h-4z" fill="rgba(102,126,234,0.6)"/>
+            </svg>
+        </div>
+        
+        <h1 class="brand-gradient">Tell Us About Yourself</h1>
+        <div class="headline">Help us personalize your HomeOps experience</div>
+        <p class="subheadline">This information helps us tailor your personal operating system to your specific needs and context.</p>
+        
+        <form class="questionnaire" id="onboardingQuestionnaire">
+            <div class="question-group">
+                <div class="question-title">Personal Context</div>
+                <div class="question-subtitle">Help us understand your life situation so we can better organize your priorities.</div>
+                
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="What should we call you?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="primaryRole">What best describes your primary role?</label>
+                    <select id="primaryRole" name="primaryRole" required>
+                        <option value="">Select your primary role</option>
+                        <option value="parent">Parent</option>
+                        <option value="executive">Executive/Leader</option>
+                        <option value="entrepreneur">Entrepreneur</option>
+                        <option value="professional">Working Professional</option>
+                        <option value="consultant">Consultant/Freelancer</option>
+                        <option value="student">Student</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="familySize">Household Size</label>
+                    <select id="familySize" name="familySize" required>
+                        <option value="">Select household size</option>
+                        <option value="solo">Just me</option>
+                        <option value="couple">Partner + me</option>
+                        <option value="small-family">Small family (3-4 people)</option>
+                        <option value="large-family">Large family (5+ people)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <div class="question-title">What areas do you want HomeOps to help manage?</div>
+                <div class="question-subtitle">Select all that apply. This helps us understand what types of emails and tasks to prioritize.</div>
+                
+                <div class="checkbox-grid">
+                    <div class="checkbox-item" onclick="toggleCheckbox('work-tasks')">
+                        <input type="checkbox" id="work-tasks" name="managementAreas" value="work-tasks">
+                        <label for="work-tasks">Work Projects & Tasks</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('family-scheduling')">
+                        <input type="checkbox" id="family-scheduling" name="managementAreas" value="family-scheduling">
+                        <label for="family-scheduling">Family Scheduling</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('household-logistics')">
+                        <input type="checkbox" id="household-logistics" name="managementAreas" value="household-logistics">
+                        <label for="household-logistics">Household Logistics</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('financial-management')">
+                        <input type="checkbox" id="financial-management" name="managementAreas" value="financial-management">
+                        <label for="financial-management">Financial Management</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('health-wellness')">
+                        <input type="checkbox" id="health-wellness" name="managementAreas" value="health-wellness">
+                        <label for="health-wellness">Health & Wellness</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('personal-projects')">
+                        <input type="checkbox" id="personal-projects" name="managementAreas" value="personal-projects">
+                        <label for="personal-projects">Personal Projects</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('travel-logistics')">
+                        <input type="checkbox" id="travel-logistics" name="managementAreas" value="travel-logistics">
+                        <label for="travel-logistics">Travel & Logistics</label>
+                    </div>
+                    <div class="checkbox-item" onclick="toggleCheckbox('social-events')">
+                        <input type="checkbox" id="social-events" name="managementAreas" value="social-events">
+                        <label for="social-events">Social Events</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <div class="question-title">What's your biggest mental load challenge?</div>
+                <div class="question-subtitle">This helps us understand where to focus your personal operating system.</div>
+                
+                <div class="priority-selector">
+                    <div class="priority-item" onclick="selectPriority('remembering-deadlines')">
+                        <div class="priority-title">Remembering Deadlines</div>
+                        <div class="priority-desc">Keeping track of important dates and tasks</div>
+                    </div>
+                    <div class="priority-item" onclick="selectPriority('coordinating-schedules')">
+                        <div class="priority-title">Coordinating Schedules</div>
+                        <div class="priority-desc">Managing multiple calendars and commitments</div>
+                    </div>
+                    <div class="priority-item" onclick="selectPriority('decision-fatigue')">
+                        <div class="priority-title">Decision Fatigue</div>
+                        <div class="priority-desc">Too many small decisions throughout the day</div>
+                    </div>
+                    <div class="priority-item" onclick="selectPriority('information-overload')">
+                        <div class="priority-title">Information Overload</div>
+                        <div class="priority-desc">Drowning in emails, messages, and notifications</div>
+                    </div>
+                    <div class="priority-item" onclick="selectPriority('task-prioritization')">
+                        <div class="priority-title">Task Prioritization</div>
+                        <div class="priority-desc">Knowing what to focus on when</div>
+                    </div>
+                    <div class="priority-item" onclick="selectPriority('follow-up-management')">
+                        <div class="priority-title">Follow-up Management</div>
+                        <div class="priority-desc">Remembering to follow up on important items</div>
+                    </div>
+                </div>
+                <input type="hidden" id="primaryChallenge" name="primaryChallenge" required>
+            </div>
+
+            <div class="question-group">
+                <div class="question-title">Email Patterns</div>
+                <div class="question-subtitle">Understanding your email habits helps us calibrate the system better.</div>
+                
+                <div class="form-group">
+                    <label for="emailVolume">How many emails do you typically receive per day?</label>
+                    <select id="emailVolume" name="emailVolume" required>
+                        <option value="">Select email volume</option>
+                        <option value="light">0-25 emails per day</option>
+                        <option value="moderate">26-75 emails per day</option>
+                        <option value="heavy">76-150 emails per day</option>
+                        <option value="overwhelming">150+ emails per day</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="emailStress">How would you describe your relationship with email?</label>
+                    <select id="emailStress" name="emailStress" required>
+                        <option value="">Select your email experience</option>
+                        <option value="manageable">Generally manageable</option>
+                        <option value="sometimes-overwhelming">Sometimes overwhelming</option>
+                        <option value="constantly-behind">Constantly behind</option>
+                        <option value="source-of-stress">Major source of stress</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <div class="question-title">Goals & Expectations</div>
+                <div class="question-subtitle">What success looks like for you with HomeOps.</div>
+                
+                <div class="form-group">
+                    <label for="primaryGoal">What's your main goal with HomeOps?</label>
+                    <textarea id="primaryGoal" name="primaryGoal" placeholder="e.g., Reduce time spent on email management, stop missing important deadlines, have better work-life balance..." required></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="continue-btn" id="continueBtn">
+                Continue to Gmail Connection
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Get user info from previous step
+        const userInfo = JSON.parse(sessionStorage.getItem('onboarding_user') || '{}');
+        const oauthPreference = sessionStorage.getItem('oauth_preference');
+        
+        if (userInfo.name) {
+            document.getElementById('firstName').value = userInfo.name;
+        }
+
+        // Show different messaging based on OAuth choice
+        if (oauthPreference === 'gmail') {
+            document.querySelector('.headline').textContent = 'Almost ready for Gmail connection!';
+            document.querySelector('.subheadline').textContent = 'Just a few quick questions to personalize your HomeOps experience before we connect your Gmail.';
+            document.getElementById('continueBtn').textContent = 'Continue to Gmail Connection';
+        } else if (oauthPreference === 'apple') {
+            document.querySelector('.headline').textContent = 'Almost ready for Apple Sign-In!';
+            document.querySelector('.subheadline').textContent = 'Just a few quick questions to personalize your HomeOps experience before we connect your Apple account.';
+            document.getElementById('continueBtn').textContent = 'Continue to Apple Sign-In';
+        }
+
+        // Handle checkbox interactions
+        function toggleCheckbox(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            const item = checkbox.closest('.checkbox-item');
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        }
+
+        // Handle priority selection
+        function selectPriority(priorityValue) {
+            // Remove previous selections
+            document.querySelectorAll('.priority-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selection to clicked item
+            event.currentTarget.classList.add('selected');
+            
+            // Set hidden input value
+            document.getElementById('primaryChallenge').value = priorityValue;
+        }
+
+        // Handle form submission
+        document.getElementById('onboardingQuestionnaire').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Saving your preferences...';
+            
+            try {
+                // Collect all form data
+                const formData = new FormData(this);
+                const userData = {};
+                
+                // Get individual form fields
+                for (let [key, value] of formData.entries()) {
+                    if (key === 'managementAreas') {
+                        if (!userData.managementAreas) userData.managementAreas = [];
+                        userData.managementAreas.push(value);
+                    } else {
+                        userData[key] = value;
+                    }
+                }
+                
+                // Validate required fields
+                const requiredFields = ['firstName', 'primaryRole', 'familySize', 'primaryChallenge', 'emailVolume', 'emailStress', 'primaryGoal'];
+                const missingFields = requiredFields.filter(field => !userData[field]);
+                
+                if (missingFields.length > 0) {
+                    alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+                    continueBtn.disabled = false;
+                    continueBtn.textContent = 'Continue to Gmail Connection';
+                    return;
+                }
+                
+                if (!userData.managementAreas || userData.managementAreas.length === 0) {
+                    alert('Please select at least one area you want HomeOps to help manage.');
+                    continueBtn.disabled = false;
+                    continueBtn.textContent = 'Continue to Gmail Connection';
+                    return;
+                }
+                
+                // Merge with existing user info
+                const completeUserData = { ...userInfo, ...userData };
+                
+                // Store in session storage
+                sessionStorage.setItem('onboarding_user', JSON.stringify(completeUserData));
+                
+                console.log('👤 User profile data collected:', completeUserData);
+                
+                // Send to server to create user profile
+                const response = await fetch('/api/create-user-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(completeUserData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ User profile created:', result.userId);
+                    
+                    // Store user ID for OAuth flow
+                    sessionStorage.setItem('onboarding_userId', result.userId);
+                    
+                    // Small delay for UX
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Proceed based on OAuth preference
+                    const oauthPreference = sessionStorage.getItem('oauth_preference');
+                    
+                    if (oauthPreference === 'gmail') {
+                        window.location.href = `/auth/gmail?isOnboarding=true&userId=${result.userId}`;
+                    } else if (oauthPreference === 'apple') {
+                        alert('Apple Sign-In coming soon! Redirecting to Gmail for now.');
+                        window.location.href = `/auth/gmail?isOnboarding=true&userId=${result.userId}`;
+                    } else {
+                        // Fallback - they chose email signup
+                        window.location.href = `/auth/gmail?isOnboarding=true&userId=${result.userId}`;
+                    }
+                } else {
+                    throw new Error('Failed to create user profile');
+                }
+                
+            } catch (error) {
+                console.error('Error saving user profile:', error);
+                alert('Error saving your preferences. Please try again.');
+                continueBtn.disabled = false;
+                continueBtn.textContent = 'Continue to Gmail Connection';
+            }
+        });
+        
+        console.log('📋 HomeOps Onboarding Questionnaire - Step 2 Loaded');
+    </script>
+</body>
+</html>

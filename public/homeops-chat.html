@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .chat-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .email-decoder-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .email-decoder-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            animation: messageSlide 0.3s ease;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            background: rgba(255, 255, 255, 0.2);
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .message.assistant {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        .message-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            resize: none;
+            min-height: 24px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .message-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .send-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .send-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .send-button:active {
+            transform: scale(0.95);
+        }
+        
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Email Decoder Overlay */
+        .email-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .email-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .email-overlay-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .email-overlay.active .email-overlay-content {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .overlay-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-overlay-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .close-overlay-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .email-decoder-content {
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+        
+        .email-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+        
+        .email-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .email-item.urgent {
+            border-left-color: #ff6b6b;
+        }
+        
+        .email-item.school {
+            border-left-color: #4ecdc4;
+        }
+        
+        .email-item.commerce {
+            border-left-color: #45b7d1;
+        }
+        
+        .email-sender {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .email-subject {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .email-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Chat Header with Email Decoder Button -->
+        <div class="chat-header">
+            <div class="chat-title">
+                <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+                HomeOps Assistant
+            </div>
+            <div class="header-actions">
+                <button class="email-decoder-btn" onclick="openEmailDecoder()">
+                    <i data-lucide="mail" style="width: 16px; height: 16px;"></i>
+                    Email Decoder
+                </button>
+                <div class="chat-status">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+                <div>👋 Welcome to HomeOps! I'm your intelligent assistant for managing family life.</div>
+            </div>
+            <div class="message assistant">
+                <div>📧 I can help you with:</div>
+                <div style="margin-top: 8px;">
+                    <div>• Smart email categorization</div>
+                    <div>• Priority task identification</div>
+                    <div>• Calendar event creation</div>
+                    <div>• Family schedule coordination</div>
+                </div>
+            </div>
+            <div class="message assistant">
+                <div>💡 Try clicking the <strong>Email Decoder</strong> button above to view your Smart Inbox!</div>
+            </div>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input">
+            <div class="input-container">
+                <textarea class="message-input" 
+                          id="messageInput" 
+                          placeholder="Ask me anything about managing your family life..."
+                          rows="1"></textarea>
+            </div>
+            <button class="send-button" id="sendButton" onclick="sendMessage()">
+                <i data-lucide="send" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Email Decoder Overlay -->
+    <div class="email-overlay" id="emailOverlay">
+        <div class="email-overlay-content">
+            <div class="overlay-header">
+                <div class="overlay-title">
+                    <i data-lucide="mail-open" style="width: 24px; height: 24px;"></i>
+                    Email Decoder - Smart Inbox
+                </div>
+                <button class="close-overlay-btn" onclick="closeEmailDecoder()">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            <div class="email-decoder-content" id="emailDecoderContent">
+                <!-- Email items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        let emailData = [
+            {
+                sender: "Lincoln Elementary",
+                subject: "Parent-Teacher Conference Scheduling",
+                time: "2h ago",
+                category: "school",
+                priority: "high"
+            },
+            {
+                sender: "Amazon",
+                subject: "Your order has shipped",
+                time: "4h ago",
+                category: "commerce",
+                priority: "low"
+            },
+            {
+                sender: "Dr. Johnson's Office",
+                subject: "Appointment Reminder - Emma's Checkup",
+                time: "1d ago",
+                category: "urgent",
+                priority: "high"
+            },
+            {
+                sender: "Soccer League",
+                subject: "Game Schedule Updated",
+                time: "1d ago",
+                category: "school",
+                priority: "medium"
+            },
+            {
+                sender: "Target",
+                subject: "Weekly deals just for you",
+                time: "2d ago",
+                category: "commerce",
+                priority: "low"
+            }
+        ];
+        
+        function openEmailDecoder() {
+            document.getElementById('emailOverlay').classList.add('active');
+            loadEmailDecoder();
+        }
+        
+        function closeEmailDecoder() {
+            document.getElementById('emailOverlay').classList.remove('active');
+        }
+        
+        function loadEmailDecoder() {
+            const content = document.getElementById('emailDecoderContent');
+            
+            content.innerHTML = emailData.map(email => `
+                <div class="email-item ${email.category}" onclick="openEmail('${email.sender}', '${email.subject}')">
+                    <div class="email-sender">${email.sender}</div>
+                    <div class="email-subject">${email.subject}</div>
+                    <div class="email-meta">
+                        <span>${email.time}</span>
+                        <span>${email.priority} priority</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function openEmail(sender, subject) {
+            closeEmailDecoder();
+            addMessage(`📧 Opening email from ${sender}: "${subject}"`, 'assistant');
+            addMessage('📋 This email appears to be about scheduling. Would you like me to add this to your calendar?', 'assistant');
+        }
+        
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `<div>${content}</div>`;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Send to API
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: 'user123', // This should be dynamic based on actual user
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideTypingIndicator();
+                if (data.reply) {
+                    addMessage(data.reply, 'assistant');
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+            })
+            .catch(error => {
+                hideTypingIndicator();
+                console.error('Chat error:', error);
+                addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+            });
+        }
+        
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant typing';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<div>• • •</div>';
+            
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        // Auto-resize textarea
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Send message on Enter (without Shift)
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Close overlay on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEmailDecoder();
+            }
+        });
+        
+        // Close overlay when clicking outside
+        document.getElementById('emailOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEmailDecoder();
+            }
+        });
+        
+        console.log('✅ HomeOps Chat with Email Decoder loaded successfully');
+    </script>
+</body>
+</html>

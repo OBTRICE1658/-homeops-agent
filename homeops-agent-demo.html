@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps Agent - Direct Access</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main App Container */
+        .app-container {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header with Agent Button */
+        .app-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .app-logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .agent-trigger {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .agent-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .agent-trigger .agent-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Main Content Area */
+        .app-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .welcome-title {
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .welcome-subtitle {
+            color: #4a5568;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .agent-cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .agent-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Agent Overlay - Notion Style */
+        .agent-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .agent-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .agent-panel {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 400px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: translateY(-20px) scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .agent-overlay.active .agent-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Agent Panel Header */
+        .agent-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .agent-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 16px;
+        }
+
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .agent-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-info p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .close-agent {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-agent:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Email Summary Toggle */
+        .email-summary-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            gap: 10px;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .email-summary-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: #f7fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message h4 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .welcome-message p {
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        /* Personalized Prompts */
+        .prompt-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .prompt-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .prompt-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .prompt-card .prompt-icon {
+            width: 20px;
+            height: 20px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .prompt-card h5 {
+            color: #2d3748;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .prompt-card p {
+            color: #718096;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Email Summary Panel */
+        .email-summary-panel {
+            display: none;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .email-summary-panel.active {
+            display: block;
+        }
+
+        .summary-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .summary-item h6 {
+            color: #2d3748;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .summary-item p {
+            color: #4a5568;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        /* Status Message */
+        .status-message {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .agent-panel {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+
+            .welcome-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-logo">🏠 HomeOps</div>
+            <button class="agent-trigger" onclick="openAgent()">
+                <i data-lucide="user-check" class="agent-icon"></i>
+                <span id="agentTriggerText">Meet Your Agent</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <div class="welcome-card">
+                <h1 class="welcome-title">Welcome to HomeOps!</h1>
+                <p class="welcome-subtitle">Your AI assistant is ready to help manage your family's mental load. Click the agent button above to get started.</p>
+                
+                <!-- Status Message -->
+                <div class="status-message">
+                    <strong>🚀 Direct Access Mode</strong><br>
+                    This is a standalone version of the HomeOps Agent interface.
+                </div>
+                
+                <button class="agent-cta" onclick="openAgent()">
+                    <i data-lucide="user-check" style="width: 20px; height: 20px;"></i>
+                    Launch Your AI Agent
+                </button>
+            </div>
+        </div>
+
+        <!-- Agent Overlay -->
+        <div class="agent-overlay" id="agentOverlay" onclick="closeAgentOnBackdrop(event)">
+            <div class="agent-panel" onclick="event.stopPropagation()">
+                <!-- Agent Header -->
+                <div class="agent-header">
+                    <button class="close-agent" onclick="closeAgent()">
+                        <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    
+                    <div class="agent-header-top">
+                        <div class="agent-avatar">
+                            <i data-lucide="user-check" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div class="agent-info">
+                            <h3 id="agentGreeting">Hi there!</h3>
+                            <p>Your HomeOps AI Assistant</p>
+                        </div>
+                    </div>
+
+                    <!-- Email Summary Toggle -->
+                    <div class="email-summary-toggle" onclick="toggleEmailSummary()">
+                        <i data-lucide="mail" style="width: 16px; height: 16px;"></i>
+                        <span>Important Email Summaries</span>
+                        <i data-lucide="chevron-down" id="summaryChevron" style="width: 16px; height: 16px; margin-left: auto;"></i>
+                    </div>
+                </div>
+
+                <!-- Email Summary Panel -->
+                <div class="email-summary-panel" id="emailSummaryPanel">
+                    <div class="summary-item">
+                        <h6>Lincoln Elementary School</h6>
+                        <p>Parent-teacher conferences next week. Emma's appointment: Thursday 3:30 PM</p>
+                    </div>
+                    <div class="summary-item">
+                        <h6>Dr. Peterson's Office</h6>
+                        <p>Jake's annual checkup scheduled for Friday 2:00 PM. Arrive 15 min early.</p>
+                    </div>
+                    <div class="summary-item">
+                        <h6>Soccer Club</h6>
+                        <p>Practice moved to Field B this Saturday. Snack duty: The Johnson family</p>
+                    </div>
+                </div>
+
+                <!-- Welcome Message & Prompts -->
+                <div class="chat-container" id="chatContainer">
+                    <div class="welcome-message">
+                        <h4>🎉 Welcome to HomeOps Agent!</h4>
+                        <p>This is a preview of your personalized AI assistant. Here are some things I can help you with:</p>
+                    </div>
+
+                    <div class="prompt-grid" id="promptGrid">
+                        <div class="prompt-card" onclick="executePrompt('school-overview')">
+                            <i data-lucide="graduation-cap" class="prompt-icon"></i>
+                            <h5>School Schedule Overview</h5>
+                            <p>Should I give you an overview of school emails from this week?</p>
+                        </div>
+                        
+                        <div class="prompt-card" onclick="executePrompt('schedule-summary')">
+                            <i data-lucide="calendar" class="prompt-icon"></i>
+                            <h5>Weekly Schedule Summary</h5>
+                            <p>Do you need me to summarize the next few weeks of your schedule?</p>
+                        </div>
+                        
+                        <div class="prompt-card" onclick="executePrompt('supplies-check')">
+                            <i data-lucide="shopping-cart" class="prompt-icon"></i>
+                            <h5>Household Supplies Check</h5>
+                            <p>Do you need to order any more toilet paper or household essentials?</p>
+                        </div>
+                        
+                        <div class="prompt-card" onclick="executePrompt('priority-emails')">
+                            <i data-lucide="mail" class="prompt-icon"></i>
+                            <h5>Priority Email Review</h5>
+                            <p>Show me the most important emails I need to handle today</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput"
+                        placeholder="Ask me anything about your family's schedule, emails, or tasks..."
+                        rows="1"
+                        onkeydown="handleChatKeydown(event)"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        function executePrompt(promptType) {
+            console.log(`🤖 Executing prompt: ${promptType}`);
+            
+            // Simulate AI response based on prompt type
+            const responses = {
+                'school-overview': `I found 3 emails from school this week:\n\n📚 Parent-teacher conferences next Thursday\n🍕 Pizza day changed to Friday\n📝 Field trip permission slip due Monday\n\nWould you like me to add any of these to your calendar?`,
+                'schedule-summary': `Here's your schedule for the next 2 weeks:\n\n📅 This Week:\n• Thursday 3:30 PM - Parent conference\n• Friday 2:00 PM - Doctor appointment\n• Saturday 9:00 AM - Soccer practice\n\n📅 Next Week:\n• Monday - Permission slip due\n• Wednesday - Pizza day at school\n\nShould I set any reminders?`,
+                'supplies-check': `Based on typical household patterns, you might need:\n\n🧻 Toilet paper (check supply)\n🧽 Paper towels\n🥛 Milk (check expiration)\n\nWant me to create a shopping list?`,
+                'priority-emails': `Top 3 emails needing attention:\n\n🔴 School permission slip (due Monday)\n🟡 Doctor's office confirmation needed\n🟡 Soccer snack duty reminder\n\nWhich one should we tackle first?`
+            };
+            
+            // Add response to chat
+            addChatMessage('assistant', responses[promptType] || 'I can help you with that! What specific information do you need?');
+            
+            // Clear prompts and show chat interface
+            document.getElementById('promptGrid').style.display = 'none';
+        }
+        
+        function addChatMessage(sender, message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                background: ${sender === 'user' ? '#667eea' : '#f7fafc'};
+                color: ${sender === 'user' ? 'white' : '#2d3748'};
+                padding: 12px 16px;
+                border-radius: 16px;
+                margin: 8px 0;
+                max-width: 85%;
+                margin-left: ${sender === 'user' ? 'auto' : '0'};
+                margin-right: ${sender === 'user' ? '0' : 'auto'};
+                white-space: pre-line;
+                line-height: 1.4;
+                font-size: 0.9rem;
+            `;
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function handleChatKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+        
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addChatMessage('user', message);
+            
+            // Clear input
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = [
+                    "I'm analyzing that for you. Based on typical email patterns, here's what I found...",
+                    "Great question! Let me check your schedule and provide the best answer.",
+                    "I can definitely help with that. Here's what I recommend based on your family's needs...",
+                    "Looking at your priorities, I think the best approach would be...",
+                    "Based on typical household patterns, here's a personalized solution..."
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addChatMessage('assistant', randomResponse);
+            }, 1000);
+        }
+        
+        function openAgent() {
+            document.getElementById('agentOverlay').classList.add('active');
+            document.getElementById('agentTriggerText').textContent = 'Agent';
+        }
+        
+        function closeAgent() {
+            document.getElementById('agentOverlay').classList.remove('active');
+        }
+        
+        function closeAgentOnBackdrop(event) {
+            if (event.target === event.currentTarget) {
+                closeAgent();
+            }
+        }
+        
+        function toggleEmailSummary() {
+            const panel = document.getElementById('emailSummaryPanel');
+            const chevron = document.getElementById('summaryChevron');
+            
+            panel.classList.toggle('active');
+            
+            if (panel.classList.contains('active')) {
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // Auto-resize chat input
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        
+        console.log('🤖 HomeOps Agent Loaded - Direct Access Mode');
+    </script>
+</body>
+</html>

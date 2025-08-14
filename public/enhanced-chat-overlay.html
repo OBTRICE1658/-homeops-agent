@@ -637,6 +637,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
             
+            // Auto-activate if in iframe or if no parent window
+            if (window.self !== window.top || window === window.parent) {
+                setTimeout(() => {
+                    openChatOverlay();
+                }, 100);
+            }
+            
             // Auto-resize textarea
             const messageInput = document.getElementById('messageInput');
             messageInput.addEventListener('input', function() {
