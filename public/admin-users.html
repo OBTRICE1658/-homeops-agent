@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps User Management</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .users-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .status.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .flex {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i data-lucide="users"></i>
+                HomeOps User Management
+            </h1>
+            <p>Add and manage users for your HomeOps system</p>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="status" class="hidden"></div>
+
+        <!-- Add Single User -->
+        <div class="section">
+            <h2>
+                <i data-lucide="user-plus"></i>
+                Add Single User
+            </h2>
+            <form id="singleUserForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" 
+                               placeholder="John Doe">
+                    </div>
+                </div>
+                <button type="submit" class="btn">
+                    <i data-lucide="plus"></i>
+                    Add User
+                </button>
+            </form>
+        </div>
+
+        <!-- Bulk Import Users -->
+        <div class="section">
+            <h2>
+                <i data-lucide="upload"></i>
+                Bulk Import Users
+            </h2>
+            <div class="file-upload-area" id="fileUploadArea">
+                <i data-lucide="upload-cloud" style="width: 48px; height: 48px; margin-bottom: 16px; color: #666;"></i>
+                <p style="margin-bottom: 8px; font-weight: 500;">Drop CSV file here or click to browse</p>
+                <p style="color: #666; font-size: 14px;">Expected format: email,name</p>
+                <input type="file" id="csvFile" accept=".csv" class="hidden">
+            </div>
+            <div class="flex">
+                <button type="button" class="btn-secondary btn" onclick="downloadSampleCSV()">
+                    <i data-lucide="download"></i>
+                    Download Sample CSV
+                </button>
+                <button type="button" class="btn" id="importBtn" disabled>
+                    <i data-lucide="upload"></i>
+                    Import Users
+                </button>
+            </div>
+        </div>
+
+        <!-- Current Users -->
+        <div class="section">
+            <h2>
+                <i data-lucide="users"></i>
+                Current Users
+            </h2>
+            <button type="button" class="btn btn-secondary" onclick="loadUsers()">
+                <i data-lucide="refresh-cw"></i>
+                Refresh List
+            </button>
+            <div id="usersContainer">
+                <p style="color: #666; margin-top: 20px;">Click "Refresh List" to load users from the server.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let selectedFile = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Single user form
+            document.getElementById('singleUserForm').addEventListener('submit', handleSingleUserSubmit);
+
+            // File upload
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const csvFileInput = document.getElementById('csvFile');
+            const importBtn = document.getElementById('importBtn');
+
+            fileUploadArea.addEventListener('click', () => csvFileInput.click());
+            fileUploadArea.addEventListener('dragover', handleDragOver);
+            fileUploadArea.addEventListener('dragleave', handleDragLeave);
+            fileUploadArea.addEventListener('drop', handleFileDrop);
+            
+            csvFileInput.addEventListener('change', handleFileSelect);
+            importBtn.addEventListener('click', handleBulkImport);
+        }
+
+        // Single user creation
+        async function handleSingleUserSubmit(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+
+            if (!email) {
+                showStatus('Please enter an email address', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Creating user...', 'info');
+                
+                const response = await fetch('/api/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, name: name || 'User' })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus(`✅ User created successfully: ${email} (ID: ${result.userId})`, 'success');
+                    document.getElementById('singleUserForm').reset();
+                    loadUsers(); // Refresh user list
+                } else {
+                    throw new Error(result.error || 'Failed to create user');
+                }
+            } catch (error) {
+                showStatus(`❌ Error creating user: ${error.message}`, 'error');
+            }
+        }
+
+        // File handling
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect({ target: { files } });
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'text/csv') {
+                selectedFile = file;
+                document.getElementById('importBtn').disabled = false;
+                showStatus(`File selected: ${file.name}`, 'info');
+            } else {
+                showStatus('Please select a valid CSV file', 'error');
+            }
+        }
+
+        // Bulk import
+        async function handleBulkImport() {
+            if (!selectedFile) {
+                showStatus('Please select a CSV file first', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Processing CSV file...', 'info');
+                
+                const text = await selectedFile.text();
+                const lines = text.trim().split('\n');
+                
+                // Check if first line is header
+                const hasHeader = lines[0].toLowerCase().includes('email');
+                const dataLines = hasHeader ? lines.slice(1) : lines;
+                
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const line of dataLines) {
+                    const [email, name] = line.split(',').map(field => field.trim().replace(/['"]/g, ''));
+                    
+                    if (email && isValidEmail(email)) {
+                        try {
+                            const response = await fetch('/api/user/login', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ email, name: name || 'User' })
+                            });
+                            
+                            const result = await response.json();
+                            if (result.success) {
+                                successCount++;
+                            } else {
+                                errorCount++;
+                            }
+                        } catch (error) {
+                            errorCount++;
+                        }
+                    } else {
+                        errorCount++;
+                    }
+                }
+                
+                showStatus(`✅ Import complete: ${successCount} users created, ${errorCount} errors`, 'success');
+                selectedFile = null;
+                document.getElementById('importBtn').disabled = true;
+                document.getElementById('csvFile').value = '';
+                loadUsers(); // Refresh user list
+                
+            } catch (error) {
+                showStatus(`❌ Error processing file: ${error.message}`, 'error');
+            }
+        }
+
+        // Load users from server
+        async function loadUsers() {
+            try {
+                showStatus('Loading users...', 'info');
+                
+                const response = await fetch('/api/users');
+                const result = await response.json();
+                
+                const container = document.getElementById('usersContainer');
+                
+                if (result.success && result.users && result.users.length > 0) {
+                    const usersTable = `
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Primary Focus</th>
+                                    <th>Created</th>
+                                    <th>Last Login</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${result.users.map(user => `
+                                    <tr>
+                                        <td>${user.name}</td>
+                                        <td>${user.email}</td>
+                                        <td>${user.primaryFocus}</td>
+                                        <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                                        <td>${new Date(user.lastLogin).toLocaleDateString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 16px; color: #666;">
+                            Total users: ${result.count}
+                        </p>
+                    `;
+                    container.innerHTML = usersTable;
+                } else {
+                    container.innerHTML = `
+                        <div class="status info">
+                            <p>No users found. Add some users using the form above!</p>
+                        </div>
+                    `;
+                }
+                
+                hideStatus();
+            } catch (error) {
+                showStatus(`❌ Error loading users: ${error.message}`, 'error');
+            }
+        }
+
+        // Utility functions
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.innerHTML = `<p>${message}</p>`;
+            status.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            document.getElementById('status').classList.add('hidden');
+        }
+
+        function downloadSampleCSV() {
+            const csvContent = `email,name
+john.doe@example.com,John Doe
+jane.smith@example.com,Jane Smith
+bob.wilson@example.com,Bob Wilson`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sample-users.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
