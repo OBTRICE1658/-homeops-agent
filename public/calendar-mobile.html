@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>HomeOps Calendar - Mobile</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      height: 100vh;
+      height: 100dvh;
+      overflow-x: hidden;
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      padding: 16px;
+    }
+    
+    .calendar-app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    /* Calendar Header */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .month-nav {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.2s;
+      touch-action: manipulation;
+    }
+    
+    .month-nav:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .month-title {
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+    }
+    
+    /* Calendar Grid */
+    .calendar-grid {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .calendar-table {
+      width: 100%;
+      border-spacing: 0;
+    }
+    
+    .day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 8px 4px;
+      text-transform: uppercase;
+    }
+    
+    .calendar-day {
+      text-align: center;
+      padding: 12px 4px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      touch-action: manipulation;
+      min-height: 48px;
+      vertical-align: top;
+    }
+    
+    .calendar-day:active {
+      transform: scale(0.95);
+    }
+    
+    .calendar-day.today {
+      background: rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+    }
+    
+    .calendar-day.has-events {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .calendar-day.other-month {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .event-dot {
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    /* This Week Section */
+    .this-week {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex: 1;
+      overflow-y: auto;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .event-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-left: 3px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.2s;
+      touch-action: manipulation;
+    }
+    
+    .event-card:active {
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .event-time {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+    
+    .event-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    
+    .event-description {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    
+    /* Task Queue */
+    .task-queue {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .task-item {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      touch-action: manipulation;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(0);
+      will-change: transform;
+    }
+    
+    .task-item:active {
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .task-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    
+    .task-item.swiping {
+      transition: none;
+    }
+    
+    .task-item.swipe-delete {
+      transform: translateX(-100%);
+      opacity: 0;
+      transition: all 0.3s ease-out;
+    }
+    
+    .task-item-content {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    .task-delete-indicator {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .task-item.swipe-active .task-delete-indicator {
+      opacity: 1;
+    }
+    
+    .task-priority {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 8px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Day View Modal */
+    .day-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .day-modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .close-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    
+    .close-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .day-section {
+      margin-bottom: 20px;
+    }
+    
+    .day-section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .day-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .day-item-time {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 4px;
+    }
+    
+    .day-item-title {
+      font-weight: 500;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 16px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      
+      .calendar-app {
+        gap: 12px;
+      }
+      
+      .calendar-header {
+        padding: 12px;
+      }
+      
+      .month-title {
+        font-size: 18px;
+      }
+      
+      .calendar-day {
+        padding: 8px 2px;
+        min-height: 40px;
+        font-size: 14px;
+      }
+      
+      .day-header {
+        font-size: 11px;
+        padding: 6px 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calendar-app">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+      <button class="month-nav" onclick="changeMonth(-1)">‹</button>
+      <div class="month-title" id="currentMonth">September 2025</div>
+      <button class="month-nav" onclick="changeMonth(1)">›</button>
+    </div>
+    
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th class="day-header">Sun</th>
+            <th class="day-header">Mon</th>
+            <th class="day-header">Tue</th>
+            <th class="day-header">Wed</th>
+            <th class="day-header">Thu</th>
+            <th class="day-header">Fri</th>
+            <th class="day-header">Sat</th>
+          </tr>
+        </thead>
+        <tbody id="calendarDays">
+          <!-- Calendar days will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- This Week Events -->
+    <div class="this-week">
+      <div class="section-title">
+        <i data-lucide="calendar-days" style="width: 20px; height: 20px;"></i>
+        This Week
+      </div>
+      <div id="weekEvents">
+        <!-- Week events will be populated here -->
+      </div>
+    </div>
+    
+    <!-- Task Queue -->
+    <div class="task-queue">
+      <div class="section-title">
+        <i data-lucide="check-square" style="width: 20px; height: 20px;"></i>
+        Task Queue
+      </div>
+      <div id="taskQueue">
+        <!-- Tasks will be populated here -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Day View Modal -->
+  <div class="day-modal" id="dayModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalDate">September 1, 2025</h3>
+        <button class="close-btn" onclick="closeModal()">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+      
+      <div class="day-section">
+        <h4>Events</h4>
+        <div id="dayEvents">
+          <!-- Day events will be loaded here -->
+        </div>
+      </div>
+      
+      <div class="day-section">
+        <h4>Tasks</h4>
+        <div id="dayTasks">
+          <!-- Day tasks will be loaded here -->
+        </div>
+      </div>
+      
+      <div class="day-section">
+        <h4>Notes</h4>
+        <div id="dayNotes">
+          <div class="day-item">
+            <textarea placeholder="Add notes for this day..." 
+                      style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; color: white; font-size: 14px; min-height: 60px; resize: vertical;"
+                      id="dayNotesText"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+      initializeCalendar();
+    });
+
+    // Current date state
+    let currentDate = new Date();
+    const today = new Date();
+    
+    // Sample data - replace with real data from your backend
+    const sampleEvents = [
+      {
+        id: 1,
+        title: "Team Meeting",
+        date: "2025-09-01",
+        time: "10:00 AM",
+        description: "Weekly team sync and project updates",
+        priority: "high"
+      },
+      {
+        id: 2,
+        title: "Doctor Appointment",
+        date: "2025-09-02",
+        time: "2:30 PM",
+        description: "Annual check-up with Dr. Smith",
+        priority: "medium"
+      },
+      {
+        id: 3,
+        title: "Grocery Shopping",
+        date: "2025-09-03",
+        time: "6:00 PM",
+        description: "Weekly grocery run - don't forget milk!",
+        priority: "low"
+      }
+    ];
+    
+    const sampleTasks = [
+      {
+        id: 1,
+        title: "Finish project proposal",
+        priority: "high",
+        completed: false
+      },
+      {
+        id: 2,
+        title: "Call insurance company",
+        priority: "medium",
+        completed: false
+      },
+      {
+        id: 3,
+        title: "Book vacation tickets",
+        priority: "low",
+        completed: true
+      }
+    ];
+
+    function initializeCalendar() {
+      updateCalendarDisplay();
+      updateWeekEvents();
+      updateTaskQueue();
+    }
+
+    function changeMonth(direction) {
+      currentDate.setMonth(currentDate.getMonth() + direction);
+      updateCalendarDisplay();
+      
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+
+    function updateCalendarDisplay() {
+      // Update month title
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      
+      document.getElementById('currentMonth').textContent = 
+        `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+      
+      // Generate calendar days
+      const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
+      
+      const calendarDays = document.getElementById('calendarDays');
+      calendarDays.innerHTML = '';
+      
+      let date = new Date(startDate);
+      
+      for (let week = 0; week < 6; week++) {
+        const row = document.createElement('tr');
+        
+        for (let day = 0; day < 7; day++) {
+          const cell = document.createElement('td');
+          cell.className = 'calendar-day';
+          cell.textContent = date.getDate();
+          
+          // Add classes for styling
+          if (date.getMonth() !== currentDate.getMonth()) {
+            cell.classList.add('other-month');
+          }
+          
+          if (date.toDateString() === today.toDateString()) {
+            cell.classList.add('today');
+          }
+          
+          // Check for events
+          const dateStr = date.toISOString().split('T')[0];
+          const hasEvents = sampleEvents.some(event => event.date === dateStr);
+          if (hasEvents) {
+            cell.classList.add('has-events');
+            const dot = document.createElement('div');
+            dot.className = 'event-dot';
+            cell.appendChild(dot);
+          }
+          
+          // Add click handler
+          const cellDate = new Date(date);
+          cell.onclick = () => selectDate(cellDate);
+          
+          row.appendChild(cell);
+          date.setDate(date.getDate() + 1);
+        }
+        
+        calendarDays.appendChild(row);
+        
+        // Stop if we've shown all days of the month and some of next month
+        if (date.getMonth() !== currentDate.getMonth() && week >= 4) {
+          break;
+        }
+      }
+    }
+
+    function selectDate(date) {
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(15);
+      }
+      
+      const dateStr = date.toISOString().split('T')[0];
+      showDayView(dateStr);
+    }
+
+    function updateWeekEvents() {
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay());
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      
+      const weekEvents = sampleEvents.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate >= weekStart && eventDate <= weekEnd;
+      });
+      
+      const container = document.getElementById('weekEvents');
+      
+      if (weekEvents.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
+            <i data-lucide="calendar-x" style="width: 24px; height: 24px; margin-bottom: 8px;"></i>
+            <div>No events this week</div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = weekEvents.map(event => `
+          <div class="event-card" onclick="showDayView('${event.date}')">
+            <div class="event-time">${event.time}</div>
+            <div class="event-title">${event.title}</div>
+            <div class="event-description">${event.description}</div>
+          </div>
+        `).join('');
+      }
+      
+      // Re-initialize icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+
+    function updateTaskQueue() {
+      const container = document.getElementById('taskQueue');
+      
+      if (sampleTasks.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
+            <i data-lucide="check-circle" style="width: 24px; height: 24px; margin-bottom: 8px;"></i>
+            <div>All tasks completed!</div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = sampleTasks.map(task => `
+          <div class="task-item ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+            <div class="task-item-content">${task.title}</div>
+            <div class="task-delete-indicator">Swipe to delete →</div>
+          </div>
+        `).join('');
+      }
+      
+      // Re-initialize icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+      
+      // Add swipe functionality to tasks
+      initializeTaskSwipe();
+    }
+
+    function initializeTaskSwipe() {
+      const taskItems = document.querySelectorAll('.task-item');
+      
+      taskItems.forEach(taskItem => {
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        let hasMoved = false;
+        
+        // Touch start
+        taskItem.addEventListener('touchstart', (e) => {
+          if (taskItem.classList.contains('completed')) return;
+          
+          startX = e.touches[0].clientX;
+          currentX = startX;
+          isDragging = true;
+          hasMoved = false;
+          taskItem.classList.add('swiping');
+        }, { passive: true });
+        
+        // Touch move
+        taskItem.addEventListener('touchmove', (e) => {
+          if (!isDragging || taskItem.classList.contains('completed')) return;
+          
+          currentX = e.touches[0].clientX;
+          const deltaX = currentX - startX;
+          hasMoved = Math.abs(deltaX) > 10;
+          
+          // Only allow left swipes (negative deltaX)
+          if (deltaX < 0) {
+            const clampedDelta = Math.max(deltaX, -100);
+            taskItem.style.transform = `translateX(${clampedDelta}px)`;
+            
+            // Show delete indicator when swiping
+            if (Math.abs(clampedDelta) > 30) {
+              taskItem.classList.add('swipe-active');
+            } else {
+              taskItem.classList.remove('swipe-active');
+            }
+          }
+        }, { passive: true });
+        
+        // Touch end
+        taskItem.addEventListener('touchend', (e) => {
+          if (!isDragging || taskItem.classList.contains('completed')) return;
+          
+          const deltaX = currentX - startX;
+          isDragging = false;
+          taskItem.classList.remove('swiping');
+          taskItem.classList.remove('swipe-active');
+          
+          // If swiped far enough left, delete the task
+          if (deltaX < -60) {
+            deleteTask(taskItem);
+          } else if (hasMoved) {
+            // Snap back to original position
+            taskItem.style.transform = 'translateX(0)';
+          } else {
+            // Handle tap to toggle completion
+            const taskId = parseInt(taskItem.dataset.taskId);
+            toggleTask(taskId);
+          }
+        }, { passive: true });
+        
+        // Prevent context menu on long press
+        taskItem.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+      });
+    }
+
+    function deleteTask(taskElement) {
+      // Add delete animation
+      taskElement.classList.add('swipe-delete');
+      
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+      
+      // Remove from data and DOM after animation
+      setTimeout(() => {
+        const taskId = parseInt(taskElement.dataset.taskId);
+        const taskIndex = sampleTasks.findIndex(t => t.id === taskId);
+        if (taskIndex !== -1) {
+          sampleTasks.splice(taskIndex, 1);
+        }
+        updateTaskQueue();
+      }, 300);
+    }
+
+    function toggleTask(taskId) {
+      const task = sampleTasks.find(t => t.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+        updateTaskQueue();
+        
+        // Haptic feedback
+        if (navigator.vibrate) {
+          navigator.vibrate(task.completed ? 50 : 25);
+        }
+      }
+    }
+
+    function showDayView(dateStr) {
+      const modal = document.getElementById('dayModal');
+      const modalDate = document.getElementById('modalDate');
+      const dayEvents = document.getElementById('dayEvents');
+      const dayTasks = document.getElementById('dayTasks');
+      const dayNotes = document.getElementById('dayNotes');
+      
+      // Format date for display
+      const date = new Date(dateStr + 'T00:00:00');
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      modalDate.textContent = date.toLocaleDateString('en-US', options);
+      
+      // Get events for this day
+      const eventsForDay = sampleEvents.filter(event => event.date === dateStr);
+      
+      if (eventsForDay.length === 0) {
+        dayEvents.innerHTML = '<div class="empty-state">No events scheduled</div>';
+      } else {
+        dayEvents.innerHTML = eventsForDay.map(event => `
+          <div class="day-item">
+            <div class="day-item-time">${event.time}</div>
+            <div class="day-item-title">${event.title}</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">${event.description}</div>
+          </div>
+        `).join('');
+      }
+      
+      // Get tasks for this day (for now, showing all pending tasks)
+      const pendingTasks = sampleTasks.filter(task => !task.completed);
+      
+      if (pendingTasks.length === 0) {
+        dayTasks.innerHTML = '<div class="empty-state">No pending tasks</div>';
+      } else {
+        dayTasks.innerHTML = pendingTasks.slice(0, 3).map(task => `
+          <div class="day-item">
+            <div class="day-item-title">
+              <span class="task-priority">${task.priority}</span>
+              ${task.title}
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.add('active');
+      
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(20);
+      }
+      
+      // Re-initialize icons in modal
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('dayModal');
+      modal.classList.remove('active');
+      
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('dayModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Prevent zoom on double tap
+    document.addEventListener('touchend', function(e) {
+      const now = new Date().getTime();
+      const timesince = now - window.lastTouch || now;
+      if (timesince < 500 && timesince > 0) {
+        e.preventDefault();
+      }
+      window.lastTouch = now;
+    });
+  </script>
+</body>
+</html>

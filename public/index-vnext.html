@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>HomeOps</title>
+  <link rel="stylesheet" href="/style-vnext.css" />
+  <script defer src="/overlay.js" type="module"></script>
+  <script defer src="/chat-vnext.js" type="module"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">HomeOps</div>
+    <nav class="top-actions" aria-label="Primary">
+      <button id="btn-email" class="icon-btn" aria-haspopup="dialog" aria-controls="email-overlay" aria-label="Open Email Overlay"><i data-lucide="mail"></i></button>
+      <button id="btn-calendar" class="icon-btn" aria-haspopup="dialog" aria-controls="calendar-overlay" aria-label="Open Calendar Overlay"><i data-lucide="calendar"></i></button>
+    </nav>
+  </header>
+
+  <main id="chat" class="chat-view" aria-live="polite">
+    <section id="chat-thread" class="thread" role="log"></section>
+    <form id="composer" class="composer" autocomplete="off">
+      <input id="composer-input" name="message" placeholder="Ask HomeOps… e.g., 'Summarize last email from Woods Academy'" aria-label="Message HomeOps" />
+      <button type="submit" class="send">Send</button>
+    </form>
+  </main>
+
+  <!-- Email Overlay -->
+  <div id="email-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="email-title" hidden>
+    <div class="overlay-panel">
+      <header class="overlay-header">
+        <h2 id="email-title">Important Emails</h2>
+        <button class="icon-btn overlay-close" data-close="email-overlay" aria-label="Close"><i data-lucide="x"></i></button>
+      </header>
+      <div id="email-list" class="email-list" aria-live="polite"></div>
+    </div>
+    <div class="overlay-backdrop" data-close="email-overlay"></div>
+  </div>
+
+  <!-- Calendar Overlay -->
+  <div id="calendar-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="calendar-title" hidden>
+    <div class="overlay-panel">
+      <header class="overlay-header">
+        <h2 id="calendar-title">Calendar</h2>
+        <button class="icon-btn overlay-close" data-close="calendar-overlay" aria-label="Close"><i data-lucide="x"></i></button>
+      </header>
+      <div id="calendar-root" class="calendar-root" aria-live="polite"></div>
+    </div>
+    <div class="overlay-backdrop" data-close="calendar-overlay"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Debug Test</title>
+    <style>
+        .hidden { display: none; }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90%;
+            overflow: auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calendar Debug Test</h1>
+    
+    <button onclick="openCalendarOverlay()">Open Calendar (Function)</button>
+    <button onclick="debugElements()">Debug Elements</button>
+    <button onclick="testOverlay()">Test Overlay Toggle</button>
+    
+    <div id="calendar-overlay" class="overlay hidden">
+        <div class="overlay-content">
+            <h2>Calendar Overlay</h2>
+            <p>This is the calendar overlay content.</p>
+            <button onclick="closeCalendarOverlay()">Close Calendar</button>
+        </div>
+    </div>
+
+    <div id="debug-output" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+
+    <script>
+        function debugElements() {
+            const overlay = document.getElementById('calendar-overlay');
+            const output = document.getElementById('debug-output');
+            
+            output.innerHTML = `
+                <h3>Debug Information:</h3>
+                <p>Calendar overlay element found: ${overlay ? 'YES' : 'NO'}</p>
+                <p>Current classes: ${overlay ? overlay.className : 'N/A'}</p>
+                <p>Current style.display: ${overlay ? overlay.style.display : 'N/A'}</p>
+                <p>Is hidden class present: ${overlay ? overlay.classList.contains('hidden') : 'N/A'}</p>
+            `;
+        }
+        
+        function testOverlay() {
+            const overlay = document.getElementById('calendar-overlay');
+            if (overlay) {
+                overlay.classList.toggle('hidden');
+                console.log('Toggled overlay, current classes:', overlay.className);
+            } else {
+                console.log('Overlay element not found!');
+            }
+        }
+        
+        function openCalendarOverlay() {
+            console.log('openCalendarOverlay called');
+            const calendarOverlay = document.getElementById('calendar-overlay');
+            
+            if (calendarOverlay) {
+                console.log('Found calendar overlay element');
+                calendarOverlay.classList.remove('hidden');
+                console.log('Removed hidden class, current classes:', calendarOverlay.className);
+            } else {
+                console.log('Calendar overlay element not found!');
+            }
+        }
+        
+        function closeCalendarOverlay() {
+            console.log('closeCalendarOverlay called');
+            const calendarOverlay = document.getElementById('calendar-overlay');
+            
+            if (calendarOverlay) {
+                console.log('Found calendar overlay element');
+                calendarOverlay.classList.add('hidden');
+                console.log('Added hidden class, current classes:', calendarOverlay.className);
+            } else {
+                console.log('Calendar overlay element not found!');
+            }
+        }
+        
+        // Auto-run debug on page load
+        window.onload = function() {
+            debugElements();
+        };
+    </script>
+</body>
+</html>

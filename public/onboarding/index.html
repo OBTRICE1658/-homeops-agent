@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HomeOps - Your Mental Load Operating System</title>
+  <link rel="stylesheet" href="onboarding.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <div class="onboarding-container">
+    
+    <!-- Step 1: Landing/Signup -->
+    <div class="step active" id="step-landing">
+      <div class="step-content">
+        <div class="logo">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="24" fill="#8B5CF6"/>
+            <circle cx="32" cy="32" r="12" fill="white"/>
+            <g opacity="0.8">
+              <circle cx="24" cy="24" r="1.5" fill="#8B5CF6"/>
+              <circle cx="40" cy="24" r="1.5" fill="#8B5CF6"/>
+              <circle cx="24" cy="40" r="1.5" fill="#8B5CF6"/>
+              <circle cx="40" cy="40" r="1.5" fill="#8B5CF6"/>
+              <path d="M32 32 L24 24 M32 32 L40 24 M32 32 L24 40 M32 32 L40 40" 
+                    stroke="#8B5CF6" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+            </g>
+          </svg>
+        </div>
+        
+        <h1 class="main-title">HomeOps</h1>
+        <p class="main-subtitle">Your Mental Load Operating System</p>
+        <p class="value-prop">Stop missing school pickups, birthday parties, and permission slips. We automatically surface what matters from your inbox.</p>
+        
+        <button class="btn-primary" onclick="nextStep()">
+          <i data-lucide="arrow-right"></i>
+          Get Started
+        </button>
+        
+        <div class="features">
+          <div class="feature">
+            <i data-lucide="mail" class="feature-icon"></i>
+            <span>Scans your email</span>
+          </div>
+          <div class="feature">
+            <i data-lucide="target" class="feature-icon"></i>
+            <span>Finds family signals</span>
+          </div>
+          <div class="feature">
+            <i data-lucide="zap" class="feature-icon"></i>
+            <span>Never miss important stuff</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Agent Training Form -->
+    <div class="step" id="step-form">
+      <h2>Train Your Agent</h2>
+      <p>Help us understand what matters to your family so we can surface the right emails.</p>
+      
+      <div class="form-group">
+        <label class="form-label" for="children">Children's Names</label>
+        <input 
+          type="text" 
+          id="children" 
+          class="form-input" 
+          placeholder="Emma, Jake, Sophie"
+        >
+        <div class="form-hint">Separate multiple names with commas</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="schools">Schools & Organizations</label>
+        <input 
+          type="text" 
+          id="schools" 
+          class="form-input" 
+          placeholder="Lincoln Elementary, Soccer Club, Dance Studio"
+        >
+        <div class="form-hint">Schools, sports teams, activity centers</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="keywords">Important Keywords</label>
+        <input 
+          type="text" 
+          id="keywords" 
+          class="form-input" 
+          placeholder="pickup, dismissal, practice, recital"
+        >
+        <div class="form-hint">Words that signal important family events</div>
+      </div>
+
+      <div class="priorities-section">
+        <label class="priorities-label">What matters most to you?</label>
+        <div class="chips-container">
+          <div class="chip active" data-value="school">
+            <i data-lucide="graduation-cap"></i>
+            School
+          </div>
+          <div class="chip active" data-value="sports">
+            <i data-lucide="trophy"></i>
+            Sports
+          </div>
+          <div class="chip active" data-value="birthdays">
+            <i data-lucide="cake"></i>
+            Birthdays
+          </div>
+          <div class="chip" data-value="medical">
+            <i data-lucide="heart-pulse"></i>
+            Medical
+          </div>
+          <div class="chip" data-value="travel">
+            <i data-lucide="plane"></i>
+            Travel
+          </div>
+          <div class="chip" data-value="bills">
+            <i data-lucide="credit-card"></i>
+            Bills
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="nextStep()">
+        <i data-lucide="arrow-right"></i>
+        Continue
+      </button>
+      <button class="btn-back" onclick="goBack()">
+        <i data-lucide="arrow-left"></i>
+        Back
+      </button>
+    </div>
+
+    <!-- Step 3: Gmail OAuth -->
+    <div class="step" id="step-oauth">
+      <div class="oauth-logo">
+        <i data-lucide="mail" style="width: 60px; height: 60px; color: #8B5CF6;"></i>
+      </div>
+      
+      <h2>Connect Your Gmail</h2>
+      <p>We need access to your email to find and organize family-related messages.</p>
+      
+      <div class="permissions-list">
+        <div class="permission-item">
+          <i data-lucide="mail-open" class="permission-icon"></i>
+          <span>Read your email messages</span>
+        </div>
+        <div class="permission-item">
+          <i data-lucide="tags" class="permission-icon"></i>
+          <span>Create labels and organize</span>
+        </div>
+        <div class="permission-item">
+          <i data-lucide="search" class="permission-icon"></i>
+          <span>Search for family-related content</span>
+        </div>
+      </div>
+      
+      <button class="btn-allow" onclick="connectGmail()">
+        <i data-lucide="check"></i>
+        Allow Access
+      </button>
+      <button class="btn-back" onclick="goBack()">
+        <i data-lucide="arrow-left"></i>
+        Back
+      </button>
+    </div>
+
+    <!-- Step 4: Email Calibration -->
+    <div class="step" id="step-calibration">
+      <h2>Email Calibration</h2>
+      <p>Here are sample emails we found. Do these look like the kind of family signals you want to catch?</p>
+      
+      <div class="email-samples" id="emailSamples">
+        <!-- Email samples will be populated by JavaScript -->
+      </div>
+      
+      <button class="btn-primary" onclick="finishOnboarding()">
+        <i data-lucide="thumbs-up"></i>
+        Looks Good!
+      </button>
+      <button class="btn-back" onclick="goBack()">
+        <i data-lucide="arrow-left"></i>
+        Back
+      </button>
+    </div>
+
+    <!-- Step 5: Success -->
+    <div class="step" id="step-success">
+      <div class="success-animation">
+        <i data-lucide="check"></i>
+      </div>
+      <h2>You're All Set!</h2>
+      <p>HomeOps is now monitoring your email for family-related signals. You'll get your first summary soon.</p>
+      
+      <button class="btn-primary" onclick="goToDashboard()">
+        <i data-lucide="layout-dashboard"></i>
+        Go to Dashboard
+      </button>
+    </div>
+
+  </div>
+
+  <script src="onboarding.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -92,10 +92,27 @@ app.get('/command-center.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'command-center.html'));
 });
 
-// Root route - redirect to onboarding for now
-app.get('/', (req, res) => {
-  console.log('🏠 Serving root route -> redirecting to onboard');
-  res.redirect('/onboard');
+// Root route - redirect to onboarding for first-time users
+app.get('/', async (req, res) => {
+  console.log('🏠 Serving root route -> checking onboarding status');
+  
+  try {
+    // In a real implementation, you'd check user auth and onboarding status
+    const userId = 'demo-user'; // For demo purposes
+    
+    const userDoc = await db.collection('users').doc(userId).get();
+    
+    if (userDoc.exists && userDoc.data().onboardingComplete) {
+      console.log('✅ User onboarding complete -> redirecting to /app');
+      res.redirect('/app');
+    } else {
+      console.log('📋 New user -> redirecting to onboarding');
+      res.redirect('/onboarding');
+    }
+  } catch (error) {
+    console.log('⚠️ Error checking onboarding status, redirecting to onboarding');
+    res.redirect('/onboarding');
+  }
 });
 
 // Serve static files with no-cache for HTML
@@ -280,6 +297,80 @@ app.get('/api/tasks', (req, res) => {
     version: "Enhanced Task Intelligence v2",
     mode: "OAuth-Free"
   });
+});
+
+// Onboarding routes
+app.get('/onboarding', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'onboarding', 'onboarding.html'));
+});
+
+app.get('/api/onboarding/state', async (req, res) => {
+  try {
+    // In a real implementation, you'd get this from the user's session/auth
+    const userId = 'demo-user'; // For demo purposes
+    
+    const doc = await db.collection('onboarding').doc(userId).get();
+    
+    if (doc.exists) {
+      res.json(doc.data());
+    } else {
+      res.json({});
+    }
+  } catch (error) {
+    console.error('Error loading onboarding state:', error);
+    res.status(500).json({ error: 'Failed to load onboarding state' });
+  }
+});
+
+app.post('/api/onboarding/state', async (req, res) => {
+  try {
+    // In a real implementation, you'd get this from the user's session/auth
+    const userId = 'demo-user'; // For demo purposes
+    
+    await db.collection('onboarding').doc(userId).set(req.body, { merge: true });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error saving onboarding state:', error);
+    res.status(500).json({ error: 'Failed to save onboarding state' });
+  }
+});
+
+app.get('/api/oauth/google/start', (req, res) => {
+  // In OAuth-free mode, simulate successful Gmail connection for demo
+  const callbackUrl = '/onboarding?gmail=connected&email=demo@family.com';
+  res.redirect(callbackUrl);
+});
+
+app.get('/api/oauth/google/callback', (req, res) => {
+  // OAuth callback handler
+  const callbackUrl = '/onboarding?gmail=connected&email=demo@family.com';
+  res.redirect(callbackUrl);
+});
+
+app.post('/api/onboarding/finalize', async (req, res) => {
+  try {
+    // In a real implementation, you'd get this from the user's session/auth
+    const userId = 'demo-user'; // For demo purposes
+    
+    // Save the complete onboarding data
+    await db.collection('users').doc(userId).set({
+      onboardingComplete: true,
+      profile: req.body.profile,
+      household: req.body.household,
+      priorities: req.body.priorities,
+      notifications: req.body.notifications,
+      createdAt: new Date().toISOString()
+    }, { merge: true });
+    
+    // Clear onboarding state
+    await db.collection('onboarding').doc(userId).delete();
+    
+    res.json({ success: true, redirectUrl: '/app' });
+  } catch (error) {
+    console.error('Error finalizing onboarding:', error);
+    res.status(500).json({ error: 'Failed to finalize onboarding' });
+  }
 });
 
 // OAuth routes (disabled with enhanced messaging)

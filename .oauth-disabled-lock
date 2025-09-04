@@ -1,0 +1,9 @@
+HOMEOPS OAUTH DISABLED
+=====================
+This file indicates HomeOps OAuth is intentionally disabled.
+Created: $(date)
+Reason: Gmail OAuth conflicts with Notion Mail
+
+To re-enable:
+1. Delete this file: rm .oauth-disabled-lock
+2. Run: ./enable-oauth.sh

@@ -273,7 +273,7 @@
       background: rgba(255, 255, 255, 0.4);
     }
     
-    /* EMAIL DECODER VIEW */
+    /* SHARED SECTION STYLES */
     .email-section {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -722,223 +722,13 @@
         </iframe>
       </div>
       
-      <!-- Email Decoder View -->
-      <div id="email-mobile" class="mobile-view">
-        <!-- Quick Intelligence Status -->
-        <div style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 12px; padding: 8px; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <div style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-              <i data-lucide="brain-circuit" style="width: 18px; height: 18px; color: #fbbf24;"></i>
-              <span>Intelligence Status</span>
-            </div>
-            <div id="gmail-connection-indicator" style="width: 10px; height: 10px; background: rgba(255, 193, 7, 0.8); border-radius: 50%;"></div>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; margin-bottom: 2px;">Decoded</div>
-              <div style="font-weight: 600; font-size: 18px;" id="decoded-emails-count">0</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; margin-bottom: 2px;">Urgent</div>
-              <div style="font-weight: 600; font-size: 18px;" id="urgent-emails-count">0</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; margin-bottom: 2px;">Actions</div>
-              <div style="font-weight: 600; font-size: 18px;" id="action-items-count">0</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; margin-bottom: 2px;">Filtered</div>
-              <div style="font-weight: 600; font-size: 18px;" id="filtered-noise-count">0</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Connection & Actions -->
-        <div style="margin-bottom: 16px;">
-          <button id="decode-inbox-mobile" onclick="loadDecoderCards()" 
-                  style="background: rgba(139, 92, 246, 0.8); border: 1px solid rgba(139, 92, 246, 1); border-radius: 12px; padding: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
-            <i data-lucide="refresh-cw" style="width: 22px; height: 22px;"></i>
-            <span>Decode Unread Emails</span>
-          </button>
-        </div>
-          
-        <!-- Intelligent Email Categories -->
-        <div style="margin-bottom: 16px;">
-          <div style="font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="bar-chart-4" style="width: 20px; height: 20px; color: #a78bfa;"></i>
-            <span>Email Categories</span>
-          </div>
-            
-            <!-- Category Tabs -->
-            <div class="category-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; overflow-x: auto;">
-              <button class="category-tab active" data-category="all" onclick="showEmailCategory('all', this)">
-                <i data-lucide="inbox" style="width: 16px; height: 16px;"></i> All
-              </button>
-              <button class="category-tab" data-category="family" onclick="showEmailCategory('family', this)">
-                <i data-lucide="users" style="width: 16px; height: 16px;"></i> Family
-              </button>
-              <button class="category-tab" data-category="commerce" onclick="showEmailCategory('commerce', this)">
-                <i data-lucide="shopping-cart" style="width: 16px; height: 16px;"></i> Commerce
-              </button>
-              <button class="category-tab" data-category="priority" onclick="showEmailCategory('priority', this)">
-                <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i> Priority
-              </button>
-              <button class="category-tab" data-category="work" onclick="showEmailCategory('work', this)">
-                <i data-lucide="briefcase" style="width: 16px; height: 16px;"></i> Work
-              </button>
-              <button class="category-tab" data-category="noise" onclick="showEmailCategory('noise', this)">
-                <i data-lucide="volume-x" style="width: 16px; height: 16px;"></i> Noise
-              </button>
-            </div>
-          </div>
-
-          <!-- Intelligent Email Results -->
-          <div id="intelligent-email-results">
-            <!-- Placeholder for no emails yet -->
-            <div id="no-emails-placeholder" style="text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);">
-              <div style="margin-bottom: 16px; display: flex; justify-content: center;">
-                <i data-lucide="brain-circuit" style="width: 48px; height: 48px; color: #a78bfa;"></i>
-              </div>
-              <div style="font-weight: 600; margin-bottom: 8px; color: white;">Ready for AI Email Analysis</div>
-              <div style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.4;">
-                Tap "Decode Unread Emails" to analyze your inbox with AI-powered intelligence and filtering.
-              </div>
-            </div>
-          </div>
-          
-          <!-- Processing Status -->
-          <div id="processing-status" style="display: none; text-align: center; padding: 20px;">
-            <div class="typing-dots" style="margin-bottom: 10px;">
-              <span>.</span><span>.</span><span>.</span>
-            </div>
-            <div id="processing-message">Your AI Chief of Staff is decoding...</div>
-          </div>
-        </div>
-      </div>
-      
       <!-- Calendar View -->
       <div id="calendar-mobile" class="mobile-view">
-        <div class="calendar-section">
-          <!-- Simple Calendar Header -->
-          <div class="calendar-header">
-            <button class="month-nav" onclick="changeMonth(-1)">‹</button>
-            <div class="section-title" id="current-month" style="display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 600;">
-              <i data-lucide="calendar" style="width: 22px; height: 22px; color: white;"></i>
-              July 2025
-            </div>
-            <button class="month-nav" onclick="changeMonth(1)">›</button>
-          </div>
-          
-          <!-- Calendar Grid -->
-          <div class="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
-            <!-- Day headers -->
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">S</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">M</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">T</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">W</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">T</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">F</div>
-            <div class="day-header" style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05);">S</div>
-            
-            <!-- Calendar days (will be populated by JS) -->
-            <div id="calendar-days" style="display: contents;">
-              <!-- JS will populate calendar days here -->
-            </div>
-          </div>
-          
-          <!-- Quick Add -->
-          <div class="quick-add-section" style="margin-bottom: 20px;">
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <input 
-                type="text" 
-                id="quick-add-input" 
-                placeholder="Add event or task..." 
-                style="
-                  flex: 1;
-                  background: rgba(255, 255, 255, 0.1);
-                  border: 1px solid rgba(255, 255, 255, 0.2);
-                  border-radius: 8px;
-                  padding: 12px 16px;
-                  color: white;
-                  font-size: 14px;
-                "
-                onkeypress="handleQuickAdd(event)"
-                onfocus="showQuickSuggestions()"
-              />
-              <button onclick="addQuickItem()" style="
-                background: rgba(59, 130, 246, 0.8);
-                border: 1px solid rgba(59, 130, 246, 1);
-                border-radius: 8px;
-                padding: 12px 16px;
-                color: white;
-                cursor: pointer;
-                font-size: 14px;
-              ">
-                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-              </button>
-            </div>
-            
-            <!-- Quick suggestions (shown on focus) -->
-            <div id="quick-suggestions" style="display: none; margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-              <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px;">
-                <strong>Events:</strong> "Meeting with John 2pm", "Dentist appointment tomorrow 3pm"<br>
-                <strong>Tasks:</strong> "Call mom", "Buy groceries", "Finish report urgent"
-              </div>
-            </div>
-          </div>
-          
-          <!-- Selected Day View -->
-          <div class="selected-day-view" style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-            <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h3 id="selected-day-title" style="margin: 0; font-size: 16px; font-weight: 600;">Today, July 30</h3>
-              <button onclick="openDayDetails()" style="
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 6px;
-                padding: 6px 8px;
-                color: white;
-                cursor: pointer;
-                font-size: 12px;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-              ">
-                <i data-lucide="message-square" style="width: 12px; height: 12px; color: white;"></i>
-                Mental Load Briefing
-              </button>
-            </div>
-            
-            <div id="selected-day-content" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Content populated by JavaScript -->
-            </div>
-          </div>
-          
-          <!-- This Week View -->
-          <div class="this-week-view" style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-            <div class="week-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 600;">This Week</h3>
-              <button onclick="openWeekDetails()" style="
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 6px;
-                padding: 6px 8px;
-                color: white;
-                cursor: pointer;
-                font-size: 12px;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-              ">
-                <i data-lucide="message-square" style="width: 12px; height: 12px; color: white;"></i>
-                Mental Load Briefing
-              </button>
-            </div>
-            
-            <div id="this-week-content" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Content populated by JavaScript -->
-            </div>
-          </div>
-        </div>
+        <iframe src="/calendar-mobile.html" 
+                style="width: 100%; height: calc(100vh - 140px); border: none; background: transparent; margin: 0; padding: 0; position: absolute; top: 0; left: 0;"
+                onload="this.style.opacity='1'; console.log('📅 Mobile Calendar iframe loaded successfully');"
+                onerror="console.error('❌ Mobile Calendar iframe failed to load');">
+        </iframe>
       </div>
       
       <!-- Command Center View -->
@@ -959,10 +749,6 @@
       <button class="nav-btn" onclick="showView('chat-mobile', this, event)">
         <i data-lucide="message-circle" class="nav-icon"></i>
         Chat
-      </button>
-      <button class="nav-btn" onclick="showView('email-mobile', this, event)">
-        <i data-lucide="mail" class="nav-icon"></i>
-        Email
       </button>
       <button class="nav-btn" onclick="showView('calendar-mobile', this, event)">
         <i data-lucide="calendar" class="nav-icon"></i>
@@ -994,9 +780,7 @@
         targetView.classList.add('active');
         
         // Initialize view-specific content
-        if (viewId === 'email-mobile') {
-          initializeEmailView();
-        } else if (viewId === 'calendar-mobile') {
+        if (viewId === 'calendar-mobile') {
           initializeCalendarView();
         } else if (viewId === 'command-mobile') {
           console.log('🚀 Loading Command Center view');
@@ -1039,9 +823,7 @@
       const activeView = document.querySelector('.mobile-view.active');
       if (activeView) {
         const viewId = activeView.id;
-        if (viewId === 'email-mobile') {
-          loadDecoderCards();
-        } else if (viewId === 'calendar-mobile') {
+        if (viewId === 'calendar-mobile') {
           initializeCalendarView();
         } else if (viewId === 'chat-mobile') {
           // Reload the chat iframe
@@ -1110,26 +892,13 @@
     // Create global alias for compatibility
     window.showView = window.showView || function() { console.error('showView not loaded yet'); };
     
-    function initializeEmailView() {
-      console.log('🧠 Initializing email view with real Gmail intelligence...');
-      
-      // Load the actual decoder cards with real Gmail data
-      loadDecoderCards();
-    }
-    
     function initializeCalendarView() {
-      console.log('Initializing calendar view...');
+      console.log('📅 Initializing calendar view...');
       
-      // Initialize calendar display with current month/year
-      updateCalendarDisplay();
+      // Calendar is now loaded via iframe, so no initialization needed
+      console.log('📅 Calendar iframe loaded - no further initialization required');
       
-      // Load simple calendar
-      renderSimpleCalendar();
-      
-      // Update AI status
-      updateAIStatus();
-      
-      // Initialize icons for calendar view
+      // Initialize icons if needed
       setTimeout(() => {
         if (typeof initializeIcons === 'function') {
           initializeIcons();
@@ -1317,12 +1086,6 @@
                         </div>
                       </div>
                     ` : ''}
-                    
-                    <button onclick="showView('email-mobile', document.querySelector('.nav-btn[onclick*=\"email-mobile\"]'), null)" 
-                            style="background: rgba(34, 197, 94, 0.4); border: 1px solid rgba(34, 197, 94, 0.6); border-radius: 8px; padding: 8px 16px; color: white; font-size: 14px; cursor: pointer; width: 100%;">
-                      <i data-lucide="mail-open"></i>
-                      View Full Email Intelligence
-                    </button>
                   </div>
                 `;
                 
@@ -1605,12 +1368,6 @@
       
       // Navigation shortcuts
       if (msg.includes('switch to') || msg.includes('go to')) {
-        if (msg.includes('email')) {
-          const emailBtn = document.querySelector('.nav-btn[onclick*="email-mobile"]');
-          showView('email-mobile', emailBtn, null);
-          addSystemMessage(messagesDiv, "📧 Switched to Email view");
-          return true;
-        }
         if (msg.includes('calendar')) {
           const calendarBtn = document.querySelector('.nav-btn[onclick*="calendar-mobile"]');
           showView('calendar-mobile', calendarBtn, null);

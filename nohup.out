@@ -1,0 +1,23 @@
+🧪 Starting HomeOps vNext Server...
+🚀 HomeOps vNext Server running on port 8081
+✨ vNext Interface: http://localhost:8081/vnext
+🧪 Test Route: http://localhost:8081/test
+
+🎯 API Endpoints:
+   💬 Chat: POST /api/chat
+   📧 Email Summary: GET /api/email-summary
+   ✍️ Email Draft: POST /api/email/draft
+✅ TEST ROUTE HIT!
+🚀 VNEXT ROUTE HIT!
+📧 Email summary request
+🚀 VNEXT ROUTE HIT!
+🚀 VNEXT ROUTE HIT!
+🚀 VNEXT ROUTE HIT!
+📧 Email summary request
+🚀 VNEXT ROUTE HIT!
+🚀 VNEXT ROUTE HIT!
+🚀 VNEXT ROUTE HIT!
+💬 Chat request: {
+  userId: 'vnext-user',
+  message: 'Can you help me summarize the last email I got fro...'
+}

@@ -1,0 +1,348 @@
+// =============================================================================
+// HOMEOPS SERVER V2 - CLEAN REBUILD
+// =============================================================================
+
+console.log('🚀 Starting HomeOps Server V2 - Clean Rebuild');
+
+// =============================================================================
+// BLOCK 1: DEPENDENCIES & ENVIRONMENT
+// =============================================================================
+
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+
+console.log('✅ Core dependencies loaded');
+
+// =============================================================================
+// BLOCK 2: SERVER SETUP
+// =============================================================================
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Basic middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+console.log('✅ Express app initialized');
+
+// =============================================================================
+// BLOCK 3: CORE ROUTES (NO DEPENDENCIES)
+// =============================================================================
+
+// Health check
+app.get('/health', (req, res) => {
+  console.log('🏥 Health check requested');
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '2.0.0'
+  });
+});
+
+// Test route
+app.get('/test', (req, res) => {
+  console.log('🧪 Test route hit');
+  res.send(`
+    <h1 style="color: green; text-align: center; margin-top: 100px;">
+      ✅ SERVER V2 WORKING!
+    </h1>
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="/health" style="color: blue;">Health Check</a> |
+      <a href="/vnext-test" style="color: purple;">VNext Test</a>
+    </div>
+  `);
+});
+
+// VNext test route (no file dependency)
+app.get('/vnext-test', (req, res) => {
+  console.log('🎯 VNext test route hit');
+  res.send(`
+    <h1 style="color: purple; text-align: center; margin-top: 100px;">
+      🎯 VNEXT TEST WORKING!
+    </h1>
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="/test" style="color: green;">Back to Test</a> |
+      <a href="/health" style="color: blue;">Health Check</a>
+    </div>
+  `);
+});
+
+console.log('✅ Core routes registered');
+
+// =============================================================================
+// BLOCK 4: FILE SERVING ROUTES
+// =============================================================================
+
+// VNext actual route (serves file)
+app.get('/vnext', (req, res) => {
+  console.log('🎯 VNext route hit - attempting to serve file');
+  
+  const filePath = path.join(__dirname, 'public', 'index-vnext.html');
+  console.log('📁 File path:', filePath);
+  console.log('📁 File exists:', fs.existsSync(filePath));
+  
+  if (!fs.existsSync(filePath)) {
+    console.log('❌ File not found - serving error page');
+    return res.status(404).send(`
+      <h1 style="color: red; text-align: center; margin-top: 100px;">
+        ❌ File Not Found
+      </h1>
+      <div style="text-align: center; margin-top: 20px;">
+        <p>Looking for: <code>${filePath}</code></p>
+        <p><a href="/vnext-test" style="color: purple;">Try VNext Test Instead</a></p>
+      </div>
+    `);
+  }
+  
+  console.log('✅ Serving file:', filePath);
+  res.sendFile(filePath);
+});
+
+// Static file serving (AFTER custom routes)
+app.use(express.static(path.join(__dirname, 'public')));
+
+console.log('✅ File serving routes registered');
+
+// =============================================================================
+// BLOCK 6: API ROUTES (NO EXTERNAL DEPENDENCIES)
+// =============================================================================
+
+// Mock email intelligence API
+app.get('/api/email/important', (req, res) => {
+  console.log('📧 Important emails API called');
+  
+  const mockEmails = [
+    {
+      messageId: 'msg_001',
+      from: 'Woods Academy <office@woodsacademy.org>',
+      subject: 'Back-to-School Night - August 22nd',
+      receivedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      summary: 'Important school event this Thursday. Permission forms due Friday.',
+      confidence: 0.95,
+      suggestedActions: [
+        { type: 'add_to_calendar', payload: { title: 'Back-to-School Night' } },
+        { type: 'draft_reply', payload: { tone: 'polite' } }
+      ]
+    },
+    {
+      messageId: 'msg_002',
+      from: 'Dr. Smith\'s Office <appointments@smithdental.com>',
+      subject: 'Appointment Reminder - Dental Checkup',
+      receivedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      summary: 'Dental appointment scheduled for tomorrow at 2:00 PM.',
+      confidence: 0.88,
+      suggestedActions: [
+        { type: 'add_to_calendar', payload: { title: 'Dental Checkup - Dr. Smith' } }
+      ]
+    }
+  ];
+  
+  res.json({ items: mockEmails });
+});
+
+// Mock email draft API
+app.post('/api/email/draft', (req, res) => {
+  console.log('✍️ Email draft API called');
+  
+  const { messageId, styleHints } = req.body;
+  const tone = styleHints?.tone || 'polite';
+  
+  const mockDraft = `Thank you for your email. I'll review the information and get back to you soon.
+
+Best regards,
+[Your name]`;
+  
+  res.json({ draft: mockDraft });
+});
+
+// Calendar events API
+app.get('/api/calendar-events/:userId', (req, res) => {
+  console.log('📅 Calendar events API called for user:', req.params.userId);
+  
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  const mockEvents = [
+    {
+      id: 'cal-1',
+      title: 'Team Meeting',
+      start: new Date(today.getTime() + 9 * 60 * 60 * 1000).toISOString(),
+      end: new Date(today.getTime() + 10 * 60 * 60 * 1000).toISOString(),
+      context: 'work'
+    },
+    {
+      id: 'cal-2',
+      title: 'Soccer Practice',
+      start: new Date(today.getTime() + 16 * 60 * 60 * 1000).toISOString(),
+      end: new Date(today.getTime() + 17.5 * 60 * 60 * 1000).toISOString(),
+      context: 'family'
+    }
+  ];
+  
+  res.json(mockEvents);
+});
+
+console.log('✅ API routes registered (mock data)');
+
+// =============================================================================
+// BLOCK 8: ONBOARDING ROUTES (CLEAN HTML)
+// =============================================================================
+
+// Onboarding start
+app.get('/onboard', (req, res) => {
+  console.log('🎯 Onboarding route hit');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Welcome</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            margin: 0; padding: 20px;
+        }
+        .container { 
+            background: white; border-radius: 24px; padding: 40px; max-width: 500px; 
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #333; }
+        .button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 16px 32px; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer; width: 100%;
+            margin-top: 20px; transition: transform 0.2s ease;
+        }
+        .button:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Welcome to HomeOps</h1>
+        <p>Your personal family operations assistant</p>
+        <button class="button" onclick="window.location.href='/questionnaire'">Get Started</button>
+    </div>
+</body>
+</html>`);
+});
+
+// Questionnaire
+app.get('/questionnaire', (req, res) => {
+  console.log('📋 Questionnaire route hit');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Questionnaire</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            margin: 0; padding: 20px;
+        }
+        .container { 
+            background: white; border-radius: 24px; padding: 40px; max-width: 500px; 
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #333; }
+        .button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 16px 32px; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer; width: 100%;
+            margin-top: 20px; transition: transform 0.2s ease;
+        }
+        .button:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Tell Us About Your Family</h1>
+        <p>Help us understand your family's needs</p>
+        <button class="button" onclick="window.location.href='/app'">Complete Setup</button>
+    </div>
+</body>
+</html>`);
+});
+
+// Main app
+app.get('/app', (req, res) => {
+  console.log('📱 Main app route hit');
+  
+  // Try to serve the file, fallback to simple HTML
+  const filePath = path.join(__dirname, 'public', 'index-with-command.html');
+  
+  if (fs.existsSync(filePath)) {
+    console.log('✅ Serving main app file');
+    res.sendFile(filePath);
+  } else {
+    console.log('⚠️ Main app file not found, serving placeholder');
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps - Main App</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            margin: 0; padding: 20px;
+        }
+        .container { 
+            background: white; border-radius: 24px; padding: 40px; max-width: 500px; 
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .title { font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎉 HomeOps Main App</h1>
+        <p>Your family operations center</p>
+        <p><strong>File:</strong> index-with-command.html not found</p>
+        <p><a href="/vnext">Try VNext Interface →</a></p>
+    </div>
+</body>
+</html>`);
+  }
+});
+
+console.log('✅ Onboarding routes registered (clean HTML)');
+
+// =============================================================================
+// BLOCK 9: START SERVER
+// =============================================================================
+
+app.listen(PORT, () => {
+  console.log('');
+  console.log('🎯 ========================================');
+  console.log('🎯 HOMEOPS SERVER V2 RUNNING');
+  console.log('🎯 ========================================');
+  console.log(`📍 Server: http://localhost:${PORT}`);
+  console.log(`🏥 Health: http://localhost:${PORT}/health`);
+  console.log(`🧪 Test: http://localhost:${PORT}/test`);
+  console.log(`🎯 VNext Test: http://localhost:${PORT}/vnext-test`);
+  console.log(`✨ VNext: http://localhost:${PORT}/vnext`);
+  console.log('');
+  console.log('🎯 API Endpoints:');
+  console.log(`📧 Important Emails: http://localhost:${PORT}/api/email/important`);
+  console.log(`✍️ Email Draft: POST http://localhost:${PORT}/api/email/draft`);
+  console.log(`📅 Calendar Events: http://localhost:${PORT}/api/calendar-events/user123`);
+  console.log('');
+  console.log('🎯 Onboarding Flow:');
+  console.log(`🚀 Start: http://localhost:${PORT}/onboard`);
+  console.log(`📋 Questionnaire: http://localhost:${PORT}/questionnaire`);
+  console.log(`📱 Main App: http://localhost:${PORT}/app`);
+  console.log('');
+  console.log('✅ Complete working app - no technical debt');
+  console.log('🧹 Clean, modular, maintainable code');
+  console.log('');
+});

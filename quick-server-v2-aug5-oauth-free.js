@@ -2,8 +2,45 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { google } = require('googleapis');
-const HomeOpsDataManager = require('./services/data-manager');
+
+// OAUTH DISABLED FOR NOTION MAIL COMPATIBILITY - VERSION 2 (Aug 5, 2025)
+console.log('⚠️  GMAIL OAUTH DISABLED - Enhanced Chat Overlay System v2 (Notion Mail compatibility mode)');
+
+// Mock Google OAuth to prevent conflicts
+const mockGoogleAuth = {
+  auth: {
+    OAuth2: class MockOAuth2 {
+      constructor() {
+        console.log('🚫 Mock OAuth2 client created (Gmail OAuth disabled)');
+      }
+      generateAuthUrl() { return '#oauth-disabled'; }
+      getToken() { return Promise.reject(new Error('OAuth disabled for Notion Mail compatibility')); }
+      setCredentials() { console.log('🚫 OAuth setCredentials blocked'); }
+    }
+  }
+};
+
+// Replace google auth with mock
+const google = { auth: mockGoogleAuth.auth };
+
+// Mock Data Manager for development
+const HomeOpsDataManager = class {
+  async processEmailIntelligently() {
+    return { 
+      summary: "Email processing disabled (OAuth-free mode)",
+      priority: "medium",
+      category: "notification"
+    };
+  }
+  
+  async getSmartSuggestions() {
+    return [
+      "Review today's calendar",
+      "Check important notifications", 
+      "Update task priorities"
+    ];
+  }
+};
 
 // Initialize Firebase Admin for email storage and user data
 const admin = require('firebase-admin');
@@ -37,12 +74,8 @@ const PORT = process.env.PORT || 3000;
 // Initialize HomeOps Data Manager for real data
 const dataManager = new HomeOpsDataManager();
 
-// Gmail OAuth setup
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GMAIL_CLIENT_ID,
-  process.env.GMAIL_CLIENT_SECRET,
-  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/auth/gmail/callback'
-);
+// Mock OAuth2 client for OAuth-free operation
+const oauth2Client = new google.auth.OAuth2();
 
 // Middleware
 app.use(express.json());
@@ -92,8 +125,8 @@ app.get('/command-center.html', (req, res) => {
 
 // Root route - redirect to onboarding for now
 app.get('/', (req, res) => {
-  console.log('🏠 Serving root route -> redirecting to onboarding');
-  res.redirect('/onboarding');
+  console.log('🏠 Serving root route -> redirecting to onboard');
+  res.redirect('/onboard');
 });
 
 // Serve static files with no-cache for HTML
@@ -112,301 +145,17 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Server is running!', timestamp: new Date().toISOString() });
 });
 
-// ========================
-// ONBOARDING API ROUTES
-// ========================
-
-// Generate session ID helper
-function generateSessionId() {
-  return 'session_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
-}
-
-// Store onboarding state
-app.post('/api/onboarding/state', async (req, res) => {
-  try {
-    const sessionId = req.headers['x-session-id'] || generateSessionId();
-    const state = req.body;
-    
-    // In production, save to database. For now, use memory store
-    if (!global.onboardingStates) {
-      global.onboardingStates = new Map();
-    }
-    
-    global.onboardingStates.set(sessionId, {
-      ...state,
-      updatedAt: new Date().toISOString()
-    });
-    
-    res.json({ 
-      success: true, 
-      sessionId,
-      message: 'State saved successfully' 
-    });
-  } catch (error) {
-    console.error('Failed to save onboarding state:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to save state' 
-    });
-  }
-});
-
-// Gmail OAuth start
-app.get('/api/oauth/google/start', (req, res) => {
-  const scopes = ['https://www.googleapis.com/auth/gmail.readonly'];
-  
-  const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes,
-    state: JSON.stringify({ 
-      redirect: '/onboarding?step=2&connected=true',
-      sessionId: req.headers['x-session-id'] || generateSessionId()
-    })
+// Health endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'HomeOps Enhanced Chat Overlay v2 Running (OAuth-Free Mode)',
+    version: 'Enhanced Chat Overlay System v2 (Aug 5, 2025)',
+    mode: 'OAuth-Free',
+    notionMailCompatible: true,
+    timestamp: new Date().toISOString() 
   });
-  
-  res.redirect(authUrl);
 });
-
-// Gmail OAuth callback
-app.get('/api/oauth/google/callback', async (req, res) => {
-  try {
-    const { code, state } = req.query;
-    const stateData = state ? JSON.parse(state) : {};
-    
-    // Exchange code for tokens
-    const { tokens } = await oauth2Client.getAccessToken(code);
-    oauth2Client.setCredentials(tokens);
-    
-    // Store tokens in Firebase/database
-    const sessionId = stateData.sessionId || generateSessionId();
-    
-    if (db) {
-      try {
-        await db.collection('users').doc(sessionId).set({
-          oauth: {
-            gmail: {
-              connected: true,
-              tokens: tokens,
-              scopes: ['gmail.readonly'],
-              connectedAt: new Date().toISOString()
-            }
-          }
-        }, { merge: true });
-        console.log('OAuth tokens saved to Firebase');
-      } catch (firebaseError) {
-        console.warn('Failed to save to Firebase, using memory store:', firebaseError.message);
-      }
-    }
-    
-    // Update memory store
-    if (!global.onboardingStates) {
-      global.onboardingStates = new Map();
-    }
-    
-    const existingState = global.onboardingStates.get(sessionId) || {};
-    global.onboardingStates.set(sessionId, {
-      ...existingState,
-      oauth: {
-        gmail: {
-          connected: true,
-          connectedAt: new Date().toISOString()
-        }
-      }
-    });
-    
-    // Redirect back to onboarding
-    const redirectUrl = stateData.redirect || '/onboarding?step=2&connected=true';
-    res.redirect(redirectUrl);
-    
-  } catch (error) {
-    console.error('OAuth callback error:', error);
-    res.redirect('/onboarding?error=oauth_failed');
-  }
-});
-
-// Finalize onboarding
-app.post('/api/onboarding/finalize', async (req, res) => {
-  try {
-    const sessionId = req.headers['x-session-id'] || 'default';
-    const state = req.body;
-    
-    // Generate user ID
-    const userId = 'user_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-    
-    // Prepare user data for Firestore
-    const userData = {
-      profile: {
-        firstName: state.profile?.firstName || '',
-        timezone: state.profile?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-        createdAt: new Date().toISOString()
-      },
-      household: {
-        children: state.household?.children || []
-      },
-      preferences: {
-        priorities: state.preferences?.priorities || {
-          school: true,
-          sports: true,
-          birthdays: true,
-          travel: true,
-          medical: false,
-          bills: false,
-          orders: true
-        },
-        summaryTimes: state.preferences?.summaryTimes || ['07:30', '19:30'],
-        quietHours: state.preferences?.quietHours || { start: '22:00', end: '07:00' }
-      },
-      oauth: state.oauth || { gmail: { connected: false } },
-      onboardingCompletedAt: new Date().toISOString()
-    };
-    
-    // Save to Firebase if available
-    if (db) {
-      try {
-        await db.collection('users').doc(userId).set(userData);
-        console.log('User data saved to Firebase:', userId);
-      } catch (firebaseError) {
-        console.warn('Failed to save to Firebase:', firebaseError.message);
-      }
-    }
-    
-    // Start initial email ingest (mock for now)
-    setTimeout(() => {
-      console.log('Starting initial email ingest for user:', userId);
-      createInitialCoffeeCup(userId, userData);
-    }, 1000);
-    
-    res.json({ 
-      success: true, 
-      userId,
-      message: 'Onboarding completed successfully',
-      redirectUrl: '/'
-    });
-    
-  } catch (error) {
-    console.error('Finalization error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to complete onboarding' 
-    });
-  }
-});
-
-// Mock initial Coffee Cup creation
-async function createInitialCoffeeCup(userId, userData) {
-  try {
-    const children = userData.household?.children || ['Lucy', 'Ellie'];
-    const firstName = userData.profile?.firstName || 'Parent';
-    const priorities = userData.preferences?.priorities || {};
-    
-    // Generate mock Coffee Cup data
-    const coffeeCupData = {
-      userId,
-      generatedAt: new Date().toISOString(),
-      summaryType: 'morning',
-      today: [],
-      this_week: [],
-      handle_now: []
-    };
-    
-    // Add priority-based items
-    if (priorities.school) {
-      coffeeCupData.today.push({
-        type: 'school',
-        title: 'Early dismissal today',
-        time: '1:00 PM',
-        child: children[0],
-        priority: 'medium'
-      });
-      
-      coffeeCupData.handle_now.push({
-        type: 'permission',
-        title: 'Sign field trip form',
-        due: 'Today',
-        priority: 'high'
-      });
-    }
-    
-    if (priorities.birthdays) {
-      coffeeCupData.this_week.push({
-        type: 'birthday',
-        title: "RSVP for Olivia's party by Thursday",
-        child: children[1] || children[0],
-        priority: 'medium'
-      });
-    }
-    
-    if (priorities.sports) {
-      coffeeCupData.this_week.push({
-        type: 'sports',
-        title: 'Soccer practice moved to 4 PM Saturday',
-        child: children[0],
-        priority: 'medium'
-      });
-    }
-    
-    if (priorities.orders) {
-      coffeeCupData.today.push({
-        type: 'delivery',
-        title: 'Amazon package arriving',
-        time: '2:00 PM',
-        priority: 'low'
-      });
-    }
-    
-    // Ensure at least one item in each section
-    if (coffeeCupData.today.length === 0) {
-      coffeeCupData.today.push({
-        type: 'general',
-        title: 'All caught up for today! ✨',
-        time: 'N/A',
-        priority: 'info'
-      });
-    }
-    
-    if (coffeeCupData.this_week.length === 0) {
-      coffeeCupData.this_week.push({
-        type: 'general',
-        title: 'Light week ahead 🌟',
-        priority: 'info'
-      });
-    }
-    
-    if (coffeeCupData.handle_now.length === 0) {
-      coffeeCupData.handle_now.push({
-        type: 'general',
-        title: 'Nothing urgent right now ✅',
-        due: 'N/A',
-        priority: 'info'
-      });
-    }
-    
-    // Save Coffee Cup to database
-    if (db) {
-      try {
-        await db.collection('users').doc(userId).collection('derived').doc('coffeeCup').set(coffeeCupData);
-        console.log('Initial Coffee Cup created for user:', userId);
-      } catch (error) {
-        console.warn('Failed to save Coffee Cup to Firebase:', error.message);
-      }
-    }
-    
-    // Store in memory as fallback
-    if (!global.coffeeCups) {
-      global.coffeeCups = new Map();
-    }
-    global.coffeeCups.set(userId, coffeeCupData);
-    
-    console.log('Initial Coffee Cup ready for user:', userId);
-    
-  } catch (error) {
-    console.error('Failed to create initial Coffee Cup:', error);
-  }
-}
-
-// ========================
-// END ONBOARDING ROUTES
-// ========================
 
 // OpenAI setup (add this back)
 const OpenAI = require('openai');
@@ -1270,11 +1019,6 @@ app.get('/onboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'onboard.html'));
 });
 
-// New minimal onboarding route
-app.get('/onboarding', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'onboarding', 'onboarding.html'));
-});
-
 app.get('/landing', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
@@ -1285,53 +1029,43 @@ app.get('/scan', (req, res) => {
 // Main app route - serve the enhanced navigation system
 
 
-// Gmail OAuth authentication
+// Gmail OAuth authentication (DISABLED for Notion Mail compatibility)
 app.get('/auth/gmail', (req, res) => {
-  // Clear any existing credentials to force fresh OAuth
-  oauth2Client.setCredentials({});
-  
-  const isOnboarding = req.query.isOnboarding === 'true';
-  const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['https://www.googleapis.com/auth/gmail.readonly'],
-    state: isOnboarding ? 'onboarding' : 'normal',
-    prompt: 'consent' // Force consent screen to get fresh tokens
+  res.json({ 
+    error: 'Gmail OAuth disabled for Notion Mail compatibility',
+    message: 'HomeOps Enhanced Chat Overlay v2 is running in OAuth-free mode to prevent conflicts with Notion Mail',
+    version: 'Enhanced Chat Overlay System v2 (Aug 5, 2025)',
+    mode: 'OAuth-Free'
   });
-  console.log('🔗 Redirecting to Gmail OAuth (fresh tokens):', authUrl);
-  res.redirect(authUrl);
 });
 
-// Google OAuth authentication (Gmail + Calendar)
+// Google OAuth authentication (DISABLED for Notion Mail compatibility)
 app.get('/auth/google', (req, res) => {
-  // Clear any existing credentials to force fresh OAuth
-  oauth2Client.setCredentials({});
-  
-  const isOnboarding = req.query.isOnboarding === 'true';
-  const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: [
-      'https://www.googleapis.com/auth/gmail.readonly',
-      'https://www.googleapis.com/auth/gmail.modify',
-      'https://www.googleapis.com/auth/calendar',
-      'https://www.googleapis.com/auth/calendar.events',
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'openid'
-    ],
-    state: isOnboarding ? 'onboarding' : 'normal',
-    prompt: 'consent' // Force consent screen to get fresh tokens
+  res.json({ 
+    error: 'Google OAuth disabled for Notion Mail compatibility',
+    message: 'HomeOps Enhanced Chat Overlay v2 is running in OAuth-free mode to prevent conflicts with Notion Mail',
+    version: 'Enhanced Chat Overlay System v2 (Aug 5, 2025)',
+    mode: 'OAuth-Free'
   });
-  console.log('🔗 Redirecting to Google OAuth (Gmail + Calendar):', authUrl);
-  res.redirect(authUrl);
 });
 
 // OAuth callback - handle both routes for compatibility
 app.get('/oauth2callback', async (req, res) => {
-  await handleOAuthCallback(req, res);
+  res.json({ 
+    error: 'OAuth callback disabled for Notion Mail compatibility',
+    message: 'HomeOps Enhanced Chat Overlay v2 is running in OAuth-free mode',
+    version: 'Enhanced Chat Overlay System v2 (Aug 5, 2025)',
+    mode: 'OAuth-Free'
+  });
 });
 
 app.get('/auth/gmail/callback', async (req, res) => {
-  await handleOAuthCallback(req, res);
+  res.json({ 
+    error: 'Gmail OAuth callback disabled for Notion Mail compatibility',
+    message: 'HomeOps Enhanced Chat Overlay v2 is running in OAuth-free mode',
+    version: 'Enhanced Chat Overlay System v2 (Aug 5, 2025)',
+    mode: 'OAuth-Free'
+  });
 });
 
 async function handleOAuthCallback(req, res) {
