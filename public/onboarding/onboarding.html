@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HomeOps - Your Mental Load Operating System</title>
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div class="onboarding-container">
+    
+    <!-- Step 1: Landing/Signup -->
+    <div class="step active" id="step-landing">
+      <div class="step-content">
+        <div class="logo">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="24" fill="#4285F4"/>
+            <circle cx="32" cy="32" r="12" fill="white"/>
+            <g opacity="0.8">
+              <circle cx="24" cy="24" r="1.5" fill="#4285F4"/>
+              <circle cx="40" cy="24" r="1.5" fill="#4285F4"/>
+              <circle cx="24" cy="40" r="1.5" fill="#4285F4"/>
+              <circle cx="40" cy="40" r="1.5" fill="#4285F4"/>
+              <path d="M32 32 L24 24 M32 32 L40 24 M32 32 L24 40 M32 32 L40 40" 
+                    stroke="#4285F4" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+            </g>
+          </svg>
+        </div>
+        
+        <h1 class="main-title">HomeOps</h1>
+        <p class="main-subtitle">Your Mental Load Operating System</p>
+        <p class="value-prop">Stop missing school pickups, birthday parties, and permission slips. We automatically surface what matters from your inbox.</p>
+        
+        <button class="btn-primary" onclick="nextStep()">Get Started</button>
+        
+        <div class="features">
+          <div class="feature">
+            <span class="feature-icon">📧</span>
+            <span>Scans your email</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🎯</span>
+            <span>Finds family signals</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">⚡</span>
+            <span>Never miss important stuff</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Training Form -->
+    <div class="step" id="step-form">
+      <div class="step-content">
+        <h2 class="step-title">Help us find what matters to you</h2>
+        <p class="step-subtitle">We'll use this to train your personal email agent</p>
+        
+        <form class="training-form">
+          <div class="form-group">
+            <label for="children" class="form-label">Children's names</label>
+            <input type="text" id="children" class="form-input" placeholder="Lucy, Max, Emma" />
+            <span class="form-hint">So we can spot school communications</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="schools" class="form-label">Schools or organizations</label>
+            <input type="text" id="schools" class="form-input" placeholder="Roosevelt Elementary, Soccer Club" />
+            <span class="form-hint">Helps us recognize important senders</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="keywords" class="form-label">Important keywords</label>
+            <input type="text" id="keywords" class="form-input" placeholder="pickup, permission slip, uniform day" />
+            <span class="form-hint">Words that signal important family stuff</span>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">What should we prioritize?</label>
+            <div class="priority-chips">
+              <div class="chip active" data-value="school">School events</div>
+              <div class="chip active" data-value="sports">Sports & activities</div>
+              <div class="chip active" data-value="birthdays">Birthdays & parties</div>
+              <div class="chip" data-value="medical">Medical appointments</div>
+              <div class="chip" data-value="deadlines">Permission slips & deadlines</div>
+            </div>
+          </div>
+        </form>
+        
+        <button class="btn-primary" onclick="nextStep()">Continue to Email Access</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Gmail OAuth -->
+    <div class="step" id="step-oauth">
+      <div class="step-content oauth-content">
+        <div class="oauth-header">
+          <svg class="google-logo" viewBox="0 0 272 92">
+            <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+            <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+            <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#34A853"/>
+            <path d="M225 3v65h-9.5V3h9.5z" fill="#EA4335"/>
+            <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#FBBC05"/>
+          </svg>
+        </div>
+        
+        <div class="oauth-app-info">
+          <div class="app-icon">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="24" fill="#4285F4"/>
+              <circle cx="32" cy="32" r="12" fill="white"/>
+            </svg>
+          </div>
+          <h1 class="oauth-title">HomeOps wants to access your Google Account</h1>
+          <p class="oauth-subtitle">homeops.ai</p>
+        </div>
+        
+        <div class="oauth-permissions">
+          <p><strong>This will allow HomeOps to:</strong></p>
+          <ul>
+            <li>📧 Read your email messages to find family-related signals</li>
+          </ul>
+        </div>
+        
+        <div class="oauth-account">
+          <div class="account-option">
+            <div class="account-avatar"></div>
+            <div class="account-info">
+              <div class="account-email">your.email@gmail.com</div>
+            </div>
+            <div class="account-check">✓</div>
+          </div>
+        </div>
+        
+        <div class="oauth-actions">
+          <button class="btn-cancel" onclick="goBack()">Cancel</button>
+          <button class="btn-allow" onclick="connectGmail()">Allow</button>
+        </div>
+        
+        <p class="oauth-footer">You can revoke access anytime in your Google Account settings</p>
+      </div>
+    </div>
+
+    <!-- Step 4: Email Calibration -->
+    <div class="step" id="step-calibration">
+      <div class="step-content">
+        <h2 class="step-title">How do these look?</h2>
+        <p class="step-subtitle">Based on your keywords, we surfaced these emails. Let us know how we did.</p>
+        
+        <div class="email-samples" id="emailSamples">
+          <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <div class="calibration-actions">
+          <button class="btn-secondary" onclick="goBack()">Adjust Settings</button>
+          <button class="btn-primary" onclick="finishOnboarding()">Looks Good!</button>
+        </div>
+        
+        <div class="calibration-footer">
+          <p>We'll keep learning and improving as you use HomeOps.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div class="step" id="step-success">
+      <div class="step-content">
+        <div class="success-icon">🎉</div>
+        <h2 class="step-title">Welcome to HomeOps!</h2>
+        <p class="step-subtitle">Your mental load operating system is ready.</p>
+        
+        <div class="success-features">
+          <div class="success-feature">
+            <span class="feature-icon">☕</span>
+            <div>
+              <strong>Daily Coffee Cup</strong>
+              <p>Morning summary of what matters today</p>
+            </div>
+          </div>
+          <div class="success-feature">
+            <span class="feature-icon">🔔</span>
+            <div>
+              <strong>Smart Alerts</strong>
+              <p>Never miss deadlines or important events</p>
+            </div>
+          </div>
+          <div class="success-feature">
+            <span class="feature-icon">🎯</span>
+            <div>
+              <strong>Signal Detection</strong>
+              <p>Automatic scanning for family priorities</p>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn-primary" onclick="goToDashboard()">Open HomeOps</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
+      <div class="oauth-card">
+        <div class="oauth-content">
+          <!-- HomeOps Logo/Brand -->
+          <div class="oauth-app-info">
+            <div class="app-icon">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Modern Agent Icon -->
+                <circle cx="32" cy="32" r="28" fill="#4285F4" opacity="0.1"/>
+                <circle cx="32" cy="32" r="16" fill="#4285F4"/>
+                <circle cx="32" cy="32" r="8" fill="white"/>
+                <g opacity="0.8">
+                  <circle cx="24" cy="24" r="2" fill="#4285F4"/>
+                  <circle cx="40" cy="24" r="2" fill="#4285F4"/>
+                  <circle cx="24" cy="40" r="2" fill="#4285F4"/>
+                  <circle cx="40" cy="40" r="2" fill="#4285F4"/>
+                  <path d="M32 32 L24 24 M32 32 L40 24 M32 32 L24 40 M32 32 L40 40" 
+                        stroke="#4285F4" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                </g>
+              </svg>
+            </div>
+            <h1 class="oauth-title">HomeOps wants to access your Google Account</h1>
+            <p class="oauth-subtitle">homeops.ai</p>
+          </div>
+          
+          <!-- Permission Details -->
+          <div class="oauth-permissions">
+            <h2>This will allow HomeOps to:</h2>
+            <ul class="permission-list">
+              <li>
+                <div class="permission-icon">📧</div>
+                <div class="permission-text">
+                  <strong>Read your email messages</strong>
+                  <p>To find family-related signals and calendar events</p>
+                </div>
+              </li>
+              <li>
+                <div class="permission-icon">👥</div>
+                <div class="permission-text">
+                  <strong>View basic account info</strong>
+                  <p>To personalize your experience</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Google Account Selection -->
+          <div class="oauth-account-select">
+            <div class="account-option active">
+              <div class="account-avatar">
+                <div class="avatar-placeholder"></div>
+              </div>
+              <div class="account-info">
+                <div class="account-email">your.email@gmail.com</div>
+                <div class="account-name">Choose this account</div>
+              </div>
+              <div class="account-check">✓</div>
+            </div>
+          </div>
+          
+          <!-- OAuth Buttons -->
+          <div class="oauth-actions">
+            <button class="btn-oauth-cancel">Cancel</button>
+            <button class="btn-oauth-allow" id="allowAccessBtn">Allow</button>
+          </div>
+          
+          <div class="oauth-footer">
+            <p>You can revoke access at any time in your <a href="#" target="_blank">Google Account settings</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Agent Customization -->
+    <div class="oauth-step" id="step-customize">
+      <div class="oauth-card">
+        <div class="oauth-content">
+          <div class="oauth-app-info">
+            <div class="app-icon">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="28" fill="#4285F4" opacity="0.1"/>
+                <circle cx="32" cy="32" r="16" fill="#4285F4"/>
+                <circle cx="32" cy="32" r="8" fill="white"/>
+              </svg>
+            </div>
+            <h1 class="oauth-title">Customize your HomeOps Agent</h1>
+            <p class="oauth-subtitle">Help us personalize your family command center</p>
+          </div>
+          
+          <form class="oauth-form">
+            <!-- Family Information -->
+            <div class="form-section">
+              <h3 class="section-title">Family Details</h3>
+              
+              <div class="form-group">
+                <label for="firstName" class="form-label">Your name</label>
+                <input type="text" id="firstName" class="form-input" placeholder="Alex" />
+              </div>
+              
+              <div class="form-group">
+                <label for="partnerName" class="form-label">Partner's name (optional)</label>
+                <input type="text" id="partnerName" class="form-input" placeholder="Jordan" />
+              </div>
+              
+              <div class="form-group">
+                <label for="children" class="form-label">Children's names</label>
+                <input type="text" id="children" class="form-input" placeholder="Lucy, Ellie, Max" />
+                <span class="form-hint">Comma-separated</span>
+              </div>
+              
+              <div class="form-group">
+                <label for="schools" class="form-label">Schools they attend</label>
+                <input type="text" id="schools" class="form-input" placeholder="Woods Academy, Roosevelt Elementary" />
+                <span class="form-hint">Helps identify school emails faster</span>
+              </div>
+            </div>
+            
+            <!-- Location & Timing -->
+            <div class="form-section">
+              <h3 class="section-title">Your Schedule</h3>
+              
+              <div class="form-group">
+                <label for="timezone" class="form-label">Time zone</label>
+                <select id="timezone" class="form-input">
+                  <option value="America/New_York">Eastern Time</option>
+                  <option value="America/Chicago">Central Time</option>
+                  <option value="America/Denver">Mountain Time</option>
+                  <option value="America/Los_Angeles">Pacific Time</option>
+                </select>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="morningTime" class="form-label">Morning summary</label>
+                  <input type="time" id="morningTime" class="form-input" value="07:30" />
+                </div>
+                <div class="form-group">
+                  <label for="eveningTime" class="form-label">Evening summary</label>
+                  <input type="time" id="eveningTime" class="form-input" value="19:30" />
+                </div>
+              </div>
+            </div>
+            
+            <!-- Agent Personality -->
+            <div class="form-section">
+              <h3 class="section-title">Agent Style</h3>
+              
+              <div class="form-group">
+                <label class="form-label">Communication tone</label>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="tone" value="professional" checked />
+                    <span class="radio-custom"></span>
+                    Professional & Direct
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="tone" value="friendly" />
+                    <span class="radio-custom"></span>
+                    Friendly & Warm
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="tone" value="casual" />
+                    <span class="radio-custom"></span>
+                    Casual & Relaxed
+                  </label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Information density</label>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="density" value="detailed" />
+                    <span class="radio-custom"></span>
+                    Detailed (show all context)
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="density" value="balanced" checked />
+                    <span class="radio-custom"></span>
+                    Balanced (key points only)
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="density" value="minimal" />
+                    <span class="radio-custom"></span>
+                    Minimal (headlines only)
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Priority Categories -->
+            <div class="form-section">
+              <h3 class="section-title">What matters most to you?</h3>
+              <div class="priority-grid">
+                <label class="priority-card active">
+                  <input type="checkbox" name="priorities" value="school" checked />
+                  <div class="priority-icon">📚</div>
+                  <div class="priority-label">School & Education</div>
+                </label>
+                <label class="priority-card active">
+                  <input type="checkbox" name="priorities" value="sports" checked />
+                  <div class="priority-icon">⚽</div>
+                  <div class="priority-label">Sports & Activities</div>
+                </label>
+                <label class="priority-card active">
+                  <input type="checkbox" name="priorities" value="birthdays" checked />
+                  <div class="priority-icon">🎂</div>
+                  <div class="priority-label">Birthdays & Events</div>
+                </label>
+                <label class="priority-card">
+                  <input type="checkbox" name="priorities" value="medical" />
+                  <div class="priority-icon">🏥</div>
+                  <div class="priority-label">Medical & Health</div>
+                </label>
+                <label class="priority-card">
+                  <input type="checkbox" name="priorities" value="travel" />
+                  <div class="priority-icon">✈️</div>
+                  <div class="priority-label">Travel & Trips</div>
+                </label>
+                <label class="priority-card">
+                  <input type="checkbox" name="priorities" value="bills" />
+                  <div class="priority-icon">💳</div>
+                  <div class="priority-label">Bills & Finance</div>
+                </label>
+                <label class="priority-card active">
+                  <input type="checkbox" name="priorities" value="orders" checked />
+                  <div class="priority-icon">📦</div>
+                  <div class="priority-label">Orders & Deliveries</div>
+                </label>
+                <label class="priority-card">
+                  <input type="checkbox" name="priorities" value="home" />
+                  <div class="priority-icon">🏠</div>
+                  <div class="priority-label">Home & Maintenance</div>
+                </label>
+              </div>
+            </div>
+          </form>
+          
+          <div class="oauth-actions">
+            <button class="btn-oauth-cancel" onclick="goBack()">Back</button>
+            <button class="btn-oauth-allow" onclick="nextStep()">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Final Confirmation -->
+    <div class="oauth-step" id="step-confirm">
+      <div class="oauth-card">
+        <div class="oauth-content">
+          <div class="oauth-app-info">
+            <div class="app-icon">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="28" fill="#34A853" opacity="0.1"/>
+                <circle cx="32" cy="32" r="16" fill="#34A853"/>
+                <path d="M26 32l4 4 8-8" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <h1 class="oauth-title">Ready to start your HomeOps Agent</h1>
+            <p class="oauth-subtitle">Review your settings and begin email scanning</p>
+          </div>
+          
+          <!-- Settings Summary -->
+          <div class="settings-summary">
+            <div class="summary-section">
+              <h3>Family</h3>
+              <div class="summary-item">
+                <span class="summary-label">Name:</span>
+                <span class="summary-value" id="summaryName">Not provided</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Children:</span>
+                <span class="summary-value" id="summaryChildren">Not provided</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Schools:</span>
+                <span class="summary-value" id="summarySchools">Not provided</span>
+              </div>
+            </div>
+            
+            <div class="summary-section">
+              <h3>Schedule</h3>
+              <div class="summary-item">
+                <span class="summary-label">Morning summary:</span>
+                <span class="summary-value" id="summaryMorning">7:30 AM</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Evening summary:</span>
+                <span class="summary-value" id="summaryEvening">7:30 PM</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Time zone:</span>
+                <span class="summary-value" id="summaryTimezone">Eastern Time</span>
+              </div>
+            </div>
+            
+            <div class="summary-section">
+              <h3>Agent Style</h3>
+              <div class="summary-item">
+                <span class="summary-label">Tone:</span>
+                <span class="summary-value" id="summaryTone">Professional & Direct</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Detail level:</span>
+                <span class="summary-value" id="summaryDensity">Balanced</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Priorities:</span>
+                <span class="summary-value" id="summaryPriorities">School, Sports, Birthdays, Orders</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- What happens next -->
+          <div class="next-steps">
+            <h3>What happens next:</h3>
+            <ol>
+              <li>We'll scan your last 60 days of email (read-only)</li>
+              <li>Identify family-related senders and important signals</li>
+              <li>Build your personalized Coffee Cup dashboard</li>
+              <li>Start monitoring for new family signals</li>
+            </ol>
+          </div>
+          
+          <div class="oauth-actions">
+            <button class="btn-oauth-cancel" onclick="goBack()">Adjust Settings</button>
+            <button class="btn-oauth-allow" id="startSyncBtn">Start HomeOps Agent</button>
+          </div>
+          
+          <div class="oauth-footer">
+            <p>Processing typically takes 30-60 seconds. You can modify these settings anytime.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success/Loading State -->
+    <div class="oauth-step" id="step-success">
+      <div class="oauth-card">
+        <div class="oauth-content">
+          <div class="oauth-app-info">
+            <div class="app-icon loading">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="28" fill="#4285F4" opacity="0.1"/>
+                <circle cx="32" cy="32" r="16" fill="#4285F4"/>
+                <circle cx="32" cy="32" r="8" fill="white"/>
+              </svg>
+            </div>
+            <h1 class="oauth-title">Setting up your HomeOps Agent</h1>
+            <p class="oauth-subtitle">Scanning your email for family signals...</p>
+          </div>
+          
+          <div class="progress-details">
+            <div class="progress-step active">
+              <div class="step-icon">✓</div>
+              <span>Connected to Gmail</span>
+            </div>
+            <div class="progress-step active">
+              <div class="step-icon">⟳</div>
+              <span>Scanning recent emails</span>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon">○</div>
+              <span>Building your dashboard</span>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon">○</div>
+              <span>Ready to use</span>
+            </div>
+          </div>
+          
+          <div class="estimated-time">
+            <p>Estimated time remaining: <span id="timeRemaining">45 seconds</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
