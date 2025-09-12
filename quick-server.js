@@ -1282,6 +1282,12 @@ app.get('/landing', (req, res) => {
 app.get('/scan', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'scan.html'));
 });
+
+// Homepage route - serve the marketing landing page
+app.get('/homepage', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
+});
+
 // Main app route - serve the enhanced navigation system
 
 
