@@ -1288,6 +1288,16 @@ app.get('/homepage', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
 });
 
+// Pricing route - serve the pricing page
+app.get('/pricing', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pricing.html'));
+});
+
+// Pricing test route - serve the test page for development
+app.get('/pricing-test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pricing-test.html'));
+});
+
 // Main app route - serve the enhanced navigation system
 
 
@@ -5322,6 +5332,56 @@ app.post('/api/feedback', async (req, res) => {
     
   } catch (error) {
     console.error('❌ Feedback submission error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Analytics Endpoint for Pricing Page Tracking
+app.post('/api/analytics', async (req, res) => {
+  try {
+    const { event, properties } = req.body;
+    
+    if (!event) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Event name is required' 
+      });
+    }
+    
+    // In development, just log to console
+    console.log(`📊 Analytics Event: ${event}`, properties);
+    
+    // In production, this would:
+    // 1. Store in analytics database (Mixpanel, Amplitude, etc.)
+    // 2. Send to data warehouse for analysis
+    // 3. Update user behavior models
+    // 4. Trigger automation workflows
+    
+    // Simulate storing analytics data
+    const analyticsEntry = {
+      id: `analytics_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      event: event,
+      properties: {
+        ...properties,
+        timestamp: new Date().toISOString(),
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        referer: req.get('Referer')
+      },
+      processed: false
+    };
+    
+    // For production implementation:
+    // await db.collection('analytics_events').doc(analyticsEntry.id).set(analyticsEntry);
+    
+    res.json({ 
+      success: true, 
+      message: 'Analytics event tracked successfully',
+      eventId: analyticsEntry.id
+    });
+    
+  } catch (error) {
+    console.error('❌ Analytics tracking error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
