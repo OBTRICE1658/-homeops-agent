@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeOps Pricing</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { Check, Star, ArrowLeft } = lucide;
+
+        const PricingPage = () => {
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+                    {/* Header */}
+                    <header className="py-6 px-4 sm:px-6 border-b border-slate-200">
+                        <div className="max-w-7xl mx-auto flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <button className="p-2 hover:bg-slate-100 rounded-lg transition">
+                                    <ArrowLeft size={24} />
+                                </button>
+                                <h1 className="text-2xl font-bold">HomeOps Pricing</h1>
+                            </div>
+                            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">
+                                Sign In
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* Pricing Section */}
+                    <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
+                        <div className="max-w-7xl mx-auto">
+                            <div className="text-center mb-12 sm:mb-16">
+                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+                                    Simple, transparent pricing
+                                </h2>
+                                <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+                                    Start free and scale as your family grows. No hidden fees, cancel anytime.
+                                </p>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+                                {/* Free Plan */}
+                                <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition">
+                                    <div className="text-center mb-6">
+                                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
+                                        <div className="mb-4">
+                                            <span className="text-4xl sm:text-5xl font-bold text-slate-900">$0</span>
+                                            <span className="text-slate-600 ml-2">forever</span>
+                                        </div>
+                                        <p className="text-slate-600">Perfect for getting started</p>
+                                    </div>
+                                    
+                                    <ul className="space-y-3 mb-8">
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">50 AI chats per month</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Basic family dashboard</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Task management</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Calendar integration</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Up to 4 family members</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Email support</span>
+                                        </li>
+                                    </ul>
+                                    
+                                    <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-full font-semibold hover:bg-slate-800 transition">
+                                        Get Started Free
+                                    </button>
+                                </div>
+
+                                {/* Pro Plan */}
+                                <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-blue-500 hover:border-blue-600 transition relative transform md:scale-105">
+                                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                                            <Star size={16} />
+                                            Most Popular
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="text-center mb-6 mt-4">
+                                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Pro</h3>
+                                        <div className="mb-4">
+                                            <span className="text-4xl sm:text-5xl font-bold text-slate-900">$15</span>
+                                            <span className="text-slate-600 ml-2">/month</span>
+                                        </div>
+                                        <p className="text-slate-600">For growing families</p>
+                                    </div>
+                                    
+                                    <ul className="space-y-3 mb-8">
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">500 AI chats per month</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Advanced AI insights</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Smart task distribution</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Meal planning & shopping lists</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Financial tracking</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Up to 6 family members</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Priority support</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Mobile apps</span>
+                                        </li>
+                                    </ul>
+                                    
+                                    <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg transition">
+                                        Start 14-Day Trial
+                                    </button>
+                                </div>
+
+                                {/* Enterprise Plan */}
+                                <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition">
+                                    <div className="text-center mb-6">
+                                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Family+</h3>
+                                        <div className="mb-4">
+                                            <span className="text-4xl sm:text-5xl font-bold text-slate-900">$30</span>
+                                            <span className="text-slate-600 ml-2">/month</span>
+                                        </div>
+                                        <p className="text-slate-600">For large families</p>
+                                    </div>
+                                    
+                                    <ul className="space-y-3 mb-8">
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Unlimited AI chats</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Advanced automation</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Custom family workflows</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Advanced analytics</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Priority integrations</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">Unlimited family members</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">White-glove setup</span>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <Check size={20} className="text-green-500 flex-shrink-0" />
+                                            <span className="text-slate-700">24/7 phone support</span>
+                                        </li>
+                                    </ul>
+                                    
+                                    <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-full font-semibold hover:bg-slate-800 transition">
+                                        Contact Sales
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Pricing FAQ */}
+                            <div className="mt-16 sm:mt-20 max-w-4xl mx-auto">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Frequently asked questions</h3>
+                                <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                                        <h4 className="font-semibold text-slate-900 mb-2">What counts as an AI chat?</h4>
+                                        <p className="text-slate-600 text-sm">Each conversation thread with our AI assistant counts as one chat. Follow-up questions in the same conversation don't count separately.</p>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                                        <h4 className="font-semibold text-slate-900 mb-2">Can I change plans anytime?</h4>
+                                        <p className="text-slate-600 text-sm">Yes! Upgrade or downgrade your plan at any time. Changes take effect at your next billing cycle.</p>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                                        <h4 className="font-semibold text-slate-900 mb-2">Is there a free trial?</h4>
+                                        <p className="text-slate-600 text-sm">Yes! All paid plans come with a 14-day free trial. No credit card required to start.</p>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                                        <h4 className="font-semibold text-slate-900 mb-2">What if I go over my chat limit?</h4>
+                                        <p className="text-slate-600 text-sm">We'll send you a notification when you're near your limit. You can upgrade anytime or wait for your limit to reset next month.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<PricingPage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
