@@ -3,119 +3,28 @@ import { Menu, X, ArrowRight, Brain, Users, Zap, LayoutDashboard, Sparkles, Shop
 
 // HomeOps Logo Component
 const HomeOpsLogo = ({ size = 48 }) => {
+  const gradientId = `homeops-gradient-${Math.random().toString(36).substr(2, 9)}`;
+  
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 1024 1024"
-      xmlns="http://www.w3.org/2000/svg"
-      role="img"
-      aria-label="HomeOps logo (agent)"
-    >
+    <svg width={size} height={size} viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HomeOps agent logo">
       <defs>
-        <linearGradient id="homeopsGradient" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gradientId} x1="220" y1="300" x2="820" y2="880" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#4C6FFF"/>
           <stop offset="100%" stopColor="#9C4DFF"/>
         </linearGradient>
       </defs>
-      
-      {/* House outline */}
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="28"
-        d="M256 520 L512 320 L768 520 V740 Q768 776 732 776 H292 Q256 776 256 740 Z"
-      />
-      
-      {/* Face: soft smile */}
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="24"
-        d="M392 620 Q512 704 632 620"
-      />
-      
-      {/* Eyes */}
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="20"
-        x1="420" y1="560" x2="470" y2="560"
-      />
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="20"
-        x1="554" y1="560" x2="604" y2="560"
-      />
-      
-      {/* Arms */}
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="22"
-        d="M256 600 Q216 616 200 648"
-      />
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="22"
-        d="M768 600 Q808 616 824 648"
-      />
-      
-      {/* Hands */}
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="16"
-        d="M188 650 q22 22 0 44 q-22 -22 0 -44 Z"
-      />
-      <path
-        stroke="url(#homeopsGradient)"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="16"
-        d="M836 650 q22 22 0 44 q-22 -22 0 -44 Z"
-      />
-      
-      {/* Legs */}
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="22"
-        x1="430" y1="776" x2="430" y2="852"
-      />
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="22"
-        x1="594" y1="776" x2="594" y2="852"
-      />
-      
-      {/* Feet */}
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="16"
-        x1="388" y1="852" x2="472" y2="852"
-      />
-      <line
-        stroke="url(#homeopsGradient)"
-        strokeLinecap="round"
-        strokeWidth="16"
-        x1="552" y1="852" x2="636" y2="852"
-      />
+      <path d="M256 520 L512 320 L768 520 V740 Q768 776 732 776 H292 Q256 776 256 740 Z" fill="none" stroke={`url(#${gradientId})`} strokeWidth="44" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M392 620 Q512 704 632 620" fill="none" stroke={`url(#${gradientId})`} strokeWidth="40" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="420" y1="560" x2="470" y2="560" stroke={`url(#${gradientId})`} strokeWidth="28" strokeLinecap="round"/>
+      <line x1="554" y1="560" x2="604" y2="560" stroke={`url(#${gradientId})`} strokeWidth="28" strokeLinecap="round"/>
+      <path d="M256 600 Q216 616 200 648" fill="none" stroke={`url(#${gradientId})`} strokeWidth="32" strokeLinecap="round"/>
+      <path d="M768 600 Q808 616 824 648" fill="none" stroke={`url(#${gradientId})`} strokeWidth="32" strokeLinecap="round"/>
+      <path d="M188 650 q22 22 0 44 q-22 -22 0 -44 Z" fill="none" stroke={`url(#${gradientId})`} strokeWidth="20" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M836 650 q22 22 0 44 q-22 -22 0 -44 Z" fill="none" stroke={`url(#${gradientId})`} strokeWidth="20" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="430" y1="776" x2="430" y2="852" stroke={`url(#${gradientId})`} strokeWidth="32" strokeLinecap="round"/>
+      <line x1="594" y1="776" x2="594" y2="852" stroke={`url(#${gradientId})`} strokeWidth="32" strokeLinecap="round"/>
+      <line x1="388" y1="852" x2="472" y2="852" stroke={`url(#${gradientId})`} strokeWidth="20" strokeLinecap="round"/>
+      <line x1="552" y1="852" x2="636" y2="852" stroke={`url(#${gradientId})`} strokeWidth="20" strokeLinecap="round"/>
     </svg>
   );
 };
@@ -181,7 +90,7 @@ const HomeOpsLanding = () => {
           </h1>
           
           <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
-            HomeOps transforms the invisible mental load into a shared operating system. Finally, everything your family needs to run smoothly in one intelligent platform.
+            HomeOps is your AI agent that reads your emails, schedules your calendar, and handles the invisible work of family coordination. Finally, an end to being the family project manager.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 sm:mb-16 px-4">
@@ -242,7 +151,7 @@ const HomeOpsLanding = () => {
               Start <span className="text-blue-600">orchestrating</span>.
             </h2>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto px-4">
-              The mental load isn't just about remembering tasks. It's about coordinating, delegating, and ensuring nothing falls through the cracks.
+              The mental load isn't just about remembering tasks. It's about processing endless emails, coordinating schedules, and ensuring nothing falls through the cracks. Let AI handle it.
             </p>
           </div>
 
@@ -250,18 +159,18 @@ const HomeOpsLanding = () => {
             {[
               {
                 icon: Brain,
-                title: "AI-Powered Intelligence",
-                description: "Smart suggestions learn your family's patterns and proactively surface what needs attention."
+                title: "Email Intelligence Agent",
+                description: "AI automatically reads and summarizes important emails from schools, sports teams, doctors, and activities - surfacing only what matters."
               },
               {
                 icon: Users,
-                title: "Shared Responsibility",
-                description: "Distribute the mental load fairly with transparent task delegation and progress tracking."
+                title: "Smart Calendar Scheduling",
+                description: "Your agent intelligently schedules events, appointments, and activities directly on your family calendar without you lifting a finger."
               },
               {
                 icon: Zap,
-                title: "Save 10+ Hours Weekly",
-                description: "Reclaim time lost to planning, coordinating, and reminding. Focus on what matters."
+                title: "Mental Load Elimination",
+                description: "Stop being the family project manager. Our AI handles the invisible work of coordination, reminders, and follow-ups."
               }
             ].map((feature, i) => (
               <div key={i} className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 hover:shadow-xl transition">
@@ -286,39 +195,39 @@ const HomeOpsLanding = () => {
           <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 px-4">
             {[
               {
-                icon: LayoutDashboard,
-                title: "Unified Family Dashboard",
-                description: "See everyone's schedules, tasks, and commitments in one beautiful view.",
+                icon: MessageSquare,
+                title: "Inbox Intelligence",
+                description: "AI reads through all your emails and extracts important information from schools, sports, activities, and appointments.",
                 gradient: "from-blue-500 to-cyan-500"
               },
               {
                 icon: Sparkles,
-                title: "Smart Task Distribution",
-                description: "AI suggests who should handle what based on availability and skills.",
+                title: "Smart Email Summaries",
+                description: "Get daily digests of what actually matters - permission slips, schedule changes, important announcements.",
                 gradient: "from-purple-500 to-pink-500"
               },
               {
-                icon: ShoppingCart,
-                title: "Meal Planning & Shopping",
-                description: "Plan meals, generate shopping lists, and track pantry inventory automatically.",
+                icon: LayoutDashboard,
+                title: "Automatic Calendar Scheduling",
+                description: "Your AI agent automatically adds events, games, practices, and appointments to your family calendar.",
                 gradient: "from-green-500 to-emerald-500"
               },
               {
-                icon: DollarSign,
-                title: "Financial Overview",
-                description: "Track family expenses, budgets, and upcoming bills in real-time.",
+                icon: Brain,
+                title: "Mental Load Assistant",
+                description: "AI handles follow-ups, reminders, and coordination so you can stop being the family project manager.",
                 gradient: "from-orange-500 to-red-500"
               },
               {
-                icon: MessageSquare,
-                title: "Communication Hub",
-                description: "Keep all family discussions, decisions, and updates in one place.",
+                icon: Zap,
+                title: "Proactive Notifications",
+                description: "Get alerts about upcoming deadlines, required actions, and important family events before they slip through the cracks.",
                 gradient: "from-indigo-500 to-blue-500"
               },
               {
                 icon: Repeat,
-                title: "Routine Automation",
-                description: "Set recurring tasks once and let HomeOps handle the reminders.",
+                title: "Smart Prioritization",
+                description: "AI learns what's truly urgent vs. routine, ensuring you focus on what actually needs your attention.",
                 gradient: "from-violet-500 to-purple-500"
               }
             ].map((feature, i) => (
@@ -365,15 +274,15 @@ const HomeOpsLanding = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Basic family dashboard</span>
+                  <span className="text-slate-700">Basic email intelligence</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Task management</span>
+                  <span className="text-slate-700">Calendar scheduling</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Calendar integration</span>
+                  <span className="text-slate-700">Email summaries</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
@@ -415,19 +324,19 @@ const HomeOpsLanding = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Advanced AI insights</span>
+                  <span className="text-slate-700">Advanced email intelligence</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Smart task distribution</span>
+                  <span className="text-slate-700">Smart calendar automation</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Meal planning & shopping lists</span>
+                  <span className="text-slate-700">Proactive notifications</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Financial tracking</span>
+                  <span className="text-slate-700">Mental load insights</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
@@ -466,11 +375,11 @@ const HomeOpsLanding = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Advanced automation</span>
+                  <span className="text-slate-700">Full email automation</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Custom family workflows</span>
+                  <span className="text-slate-700">Custom agent workflows</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
@@ -478,7 +387,7 @@ const HomeOpsLanding = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Priority integrations</span>
+                  <span className="text-slate-700">Priority email processing</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check size={20} className="text-green-500 flex-shrink-0" />
