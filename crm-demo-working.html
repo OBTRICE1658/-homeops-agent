@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRM AI Demo - Working Version</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+        .banner { background: #dc2626; color: white; padding: 10px; text-align: center; font-weight: bold; }
+        .container { max-width: 1200px; margin: 20px auto; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 20px; }
+        .content { padding: 30px; }
+        .query-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .results { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
+        th { background: #f1f5f9; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+        .broken { color: #dc2626; background: #fef2f2; padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+        .confused { color: #d97706; background: #fffbeb; padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+        .missing { color: #6b7280; font-style: italic; }
+        .error-box { background: #fef3c7; border: 1px solid #fcd34d; padding: 15px; border-radius: 8px; margin: 20px 0; color: #92400e; }
+        .chat-box { position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid #e5e7eb; }
+        .chat-header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 15px; font-weight: 600; }
+        .chat-body { padding: 15px; height: 120px; overflow-y: auto; }
+        .ai-message { background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 14px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <div class="banner">🚨 DEMO: Enterprise CRM AI Assistant - Data Integration Issues</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🤖 SalesFlow AI Assistant</h1>
+            <p>Enterprise Customer Intelligence Platform</p>
+        </div>
+        
+        <div class="content">
+            <div class="query-box">
+                <strong>Your Query:</strong><br>
+                "Show me all my customers up for renewal over the next 6 months that have low usage and are potentially churn risks"
+            </div>
+            
+            <div class="results">
+                <h3>Query Results - Found 6 records</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Contract Renewal</th>
+                            <th>Usage Analytics</th>
+                            <th>Churn Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Acme Corporation</td>
+                            <td><span class="broken">cstm_field_10982_rvnl_dt_v2</span></td>
+                            <td><span class="confused">usage_calc_err: NaN%</span></td>
+                            <td><span class="missing">null_reference</span></td>
+                        </tr>
+                        <tr>
+                            <td>Globodyne Systems</td>
+                            <td><span class="broken">legacy_db_sync_failed</span></td>
+                            <td><span class="confused">¯\_(ツ)_/¯ maybe_low?</span></td>
+                            <td><span class="missing">data_not_migrated</span></td>
+                        </tr>
+                        <tr>
+                            <td>Wayne Enterprises</td>
+                            <td><span class="broken">ERROR_TABLE_LOCK_TIMEOUT</span></td>
+                            <td><span class="confused">somewhere_between_0_100</span></td>
+                            <td><span class="broken">ML_MODEL_CRASHED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Stark Industries</td>
+                            <td><span class="broken">ref_id_legacy_crm_v1_backup</span></td>
+                            <td><span class="missing">ask_sarah_from_IT</span></td>
+                            <td><span class="confused">high_medium_or_low_idk</span></td>
+                        </tr>
+                        <tr>
+                            <td>Oscorp Technologies</td>
+                            <td><span class="broken">migration_pending_since_2019</span></td>
+                            <td><span class="confused">usage_data_corrupted_lol</span></td>
+                            <td><span class="missing">algorithm_gave_up</span></td>
+                        </tr>
+                        <tr>
+                            <td>LexCorp International</td>
+                            <td><span class="broken">check_old_spreadsheet_maybe</span></td>
+                            <td><span class="confused">42% (source: magic_8_ball)</span></td>
+                            <td><span class="missing">¯\_(ツ)_/¯</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="error-box">
+                    <strong>⚠️ Data Integration Issues:</strong><br>
+                    Unable to retrieve Contract Renewal dates (legacy field mapping), Usage Analytics (database timeout), and Churn Probability (ML model offline). Consider upgrading to Enterprise++ plan for "better" data consistency.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-box">
+        <div class="chat-header">🤖 SalesFlow Assistant</div>
+        <div class="chat-body">
+            <div class="ai-message" id="ai-msg">
+                As you can see, I have retrieved your data as requested.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const messages = [
+            "As you can see, I have retrieved your data as requested.",
+            "I found your renewal data! It's stored as a PDF in an email from 2018. Should I ask Carol to forward it? 📧",
+            "Good news: I found the usage metrics! Bad news: they're in a database nobody has the password for. 🔐",
+            "Churn analysis complete! Results show customers are either 'Very Happy' or 'Gone Forever' - no middle ground. 🎭",
+            "I've integrated with 3 out of 15 systems! The other 12 are 'temporarily unavailable' since 2019. 💻"
+        ];
+        
+        let index = 0;
+        setInterval(() => {
+            document.getElementById('ai-msg').textContent = messages[index];
+            index = (index + 1) % messages.length;
+        }, 4000);
+    </script>
+</body>
+</html>

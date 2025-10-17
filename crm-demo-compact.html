@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise CRM AI Assistant - Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Main CRM Layout */
+        .crm-container {
+            display: flex;
+            height: calc(500px - 32px);
+        }
+
+        /* Side Navigation */
+        .sidebar {
+            width: 160px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .logo-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-section {
+            padding: 8px 0;
+        }
+
+        .nav-title {
+            padding: 4px 12px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: white;
+            border-right: 3px solid #6366f1;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        /* Top Header Bar */
+        .header-bar {
+            background-color: #ffffff;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 4px 8px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 16px;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background: white;
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 12px 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-avatar {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .chat-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .chat-status {
+            font-size: 10px;
+            opacity: 0.9;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            display: flex;
+            gap: 8px;
+        }
+
+        .message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .ai-avatar-msg {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .user-avatar-msg {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-message {
+            background: #3b82f6;
+            color: white;
+            margin-left: auto;
+            max-width: 80%;
+        }
+
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9px;
+            margin-top: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .results-table th {
+            background-color: #f8fafc;
+            padding: 4px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .results-table td {
+            padding: 4px;
+            border-bottom: 1px solid #f1f5f9;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .broken-data {
+            color: #ef4444;
+            font-style: italic;
+            background-color: #fef2f2;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        .missing-data {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .confused-data {
+            color: #f59e0b;
+            background-color: #fffbeb;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #6b7280;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 3px;
+            height: 3px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        .error-footer {
+            margin-top: 8px;
+            padding: 6px;
+            background-color: #fef3c7;
+            border-radius: 4px;
+            font-size: 9px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        🚨 DEMO: Enterprise CRM AI Assistant - Watch Real-Time Data Integration Failures
+    </div>
+
+    <div class="crm-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">SF</div>
+                    <div class="logo-text">SalesFlow</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Main</div>
+                <div class="nav-item">
+                    <span>📊</span>
+                    Dashboard
+                </div>
+                <div class="nav-item">
+                    <span>👥</span>
+                    Customers
+                </div>
+                <div class="nav-item active">
+                    <span>🤖</span>
+                    AI Assistant
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Tools</div>
+                <div class="nav-item">
+                    <span>📈</span>
+                    Analytics
+                </div>
+                <div class="nav-item">
+                    <span>⚡</span>
+                    Automation
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Bar -->
+            <div class="header-bar">
+                <div class="header-left">
+                    <div class="header-title">AI Assistant</div>
+                    <div class="breadcrumb">
+                        <span>SalesFlow</span>
+                        <span>/</span>
+                        <span>AI Customer Intelligence</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn">+ New Chat</button>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-info">
+                            <h3>SalesFlow AI Assistant</h3>
+                            <div class="chat-status">Powered by Enterprise-Grade Machine Learning</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-body" id="chatBody">
+                        <div class="message">
+                            <div class="message-avatar ai-avatar-msg">🤖</div>
+                            <div class="message-content ai-message">
+                                👋 Hi! I'm your AI sales assistant. I can analyze customer data, predict churn risks, and identify renewal opportunities.
+                                <br><br>What would you like to know about your customers?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let step = 0;
+        const messages = [
+            // Step 1: User asks question
+            {
+                type: 'user',
+                content: 'Show me customers up for renewal in next 6 months with low usage and churn risk',
+                delay: 2000
+            },
+            // Step 2: AI starts processing
+            {
+                type: 'ai',
+                content: 'I\'ll analyze your customer renewal data and usage patterns to identify churn risks. Querying integrated systems...',
+                delay: 1500,
+                showTyping: true
+            },
+            // Step 3: Show broken results
+            {
+                type: 'ai',
+                content: `Perfect! I've retrieved your customer data:
+
+<table class="results-table">
+<thead>
+<tr>
+<th>Customer</th>
+<th>Renewal</th>
+<th>Usage</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acme Corp</td>
+<td class="broken-data">cstm_field_10982_rvnl_dt_v2</td>
+<td class="confused-data">usage_calc_err: NaN%</td>
+<td class="missing-data">null_ref</td>
+</tr>
+<tr>
+<td>Globodyne</td>
+<td class="broken-data">legacy_db_sync_failed</td>
+<td class="confused-data">¯\\_(ツ)_/¯ maybe_low?</td>
+<td class="missing-data">data_not_migrated</td>
+</tr>
+<tr>
+<td>Wayne Ent.</td>
+<td class="broken-data">ERROR_TABLE_LOCK_TIMEOUT</td>
+<td class="confused-data">between_0_100</td>
+<td class="broken-data">ML_MODEL_CRASHED</td>
+</tr>
+<tr>
+<td>Stark Ind.</td>
+<td class="broken-data">ref_id_legacy_crm_v1</td>
+<td class="missing-data">ask_sarah_IT</td>
+<td class="confused-data">high_med_low_idk</td>
+</tr>
+</tbody>
+</table>
+
+<div class="error-footer">
+<span>⚠️</span>
+<div><strong>Issues:</strong> Unable to retrieve data (legacy field mapping failed, database timeout, ML model offline).</div>
+</div>`,
+                delay: 3000,
+                showTyping: true
+            },
+            // Step 4: Follow-up sarcastic message
+            {
+                type: 'ai',
+                content: 'Successfully retrieved 0.3% of your data! The remaining 99.7% is across 47 legacy systems that haven\'t synced since 2019. Create a Jira ticket? 🎫',
+                delay: 4000
+            }
+        ];
+
+        function typeMessage(text, element, callback) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 20);
+                } else {
+                    callback && callback();
+                }
+            }
+            type();
+        }
+
+        function addMessage(message) {
+            const chatBody = document.getElementById('chatBody');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            const avatarClass = message.type === 'user' ? 'user-avatar-msg' : 'ai-avatar-msg';
+            const contentClass = message.type === 'user' ? 'user-message' : 'ai-message';
+            const avatar = message.type === 'user' ? '👤' : '🤖';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${avatarClass}">${avatar}</div>
+                <div class="message-content ${contentClass}" id="msg-${step}"></div>
+            `;
+            
+            chatBody.appendChild(messageDiv);
+            
+            const contentElement = document.getElementById(`msg-${step}`);
+            
+            if (message.showTyping) {
+                contentElement.innerHTML = `
+                    <div class="typing-indicator">
+                        <span>AI is typing</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    contentElement.innerHTML = message.content;
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 1500);
+            } else {
+                typeMessage(message.content, contentElement, () => {
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+            }
+            
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function runDemo() {
+            if (step < messages.length) {
+                setTimeout(() => {
+                    addMessage(messages[step]);
+                    step++;
+                    runDemo();
+                }, messages[step] ? messages[step].delay : 1000);
+            } else {
+                // Restart demo after pause
+                setTimeout(() => {
+                    step = 0;
+                    document.getElementById('chatBody').innerHTML = `
+                        <div class="message">
+                            <div class="message-avatar ai-avatar-msg">🤖</div>
+                            <div class="message-content ai-message">
+                                👋 Hi! I'm your AI sales assistant. I can analyze customer data, predict churn risks, and identify renewal opportunities.
+                                <br><br>What would you like to know about your customers?
+                            </div>
+                        </div>
+                    `;
+                    runDemo();
+                }, 6000);
+            }
+        }
+
+        // Start demo
+        setTimeout(runDemo, 2500);
+    </script>
+</body>
+</html>

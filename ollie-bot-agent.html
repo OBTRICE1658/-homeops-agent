@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollie Bot - Agency Opportunity Discovery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 600px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bot-container {
+            background: white;
+            border-radius: 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .bot-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            padding: 20px 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bot-avatar {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .bot-info h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .bot-tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #fafafb;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .ollie-avatar {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .user-avatar {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .ollie-message {
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            margin-left: auto;
+            max-width: 80%;
+        }
+
+        .opportunity-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .opportunity-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .opportunity-icon {
+            width: 32px;
+            height: 32px;
+            background: #0ea5e9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .opportunity-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0c4a6e;
+        }
+
+        .opportunity-desc {
+            font-size: 14px;
+            color: #0369a1;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .agent-examples {
+            background: rgba(255,255,255,0.7);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #0c4a6e;
+            font-style: italic;
+        }
+
+        .agent-examples strong {
+            color: #0369a1;
+        }
+
+        .input-area {
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #4f46e5;
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .quick-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-btn {
+            padding: 8px 12px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="bot-container">
+        <div class="bot-header">
+            <div class="bot-avatar">🤖</div>
+            <div class="bot-info">
+                <h1>Ollie Bot</h1>
+                <div class="bot-tagline">Agency Opportunity Discovery Assistant</div>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="message">
+                <div class="message-avatar ollie-avatar">🤖</div>
+                <div class="message-content ollie-message">
+                    👋 Hey there! I'm <strong>Ollie Bot</strong>, your agency opportunity discovery assistant.
+                    <br><br>
+                    I help agencies like yours identify high-value automation opportunities for your clients. Just tell me about a prospect's industry or current tech stack, and I'll surface specific integration and AI agent opportunities you can pitch.
+                    <br><br>
+                    <strong>Ready to discover some opportunities?</strong>
+
+                    <div class="quick-options">
+                        <div class="quick-btn" onclick="selectVertical('ecommerce')">🛒 Ecommerce</div>
+                        <div class="quick-btn" onclick="selectVertical('saas')">💻 B2B SaaS</div>
+                        <div class="quick-btn" onclick="selectVertical('legal')">⚖️ Legal Services</div>
+                        <div class="quick-btn" onclick="selectVertical('realestate')">🏠 Real Estate</div>
+                        <div class="quick-btn" onclick="selectVertical('manufacturing')">🏭 Manufacturing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" class="input-field" id="messageInput" placeholder="Tell me about your prospect's industry or current tools..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const opportunities = {
+            ecommerce: {
+                title: "Ecommerce GTM Hub",
+                icon: "🛒",
+                description: "Unify Shopify, Recharge, Attentive/Klaviyo, Gorgias, Loop, and 3PL data into one GTM hub. Link merchandising calendars, campaigns, CX tickets, and supplier portals in a single workspace.",
+                agents: "Forecast stockouts, auto generate campaign retros, surface SKU anomalies, draft supplier comms."
+            },
+            saas: {
+                title: "B2B SaaS Operating System", 
+                icon: "💻",
+                description: "Build operating systems that unify Jira/Linear, Productboard, Salesforce/HubSpot, Gong, and feedback tools. Map onboarding, adoption, roadmap progress, and customer health in one workspace.",
+                agents: "Generate onboarding health scores, recommend next steps, summarize feedback into themes, flag churn risk early."
+            },
+            legal: {
+                title: "Legal Practice Management",
+                icon: "⚖️", 
+                description: "Connect Clio, QuickBooks/Xero, DocuSign, and precedent libraries into Notion. Centralize matters, filings, billing, and compliance.",
+                agents: "Draft filings, check citations, flag compliance gaps, generate client ready summaries and billing statements."
+            },
+            realestate: {
+                title: "Real Estate Broker Workspace",
+                icon: "🏠",
+                description: "Build broker workspaces that connect MLS feeds, Dotloop, DocuSign, and commission trackers. Link listings, deals, contracts, and commissions in one CRM.",
+                agents: "Enrich buyer and seller records, generate showing recaps, forecast commissions, flag stalled deals."
+            },
+            manufacturing: {
+                title: "Manufacturing Operations Hub",
+                icon: "🏭",
+                description: "Consolidate ERP exports, QA logs, supplier portals, and SOPs into Notion. Link production dashboards, QA checklists, and supply chain trackers.",
+                agents: "Monitor production inputs, detect anomalies, generate QA reports, simulate supplier or logistics adjustments."
+            }
+        };
+
+        function addMessage(content, isUser = false) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            const avatarClass = isUser ? 'user-avatar' : 'ollie-avatar';
+            const contentClass = isUser ? 'user-message' : 'ollie-message';
+            const avatar = isUser ? '👤' : '🤖';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${avatarClass}">${avatar}</div>
+                <div class="message-content ${contentClass}">${content}</div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const chatArea = document.getElementById('chatArea');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message';
+            typingDiv.id = 'typing-indicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar ollie-avatar">🤖</div>
+                <div class="message-content ollie-message">
+                    <div class="typing-indicator">
+                        <span>Ollie is analyzing opportunities</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            chatArea.appendChild(typingDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function showOpportunity(vertical) {
+            const opp = opportunities[vertical];
+            const opportunityHTML = `
+                Perfect! Here's a high-value opportunity for ${vertical} clients:
+                
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div class="opportunity-icon">${opp.icon}</div>
+                        <div class="opportunity-title">${opp.title}</div>
+                    </div>
+                    <div class="opportunity-desc">${opp.description}</div>
+                    <div class="agent-examples">
+                        <strong>AI Agent Opportunities:</strong> ${opp.agents}
+                    </div>
+                </div>
+
+                This is typically a <strong>$15k-50k project</strong> with ongoing monthly retainers of <strong>$3k-8k</strong> for maintenance and optimization.
+                
+                <br><br>Want me to analyze another vertical or dive deeper into this opportunity?
+            `;
+            
+            addMessage(opportunityHTML);
+        }
+
+        function selectVertical(vertical) {
+            addMessage(`I'm interested in ${vertical} opportunities`, true);
+            
+            setTimeout(() => {
+                addTypingIndicator();
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    showOpportunity(vertical);
+                }, 2000);
+            }, 500);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                input.value = '';
+                
+                setTimeout(() => {
+                    addTypingIndicator();
+                    setTimeout(() => {
+                        removeTypingIndicator();
+                        handleUserMessage(message);
+                    }, 1500);
+                }, 500);
+            }
+        }
+
+        function handleUserMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('shopify') || lowerMessage.includes('ecommerce') || lowerMessage.includes('e-commerce')) {
+                showOpportunity('ecommerce');
+            } else if (lowerMessage.includes('saas') || lowerMessage.includes('software') || lowerMessage.includes('hubspot') || lowerMessage.includes('salesforce')) {
+                showOpportunity('saas');
+            } else if (lowerMessage.includes('legal') || lowerMessage.includes('law') || lowerMessage.includes('clio')) {
+                showOpportunity('legal');
+            } else if (lowerMessage.includes('real estate') || lowerMessage.includes('realtor') || lowerMessage.includes('mls')) {
+                showOpportunity('realestate');
+            } else if (lowerMessage.includes('manufacturing') || lowerMessage.includes('factory') || lowerMessage.includes('erp')) {
+                showOpportunity('manufacturing');
+            } else {
+                addMessage(`I can help you identify opportunities in these verticals:<br><br>
+                    🛒 <strong>Ecommerce</strong> - Shopify, inventory, marketing automation<br>
+                    💻 <strong>B2B SaaS</strong> - CRM, product management, customer success<br>
+                    ⚖️ <strong>Legal Services</strong> - Case management, billing, compliance<br>
+                    🏠 <strong>Real Estate</strong> - MLS, transactions, commission tracking<br>
+                    🏭 <strong>Manufacturing</strong> - ERP, quality control, supply chain<br><br>
+                    Which industry matches your prospect best?`);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Auto-start demo after 3 seconds
+        setTimeout(() => {
+            addMessage("👋 Try asking me about a specific industry like 'ecommerce' or 'SaaS' to see how this works!", false);
+        }, 3000);
+    </script>
+</body>
+</html>

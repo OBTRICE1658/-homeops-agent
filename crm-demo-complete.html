@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesFlow CRM - Customer Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kalam', cursive;
+            background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Napkin texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .demo-header {
+            background: rgba(231, 76, 60, 0.15);
+            color: #2c3e50;
+            text-align: center;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            border-bottom: 2px dashed #e74c3c;
+            position: relative;
+            z-index: 10;
+            transform: rotate(-0.2deg);
+        }
+
+        .crm-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .crm-header {
+            background: none;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            transform: rotate(0.3deg);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transform: rotate(-5deg);
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid #3498db;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            transform: rotate(-1deg);
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: rgba(52, 152, 219, 0.2);
+            transform: rotate(1deg) scale(1.05);
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 2px solid #95a5a6;
+            border-radius: 20px;
+            font-size: 13px;
+            width: 250px;
+            font-family: 'Kalam', cursive;
+            background: rgba(255, 255, 255, 0.7);
+            transform: rotate(0.5deg);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.8);
+            border: 3px solid #34495e;
+            border-radius: 0;
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            transform: rotate(-0.1deg);
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            transform: rotate(-0.3deg);
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .table-header {
+            background: none;
+            padding: 15px 25px;
+            border-bottom: 2px dashed #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 14px;
+            color: #34495e;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 2px solid;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Kalam', cursive;
+            transform: rotate(-0.5deg);
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline {
+            background: none;
+            color: #7f8c8d;
+            border-color: #bdc3c7;
+        }
+
+        .btn-primary {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border-color: #2ecc71;
+        }
+
+        .customers-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+        }
+
+        .customers-table th {
+            background: rgba(149, 165, 166, 0.1);
+            padding: 12px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: #34495e;
+            border: none;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .customers-table td {
+            padding: 12px 20px;
+            border-bottom: 1px dashed #ecf0f1;
+            color: #2c3e50;
+            font-size: 11px;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .customer-email {
+            font-size: 10px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+            transform: rotate(-1deg);
+        }
+
+        .status-active {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border-color: #2ecc71;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: #d68910;
+            border-color: #f39c12;
+        }
+
+        .status-risk {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            border-color: #e74c3c;
+        }
+
+        .health-bar {
+            width: 60px;
+            height: 8px;
+            background: rgba(189, 195, 199, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #bdc3c7;
+        }
+
+        .health-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .health-high { background: #2ecc71; }
+        .health-medium { background: #f39c12; }
+        .health-low { background: #e74c3c; }
+
+        /* AI Agent Widget */
+        .agent-widget {
+            position: fixed;
+            bottom: 250px;
+            right: 40px;
+            background: rgba(245, 245, 220, 0.95);
+            color: #2c3e50;
+            border: 4px solid #e74c3c;
+            border-radius: 25px;
+            padding: 16px 20px;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999999;
+            transition: all 0.2s ease;
+            max-width: 240px;
+            font-size: 14px;
+            user-select: none;
+            transform: rotate(-1.5deg);
+            font-family: 'Kalam', cursive;
+            font-weight: 700;
+            animation: attention 4s infinite;
+        }
+
+        @keyframes attention {
+            0%, 100% { 
+                transform: rotate(-1.5deg) scale(1);
+                box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+            }
+            50% { 
+                transform: rotate(-1.5deg) scale(1.05);
+                box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .agent-widget:hover {
+            transform: rotate(-1.5deg) scale(1.02);
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .agent-widget.clicked {
+            transform: rotate(-1.5deg) scale(0.95);
+            background: rgba(231, 76, 60, 0.2);
+        }
+
+        .agent-widget.hidden {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        body.chat-open .agent-widget {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        .agent-widget-icon {
+            font-size: 24px;
+            animation: wobble 2s infinite, pulse 3s infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .agent-widget-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .widget-title {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .widget-subtitle {
+            font-size: 10px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        /* Right Side Chat Interface */
+        .side-chat-interface {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 420px;
+            height: 550px;
+            background: rgba(245, 245, 220, 0.95);
+            border: 3px solid #34495e;
+            border-radius: 0;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) rotate(0.8deg);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Kalam', cursive;
+            z-index: 999998;
+        }
+
+        .side-chat-interface::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(139, 69, 19, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .side-chat-interface::after {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(139, 69, 19, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .side-chat-interface.open {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto;
+            transform: translateY(0) rotate(0.8deg);
+        }
+
+        .side-chat-header {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 10px;
+            border-bottom: 2px dashed #3498db;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 12px 12px 0 0;
+            transform: rotate(-0.2deg);
+        }
+
+        .side-chat-icon {
+            font-size: 18px;
+        }
+
+        .side-chat-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .side-chat-subtitle {
+            font-size: 12px;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .side-chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .side-message {
+            max-width: 90%;
+            padding: 8px 12px;
+            border-radius: 0;
+            font-size: 14px;
+            line-height: 1.3;
+            border: 2px solid;
+            transform: rotate(var(--msg-rotation, 0deg));
+            position: relative;
+        }
+
+        .side-message.bot {
+            background: none;
+            color: #2c3e50;
+            align-self: flex-start;
+            border-color: #3498db;
+            --msg-rotation: -0.5deg;
+        }
+
+        .side-message.bot::before {
+            content: '🤖';
+            position: absolute;
+            left: -8px;
+            top: -8px;
+            background: rgba(245, 245, 220, 0.9);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .side-message.user {
+            background: none;
+            color: #2c3e50;
+            align-self: flex-end;
+            border-color: #2ecc71;
+            --msg-rotation: 0.8deg;
+        }
+
+        .side-message.user::before {
+            content: '👤';
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            background: rgba(245, 245, 220, 0.9);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .side-chat-input-area {
+            padding: 8px;
+            border-top: 2px dashed #95a5a6;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .side-input-container {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .side-chat-input {
+            flex: 1;
+            border: 2px solid #95a5a6;
+            border-radius: 15px;
+            padding: 8px 12px;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Kalam', cursive;
+            box-sizing: border-box;
+            background: none;
+            color: #2c3e50;
+            transform: rotate(-0.5deg);
+            max-height: 60px;
+            min-height: 35px;
+        }
+
+        .side-chat-input:focus {
+            border-color: #3498db;
+        }
+
+        .side-send-button {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #2ecc71;
+            border-radius: 50%;
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            transform: rotate(5deg);
+        }
+
+        .side-send-button:hover {
+            background: rgba(46, 204, 113, 0.2);
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .agent-widget {
+                bottom: 200px;
+                right: 20px;
+                padding: 12px 14px;
+                max-width: 160px;
+                font-size: 12px;
+            }
+            
+            .side-chat-interface {
+                width: 300px;
+                height: 350px;
+                bottom: 200px;
+                right: 20px;
+            }
+            
+            .customers-table {
+                min-width: 500px;
+                font-size: 11px;
+            }
+        }
+
+        /* Desktop overrides */
+        @media (min-width: 1024px) {
+            .agent-widget {
+                bottom: 250px !important;
+                right: 40px !important;
+            }
+            
+            .side-chat-interface {
+                bottom: 80px !important;
+                right: 20px !important;
+                width: 420px !important;
+                height: 550px !important;
+            }
+        }
+
+        .table-wrapper {
+            overflow: hidden;
+            border-radius: 8px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        🚨 DEMO: SalesFlow CRM - Customer Intelligence Platform
+    </div>
+
+    <div class="crm-container">
+        <div class="crm-header">
+            <div class="logo-section">
+                <div class="logo">SF</div>
+                <div class="app-title">SalesFlow</div>
+            </div>
+            
+            <div class="nav-tabs">
+                <div class="nav-tab active">📝 Customers</div>
+                <div class="nav-tab">📊 Deals</div>
+                <div class="nav-tab">📈 Analytics</div>
+                <div class="nav-tab">📋 Reports</div>
+            </div>
+            
+            <input type="text" class="search-box" placeholder="Search customers...">
+        </div>
+
+        <div class="main-content">
+            <div class="page-title">Customers</div>
+            <div class="page-subtitle">(your database holds almost no context)</div>
+            
+            <div class="table-header">
+                <div class="table-title">📄 Customer List (sketched)</div>
+                <div class="table-actions">
+                    <button class="btn btn-outline">Filter</button>
+                    <button class="btn btn-outline">Export</button>
+                    <button class="btn btn-primary">Add Customer</button>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>📝 CUSTOMER</th>
+                            <th>🏷️ STATUS</th>
+                            <th>💰 VALUE</th>
+                            <th>🔄 RENEWAL</th>
+                            <th>📊 USAGE %</th>
+                            <th>❤️ HEALTH</th>
+                            <th>⚡ ACTIVITY</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Acme Corporation</div>
+                                <div class="customer-email">contact@acme.com</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$25,500</td>
+                            <td>Mar 15, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-high" style="width: 92%"></div>
+                                </div>
+                                92%
+                            </td>
+                            <td>92</td>
+                            <td>3 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">TechStart Inc</div>
+                                <div class="customer-email">hello@techstart.io</div>
+                            </td>
+                            <td><span class="status-badge status-pending">Renewal Due</span></td>
+                            <td>$89,250</td>
+                            <td>Jan 23, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-medium" style="width: 67%"></div>
+                                </div>
+                                67%
+                            </td>
+                            <td>67</td>
+                            <td>1 day ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Global Solutions LLC</div>
+                                <div class="customer-email">admin@globalsolutions.net</div>
+                            </td>
+                            <td><span class="status-badge status-risk">At Risk</span></td>
+                            <td>$156,900</td>
+                            <td>Feb 8, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-low" style="width: 34%"></div>
+                                </div>
+                                34%
+                            </td>
+                            <td>34</td>
+                            <td>5 days ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Innovation Labs</div>
+                                <div class="customer-email">team@innovationlabs.org</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$67,400</td>
+                            <td>Jun 19, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-medium" style="width: 71%"></div>
+                                </div>
+                                71%
+                            </td>
+                            <td>71</td>
+                            <td>3 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Enterprise Dynamics</div>
+                                <div class="customer-email">info@enterprisedynamics.com</div>
+                            </td>
+                            <td><span class="status-badge status-pending">Renewal Due</span></td>
+                            <td>$203,400</td>
+                            <td>Jan 30, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-medium" style="width: 63%"></div>
+                                </div>
+                                63%
+                            </td>
+                            <td>63</td>
+                            <td>6 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Digital Solutions Co</div>
+                                <div class="customer-email">sales@digitalsolutions.biz</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$112,300</td>
+                            <td>Apr 18, 2025</td>
+                            <td>
+                                <div class="health-bar">
+                                    <div class="health-fill health-high" style="width: 89%"></div>
+                                </div>
+                                89%
+                            </td>
+                            <td>89</td>
+                            <td>30 minutes ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Agent Widget -->
+    <div class="agent-widget" id="agentWidget">
+        <div class="agent-widget-icon">🤖</div>
+        <div class="agent-widget-text">
+            <div class="widget-title">AI Assistant</div>
+            <div class="widget-subtitle">Ask about customers</div>
+        </div>
+    </div>
+
+    <!-- Right Side Chat Interface -->
+    <div class="side-chat-interface" id="sideChatInterface">
+        <div class="side-chat-header">
+            <div class="side-chat-icon">🤖</div>
+            <div>
+                <div class="side-chat-title">AI Assistant</div>
+                <div class="side-chat-subtitle">Customer insights & analysis</div>
+            </div>
+        </div>
+        
+        <div class="side-chat-messages" id="sideChatMessages">
+            <div class="side-message bot">
+                Hello! I can help you analyze customer data and provide insights. What would you like to know?
+            </div>
+        </div>
+        
+        <div class="side-chat-input-area">
+            <div class="side-input-container">
+                <textarea class="side-chat-input" id="sideChatInput" placeholder="Ask me anything..." rows="1"></textarea>
+                <button class="side-send-button" id="sideSendButton">
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isSimulationRunning = false;
+        let currentQueryIndex = 0;
+
+        const userQueries = [
+            "Who are our highest value customers that might be at risk of churning?",
+            "What's the average deal size for customers in the tech industry?",
+            "Can you identify which customers haven't logged in recently?",
+            "Show me which accounts are up for renewal in Q1 2025?"
+        ];
+
+        const botResponses = [
+            "Based on your database, here are the customers with high contract values but concerning engagement patterns:\n\n• Global Solutions LLC ($156,900) - Usage dropped to 34%, last activity 5 days ago\n• Enterprise Dynamics ($203,400) - Only 63% usage despite renewal due Jan 30\n• TechStart Inc ($89,250) - 67% usage, renewal due soon\n\nThese accounts need immediate attention from your customer success team.",
+            
+            "Looking at your customer data, the average deal size varies significantly by industry:\n\n• Enterprise Software: $178,650 average\n• Tech Startups: $89,250 average  \n• Manufacturing: $134,200 average\n• Professional Services: $67,400 average\n\nTech companies show lower initial contract values but higher expansion potential.",
+            
+            "Here are customers with concerning login patterns:\n\n• Global Solutions LLC - Last login 5+ days ago\n• Enterprise Dynamics - Sporadic usage over past 2 weeks\n• Innovation Labs - Decreased frequency this month\n\nI recommend scheduling check-in calls to understand any blockers they're experiencing.",
+            
+            "Q1 2025 renewal pipeline shows:\n\n• TechStart Inc - $89,250 (Jan 23) - NEEDS ATTENTION\n• Enterprise Dynamics - $203,400 (Jan 30) - AT RISK\n• Global Solutions - $156,900 (Feb 8) - HIGH RISK\n\nTotal Q1 renewals at risk: $449,550\n\nRecommend immediate outreach with customized retention offers."
+        ];
+
+        // Auto-start simulation
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (!isSimulationRunning) {
+                    startWidgetSimulation();
+                }
+            }, 3000);
+        });
+
+        function startWidgetSimulation() {
+            if (isSimulationRunning) return;
+            isSimulationRunning = true;
+            
+            const widget = document.getElementById('agentWidget');
+            if (widget) {
+                widget.style.border = '4px solid #f39c12';
+                widget.style.boxShadow = '8px 8px 0px rgba(243, 156, 18, 0.4)';
+                
+                setTimeout(() => {
+                    simulateWidgetClick();
+                }, 3000);
+            }
+        }
+
+        function simulateWidgetClick() {
+            const widget = document.getElementById('agentWidget');
+            const sideChat = document.getElementById('sideChatInterface');
+            
+            if (!widget || !sideChat) {
+                isSimulationRunning = false;
+                return;
+            }
+            
+            widget.classList.add('clicked');
+            
+            setTimeout(() => {
+                widget.classList.remove('clicked');
+                widget.classList.add('hidden');
+                document.body.classList.add('chat-open');
+                sideChat.classList.add('open');
+                
+                setTimeout(() => {
+                    if (widget && widget.parentNode) {
+                        widget.parentNode.removeChild(widget);
+                    }
+                }, 1000);
+                
+                setTimeout(() => {
+                    startSideChatTyping();
+                }, 500);
+            }, 300);
+        }
+
+        function startSideChatTyping() {
+            const sideChatInput = document.getElementById('sideChatInput');
+            const currentQuery = userQueries[currentQueryIndex];
+            
+            if (!sideChatInput) {
+                isSimulationRunning = false;
+                return;
+            }
+            
+            typeMessage(sideChatInput, currentQuery, () => {
+                setTimeout(() => {
+                    sendSideChatMessage();
+                }, 1000);
+            });
+        }
+
+        function typeMessage(input, message, callback) {
+            let index = 0;
+            input.value = '';
+            
+            function typeChar() {
+                if (index < message.length) {
+                    input.value += message.charAt(index);
+                    index++;
+                    setTimeout(typeChar, 50 + Math.random() * 50);
+                } else {
+                    callback();
+                }
+            }
+            
+            typeChar();
+        }
+
+        function sendSideChatMessage() {
+            const sideChatInput = document.getElementById('sideChatInput');
+            const sideChatMessages = document.getElementById('sideChatMessages');
+            
+            if (!sideChatInput || !sideChatMessages) {
+                isSimulationRunning = false;
+                return;
+            }
+            
+            const userMessage = sideChatInput.value.trim();
+            if (!userMessage) {
+                isSimulationRunning = false;
+                return;
+            }
+            
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'side-message user';
+            userMessageDiv.textContent = userMessage;
+            sideChatMessages.appendChild(userMessageDiv);
+            
+            sideChatInput.value = '';
+            sideChatMessages.scrollTop = sideChatMessages.scrollHeight;
+            
+            setTimeout(() => {
+                simulateAIResponse();
+            }, 1500);
+        }
+
+        function simulateAIResponse() {
+            const sideChatMessages = document.getElementById('sideChatMessages');
+            
+            if (!sideChatMessages) {
+                isSimulationRunning = false;
+                return;
+            }
+            
+            const botResponse = botResponses[currentQueryIndex] || "I'm processing your request and analyzing the customer data...";
+            
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'side-message bot';
+            botMessageDiv.textContent = botResponse;
+            sideChatMessages.appendChild(botMessageDiv);
+            
+            sideChatMessages.scrollTop = sideChatMessages.scrollHeight;
+            
+            currentQueryIndex = (currentQueryIndex + 1) % botResponses.length;
+            
+            setTimeout(() => {
+                resetSimulation();
+            }, 8000);
+        }
+
+        function resetSimulation() {
+            const sideChat = document.getElementById('sideChatInterface');
+            const sideChatMessages = document.getElementById('sideChatMessages');
+            
+            if (sideChat) {
+                sideChat.classList.remove('open');
+                document.body.classList.remove('chat-open');
+            }
+            
+            if (sideChatMessages) {
+                sideChatMessages.innerHTML = '<div class="side-message bot">Hello! I can help you analyze customer data and provide insights. What would you like to know?</div>';
+            }
+            
+            // Recreate widget
+            let widget = document.getElementById('agentWidget');
+            if (!widget) {
+                widget = document.createElement('div');
+                widget.id = 'agentWidget';
+                widget.className = 'agent-widget';
+                widget.innerHTML = `
+                    <div class="agent-widget-icon">🤖</div>
+                    <div class="agent-widget-text">
+                        <div class="widget-title">AI Assistant</div>
+                        <div class="widget-subtitle">Ask about customers</div>
+                    </div>
+                `;
+                document.body.appendChild(widget);
+            } else {
+                widget.classList.remove('hidden');
+                widget.style.display = 'flex';
+                widget.style.visibility = 'visible';
+                widget.style.opacity = '1';
+            }
+            
+            isSimulationRunning = false;
+            
+            setTimeout(() => {
+                if (!isSimulationRunning) {
+                    startWidgetSimulation();
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

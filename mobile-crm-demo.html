@@ -2,595 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeOps - Family life, effortlessly organized</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>🚨 DEMO: SalesFlow CRM - Customer Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables - HomeOps Brand System */
-        :root {
-            /* Primary Colors */
-            --charcoal: #171717;
-            --gray-dark: #404040;
-            --gray-medium: #666666;
-            --white: #ffffff;
-
-            /* Beige Gradient System */
-            --beige-light: #f5f3f0;
-            --beige-medium: #e8e6e1;
-            --beige-warm: #d4c4b0;
-
-            /* Spacing */
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-base: 16px;
-            --spacing-md: 24px;
-            --spacing-lg: 32px;
-            --spacing-xl: 48px;
-
-            /* Border Radius */
-            --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 14px;
-            --radius-xl: 40px;
-
-            /* Transitions */
-            --transition: 0.2s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, var(--beige-light) 0%, var(--beige-medium) 100%);
-            color: var(--charcoal);
-            line-height: 1.6;
-            min-height: 100vh;
+            font-family: 'Kalam', cursive;
+            background: #f5f5dc; /* Beige napkin color */
+            background-image: 
+                /* Paper texture */
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.04) 2px, rgba(0,0,0,.04) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.04) 2px, rgba(0,0,0,.04) 4px),
+                /* Coffee stains */
+                radial-gradient(ellipse at 15% 25%, rgba(139, 69, 19, 0.08) 15px, transparent 16px),
+                radial-gradient(ellipse at 85% 15%, rgba(160, 82, 45, 0.06) 20px, transparent 21px),
+                radial-gradient(ellipse at 70% 80%, rgba(101, 67, 33, 0.05) 12px, transparent 13px);
+            background-size: 20px 20px, 20px 20px, 100% 100%, 100% 100%, 100% 100%;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Container & Layout */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-        }
-
-        .content-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid var(--beige-medium);
-            padding: 15px 20px;
-            z-index: 1000;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Logo */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            text-decoration: none;
-            color: var(--charcoal);
-        }
-
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
-            border-radius: var(--spacing-xs);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .logo-icon::after {
-            content: '';
-            width: 16px;
-            height: 16px;
-            background: linear-gradient(135deg, #e8d5c4 0%, var(--beige-warm) 100%);
-            transform: rotate(45deg);
-            border-radius: 2px;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--charcoal);
-        }
-
-        /* Profile Avatar */
-        .profile-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--beige-medium);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--gray-dark);
-        }
-
-        /* Main Content */
-        .main {
-            padding-top: 80px;
+            bottom: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            margin: 0;
+            padding: 8px;
+            -webkit-tap-highlight-color: transparent;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            min-width: 100vw;
+            max-width: 100vw;
             min-height: 100vh;
+            max-height: 100vh;
         }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(180deg, var(--beige-light) 0%, var(--white) 100%);
-            padding: var(--spacing-xl) 0;
-            text-align: center;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-            color: var(--charcoal);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--gray-medium);
-            margin-bottom: var(--spacing-xl);
-            line-height: 1.4;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: var(--spacing-base);
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 18px var(--spacing-md);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-family: inherit;
-            font-size: 1rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            min-width: 140px;
-        }
-
-        .btn-primary {
-            background: var(--charcoal);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background: var(--gray-dark);
-        }
-
-        .btn-secondary {
-            background: var(--white);
-            border: 2px solid var(--charcoal);
-            color: var(--charcoal);
-        }
-
-        .btn-secondary:hover {
-            background: var(--charcoal);
-            color: var(--white);
-        }
-
-        /* Features Section */
-        .features {
-            padding: var(--spacing-xl) 0;
-        }
-
-        .features-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .features-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--charcoal);
-            margin-bottom: var(--spacing-base);
-        }
-
-        .features-subtitle {
-            font-size: 1rem;
-            color: var(--gray-medium);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-md);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--white);
-            border: 1px solid var(--beige-medium);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            transform: translateY(-1px);
-            border-color: var(--beige-warm);
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--beige-light);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: var(--spacing-base);
-        }
-
-        .card-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .card-description {
-            color: var(--gray-medium);
-            line-height: 1.5;
-        }
-
-        /* Dashboard Preview Section */
-        .dashboard-preview {
-            padding: var(--spacing-xl) 0;
-            background: var(--white);
-        }
-
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .dashboard-mock {
-            background: var(--beige-light);
-            border: 1px solid var(--beige-medium);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .dashboard-nav {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .nav-item {
-            padding: var(--spacing-sm) var(--spacing-base);
-            background: var(--white);
-            border: 1px solid var(--beige-medium);
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .nav-item.active {
-            background: var(--charcoal);
-            color: var(--white);
-            border-color: var(--charcoal);
-        }
-
-        .dashboard-content {
-            background: var(--white);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-md);
-            min-height: 300px;
-        }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm) 0;
-            border-bottom: 1px solid var(--beige-light);
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
-        }
-
-        .task-checkbox {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--beige-warm);
-            border-radius: 3px;
-            flex-shrink: 0;
-        }
-
-        .task-text {
-            flex: 1;
-            color: var(--gray-medium);
-        }
-
-        .task-badge {
-            background: var(--charcoal);
-            color: var(--white);
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        /* Footer */
-        .footer {
-            padding: var(--spacing-xl) 0;
-            background: var(--charcoal);
-            color: var(--white);
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-        }
-
-        .footer-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: var(--spacing-base);
-        }
-
-        .footer-subtitle {
-            color: var(--beige-medium);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .footer-cta {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            flex-wrap: wrap;
-            margin-bottom: var(--spacing-base);
-            color: var(--beige-medium);
-            font-size: 0.875rem;
-        }
-
-        .footer-link {
-            color: var(--beige-medium);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-link:hover {
-            color: var(--white);
-        }
-
-        .footer-copyright {
-            font-size: 0.875rem;
-            color: var(--gray-medium);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .container, .content-container {
-                padding: 0 20px;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.125rem;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 280px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .dashboard-nav {
-                flex-wrap: wrap;
-            }
-
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="#" class="logo">
-                <div class="logo-icon"></div>
-                <span class="logo-text">HomeOps</span>
-            </a>
-            <div class="profile-avatar">JB</div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">Family life, effortlessly organized</h1>
-                <p class="hero-subtitle">HomeOps handles the complexities of modern family management, so you can focus on what matters most.</p>
-                <div class="hero-cta">
-                    <a href="#" class="btn btn-primary">Get Started</a>
-                    <a href="#" class="btn btn-secondary">Learn More</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features">
-            <div class="container">
-                <div class="content-container">
-                    <div class="features-header">
-                        <h2 class="features-title">What HomeOps handles for you</h2>
-                        <p class="features-subtitle">Intelligent automation for the modern family</p>
-                    </div>
-                    <div class="features-grid">
-                        <div class="card">
-                            <div class="card-icon">📅</div>
-                            <h3 class="card-title">Smart Scheduling</h3>
-                            <p class="card-description">Automatically coordinate family calendars, appointments, and activities with intelligent conflict resolution.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🏠</div>
-                            <h3 class="card-title">Home Management</h3>
-                            <p class="card-description">Track maintenance, manage household tasks, and coordinate service appointments seamlessly.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">💰</div>
-                            <h3 class="card-title">Financial Oversight</h3>
-                            <p class="card-description">Monitor family spending, track budgets, and receive intelligent insights on household finances.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">📋</div>
-                            <h3 class="card-title">Task Coordination</h3>
-                            <p class="card-description">Distribute and track family responsibilities with smart reminders and progress updates.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🔔</div>
-                            <h3 class="card-title">Intelligent Alerts</h3>
-                            <p class="card-description">Get notified about important deadlines, conflicts, and opportunities for optimization.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">📊</div>
-                            <h3 class="card-title">Family Insights</h3>
-                            <p class="card-description">Understand your family's patterns and receive personalized recommendations for improvement.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dashboard Preview -->
-        <section class="dashboard-preview">
-            <div class="container">
-                <div class="content-container">
-                    <div class="dashboard-header">
-                        <h2 class="features-title">Here's what needs your attention today</h2>
-                        <p class="features-subtitle">Your personalized family command center</p>
-                    </div>
-                    <div class="dashboard-mock">
-                        <div class="dashboard-nav">
-                            <div class="nav-item active">Today</div>
-                            <div class="nav-item">This Week</div>
-                            <div class="nav-item">Calendar</div>
-                            <div class="nav-item">Tasks</div>
-                            <div class="nav-item">Budget</div>
-                        </div>
-                        <div class="dashboard-content">
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-text">Schedule Emma's dentist appointment</div>
-                                <div class="task-badge">urgent</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-text">Review monthly grocery budget - $47 over target</div>
-                                <div class="task-badge">review</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-text">HVAC maintenance due this week</div>
-                                <div class="task-badge">home</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-text">Soccer practice conflicts with piano lesson Thursday</div>
-                                <div class="task-badge">conflict</div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-checkbox"></div>
-                                <div class="task-text">Birthday party invitation - RSVP by Friday</div>
-                                <div class="task-badge">social</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <h3 class="footer-title">Ready to simplify your family life?</h3>
-            <p class="footer-subtitle">Join families who have reclaimed their time with HomeOps</p>
-            <div class="footer-cta">
-                <a href="#" class="btn btn-primary">Start Your Free Trial</a>
-            </div>
-            <div class="footer-links">
-                <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Terms of Service</a>
-                <a href="#" class="footer-link">Support</a>
-                <a href="#" class="footer-link">Contact</a>
-            </div>
-            <p class="footer-copyright">© 2024 HomeOps. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
-</html>
 
         .demo-header {
             background: none;
@@ -1800,6 +1255,10 @@
             font-weight: 700;
             transform: rotate(-2deg);
         }
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 999998;
+        }
 
         .side-chat-interface.open {
             opacity: 1 !important;
@@ -2320,17 +1779,6 @@
             }
         }
 
-        /* EMERGENCY fallback - widget not showing */
-        .agent-widget {
-            position: fixed !important;
-            bottom: 250px !important;
-            right: 40px !important;
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            z-index: 999999 !important;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -2454,12 +1902,12 @@
         <div class="main-content">
             <div class="page-header">
                 <div class="page-title">Customers</div>
-                <div class="page-subtitle">Interactive CRM Demo</div>
+                <div class="page-subtitle">(just database fields drawn on napkin)</div>
             </div>
 
             <div class="content-card">
                 <div class="table-header">
-                    <div class="table-title">📋 Customer List</div>
+                    <div class="table-title">📋 Customer List (sketched)</div>
                     <div class="table-actions">
                         <button class="btn btn-secondary">Filter</button>
                         <button class="btn btn-secondary">Export</button>
@@ -2696,7 +2144,7 @@
 
     <!-- AI Agent Widget - Right Side -->
     <div class="agent-widget" id="agentWidget">
-        <div class="agent-widget-icon">🤖</div>
+        <div class="agent-widget-icon">�</div>
         <div class="agent-widget-text">
             <div class="widget-title">AI Assistant</div>
             <div class="widget-subtitle">Ask about customers</div>
@@ -2706,7 +2154,7 @@
     <!-- Right Side Chat Interface -->
     <div class="side-chat-interface" id="sideChatInterface">
         <div class="side-chat-header">
-            <div class="side-chat-icon">🤖</div>
+            <div class="side-chat-icon">�</div>
             <div>
                 <div class="side-chat-title">AI Assistant</div>
                 <div class="side-chat-subtitle">Customer insights & analysis</div>

@@ -90,10 +90,10 @@ app.get('/command-center.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'command-center.html'));
 });
 
-// Root route - redirect to onboarding for now
+// Root route - serve the new HomeOps V2 website
 app.get('/', (req, res) => {
-  console.log('🏠 Serving root route -> redirecting to onboarding');
-  res.redirect('/onboarding');
+  console.log('🏠 Serving HomeOps V2 website');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Serve static files with no-cache for HTML

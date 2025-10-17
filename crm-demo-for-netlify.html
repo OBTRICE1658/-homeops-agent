@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 DEMO: SalesFlow CRM - Customer Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* CRM Layout */
+        .crm-container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 48px);
+            max-width: 100%;
+        }
+
+        /* CRM Header */
+        .crm-header {
+            background-color: #ffffff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            color: #6366f1;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nav-tab {
+            padding: 8px 12px;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .nav-tab.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 200px;
+            background: #f8fafc;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Customer List Table */
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #6b7280;
+            border: 1px solid #e2e8f0;
+        }
+
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .customers-table th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .customers-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .customers-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-renewal {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-risk {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        .usage-bar {
+            width: 100px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .usage-high { background: #10b981; }
+        .usage-medium { background: #f59e0b; }
+        .usage-low { background: #ef4444; }
+
+        /* Query Section */
+        .agent-query {
+            padding: 16px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .query-label {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .query-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .query-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .query-submit {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+
+        .query-submit:hover {
+            transform: translateY(-1px);
+        }
+
+        .query-submit:active {
+            transform: translateY(0);
+        }
+
+        .demo-suggestion {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .demo-suggestion span {
+            color: #0369a1;
+            display: block;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .use-suggestion {
+            padding: 6px 12px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 16px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .results-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .results-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            border-top-color: #6366f1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .typed-query {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .typing-text {
+            border-right: 2px solid #6366f1;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: #6366f1; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        /* Mobile-Optimized Table */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            font-size: 11px;
+            background: white;
+        }
+
+        .results-table th {
+            background-color: #f8fafc;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #6b7280;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 10px;
+            line-height: 1.3;
+            word-break: break-all;
+        }
+
+        .results-table tr {
+            background-color: white;
+        }
+
+        .results-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Broken data styling */
+        .broken-data {
+            color: #ef4444;
+            font-style: italic;
+            background-color: #fef2f2;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #fecaca;
+            font-size: 9px;
+        }
+
+        .confused-data {
+            color: #f59e0b;
+            background-color: #fffbeb;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #fed7aa;
+            font-size: 9px;
+        }
+
+        /* Footer Warning */
+        .results-footer {
+            margin-top: 16px;
+            padding: 12px;
+            background-color: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #92400e;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        /* Mobile AI Chat */
+        .ai-chat-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 340px;
+            height: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            z-index: 1000;
+            transition: all 0.5s ease-in-out;
+            max-width: calc(100vw - 40px);
+        }
+
+        .ai-chat-panel.expanded {
+            bottom: 0;
+            right: 0;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            z-index: 2000;
+            max-width: none;
+        }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 12px 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-avatar {
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .ai-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .ai-status {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .close-btn {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .ai-chat-panel.expanded .close-btn {
+            display: flex;
+        }
+
+        .report-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .ai-chat-panel.expanded .report-content {
+            display: block;
+        }
+
+        .broken-report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+        }
+
+        .broken-report-table th {
+            background-color: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 12px;
+        }
+
+        .broken-report-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .ai-chat-panel.expanded .ai-info h4 {
+            font-size: 18px;
+        }
+
+        .ai-chat-panel.expanded .ai-status {
+            font-size: 12px;
+        }
+
+        .ai-chat-body {
+            padding: 16px;
+            max-height: 160px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .ai-chat-panel.expanded .ai-chat-body {
+            max-height: calc(100vh - 80px);
+            padding: 32px;
+        }
+
+        .ai-greeting {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-message, .ai-message-container {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .ai-message-container {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .user-bubble {
+            background: #6366f1;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-bubble {
+            background: #f8fafc;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 3px;
+            height: 3px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        /* Mobile First - Base Styles Above */
+        
+        /* Mobile Specific */
+        @media (max-width: 767px) {
+            .demo-header {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            .crm-header {
+                padding: 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .header-left {
+                order: 1;
+                justify-content: center;
+            }
+            
+            .header-right {
+                order: 2;
+                justify-content: center;
+            }
+            
+            .search-box {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .nav-tabs {
+                order: 3;
+                justify-content: center;
+                padding: 0 12px;
+                border-top: 1px solid #e2e8f0;
+                padding-top: 12px;
+            }
+            
+            .main-content {
+                padding: 12px;
+            }
+            
+            .customers-table {
+                min-width: 600px;
+            }
+            
+            .customers-table th,
+            .customers-table td {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .ai-chat-panel {
+                width: calc(100vw - 24px);
+                right: 12px;
+                bottom: 12px;
+                height: 180px;
+            }
+        }
+
+        /* Tablet Adjustments */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .demo-header {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
+            .crm-header {
+                padding: 16px 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .customers-table th,
+            .customers-table td {
+                padding: 14px 18px;
+                font-size: 14px;
+            }
+            
+            .ai-chat-panel {
+                width: 380px;
+                height: 240px;
+                bottom: 24px;
+                right: 24px;
+            }
+        }
+
+        /* Desktop Adjustments */
+        @media (min-width: 1024px) {
+            .demo-header {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+            
+            .crm-header {
+                padding: 20px 32px;
+            }
+            
+            .header-left {
+                gap: 32px;
+            }
+            
+            .nav-tabs {
+                gap: 24px;
+            }
+            
+            .search-box {
+                width: 280px;
+            }
+            
+            .main-content {
+                padding: 32px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .table-header {
+                padding: 24px 32px;
+            }
+            
+            .customers-table th,
+            .customers-table td {
+                padding: 16px 24px;
+                font-size: 14px;
+            }
+            
+            .ai-chat-panel {
+                width: 420px;
+                height: 260px;
+                bottom: 32px;
+                right: 32px;
+            }
+            
+            .ai-message {
+                font-size: 13px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1440px) {
+            .main-content {
+                padding: 40px;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Table Wrapper for Mobile Scrolling */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+        }
+
+        /* Animation for smooth transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        🚨 DEMO: SalesFlow CRM - Customer Intelligence Platform
+    </div>
+
+    <div class="crm-container">
+        <!-- CRM Header -->
+        <div class="crm-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">SF</div>
+                    <span>SalesFlow</span>
+                </div>
+                <div class="nav-tabs">
+                    <div class="nav-tab active">Customers</div>
+                    <div class="nav-tab">Deals</div>
+                    <div class="nav-tab">Analytics</div>
+                    <div class="nav-tab">Reports</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <input type="text" class="search-box" placeholder="Search customers, deals, contacts...">
+                <div class="user-avatar">JD</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <div class="page-title">Customers</div>
+                <div class="page-subtitle">Manage your customer relationships and track engagement</div>
+            </div>
+
+            <div class="content-card">
+                <div class="table-header">
+                    <div class="table-title">Customer List</div>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary">Filter</button>
+                        <button class="btn btn-secondary">Export</button>
+                        <button class="btn btn-primary">Add Customer</button>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Contract Value</th>
+                            <th>Renewal Date</th>
+                            <th>Usage</th>
+                            <th>Health Score</th>
+                            <th>Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Acme Corporation</div>
+                                <div style="font-size: 12px; color: #9ca3af;">acme@corp.com</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$124,500</td>
+                            <td>Mar 15, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-high" style="width: 85%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">85%</span>
+                            </td>
+                            <td style="color: #10b981; font-weight: 600;">92</td>
+                            <td>2 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">TechStart Inc</div>
+                                <div style="font-size: 12px; color: #9ca3af;">hello@techstart.io</div>
+                            </td>
+                            <td><span class="status-badge status-renewal">Renewal Due</span></td>
+                            <td>$89,200</td>
+                            <td>Jan 22, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-low" style="width: 32%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">32%</span>
+                            </td>
+                            <td style="color: #f59e0b; font-weight: 600;">67</td>
+                            <td>1 day ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Global Solutions LLC</div>
+                                <div style="font-size: 12px; color: #9ca3af;">contact@globalsolutions.com</div>
+                            </td>
+                            <td><span class="status-badge status-risk">At Risk</span></td>
+                            <td>$156,800</td>
+                            <td>Feb 8, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-low" style="width: 18%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">18%</span>
+                            </td>
+                            <td style="color: #ef4444; font-weight: 600;">34</td>
+                            <td>5 days ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Innovation Labs</div>
+                                <div style="font-size: 12px; color: #9ca3af;">team@innovationlabs.co</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$67,400</td>
+                            <td>Jun 12, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-medium" style="width: 58%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">58%</span>
+                            </td>
+                            <td style="color: #f59e0b; font-weight: 600;">71</td>
+                            <td>3 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Enterprise Dynamics</div>
+                                <div style="font-size: 12px; color: #9ca3af;">sales@entdynamics.net</div>
+                            </td>
+                            <td><span class="status-badge status-renewal">Renewal Due</span></td>
+                            <td>$203,900</td>
+                            <td>Jan 30, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-medium" style="width: 45%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">45%</span>
+                            </td>
+                            <td style="color: #f59e0b; font-weight: 600;">63</td>
+                            <td>6 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-name">Digital Solutions Co</div>
+                                <div style="font-size: 12px; color: #9ca3af;">info@digitalsolutions.com</div>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>$112,300</td>
+                            <td>Apr 18, 2025</td>
+                            <td>
+                                <div class="usage-bar">
+                                    <div class="usage-fill usage-high" style="width: 78%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #6b7280;">78%</span>
+                            </td>
+                            <td style="color: #10b981; font-weight: 600;">88</td>
+                            <td>30 minutes ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Chat Panel -->
+    <div class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <div class="ai-avatar">🤖</div>
+            <div class="ai-info">
+                <h4>SalesFlow AI Assistant</h4>
+                <div class="ai-status">Powered by Enterprise-Grade Machine Learning 🤖</div>
+            </div>
+            <button class="close-btn" onclick="collapseChat()">×</button>
+        </div>
+        <div class="ai-chat-body" id="chatBody">
+            <div class="ai-greeting" id="aiGreeting">
+                👋 Hi! I'm your AI sales assistant. I can analyze customer data, predict churn risks, and identify renewal opportunities.<br><br>
+                What would you like to know about your customers?
+            </div>
+            <div class="chat-messages" id="chatMessages" style="display: none;">
+                <div class="user-message">
+                    <div class="message-bubble user-bubble" id="userQuery">
+                        Which customers are at risk of churning this quarter?
+                    </div>
+                </div>
+                <div class="ai-message-container">
+                    <div class="message-bubble ai-bubble" id="aiResponse">
+                        <span class="typing-text" id="typingText"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <span>AI is analyzing customer data</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="report-content" id="reportContent">
+                <h3 style="color: #374151; margin-bottom: 16px;">📊 Top 15 Renewal Accounts - Static Field Retrieval</h3>
+                <table class="broken-report-table" id="brokenReportTable">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Renewal Date Field</th>
+                            <th>Usage Metric Field</th>
+                            <th>Risk Assessment Field</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Will be populated with broken data -->
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px; padding: 16px; background-color: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; font-size: 12px; color: #92400e;">
+                    <strong>⚠️ Agent Limitations:</strong> Successfully retrieved static field names from CRM database. Unable to provide contextual insights, connect usage patterns to churn risk, or suggest next actions. 
+                    Current architecture limited to record-keeping data retrieval - no intelligence layer for meaningful business outcomes.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Broken data examples for the demo - showing static field retrieval
+        const brokenData = [
+            {
+                name: "Acme Corporation",
+                renewal: "renewal_date_field_v3",
+                usage: "usage_score_null",
+                churn: "churn_risk_undefined"
+            },
+            {
+                name: "TechStart Inc", 
+                renewal: "contract_end_dt",
+                usage: "product_utilization_tbd",
+                churn: "risk_assessment_pending"
+            },
+            {
+                name: "Global Solutions LLC",
+                renewal: "renewal_timestamp_epoch", 
+                usage: "monthly_active_users_na",
+                churn: "churn_probability_error"
+            },
+            {
+                name: "Innovation Labs",
+                renewal: "subscription_expiry_raw", 
+                usage: "feature_adoption_metric",
+                churn: "retention_score_missing"
+            },
+            {
+                name: "Enterprise Dynamics", 
+                renewal: "contract_renewal_field",
+                usage: "usage_analytics_field",
+                churn: "at_risk_flag_boolean"
+            },
+            {
+                name: "Digital Solutions Co",
+                renewal: "renewal_date_string",
+                usage: "engagement_score_field",
+                churn: "churn_indicator_raw"
+            },
+            {
+                name: "CloudTech Industries",
+                renewal: "contract_end_date_iso",
+                usage: "platform_usage_metric",
+                churn: "risk_level_enum"
+            },
+            {
+                name: "DataFlow Corp",
+                renewal: "subscription_renewal_dt",
+                usage: "user_activity_score",
+                churn: "churn_flag_binary"
+            },
+            {
+                name: "NextGen Systems",
+                renewal: "renewal_period_end",
+                usage: "product_engagement_raw",
+                churn: "retention_risk_calc"
+            },
+            {
+                name: "TechSolutions Ltd",
+                renewal: "contract_expiry_field",
+                usage: "usage_frequency_data",
+                churn: "at_risk_classification"
+            },
+            {
+                name: "InnovateCorp",
+                renewal: "renewal_date_formatted",
+                usage: "utilization_percentage",
+                churn: "churn_prediction_null"
+            },
+            {
+                name: "SmartBusiness Inc",
+                renewal: "subscription_end_field",
+                usage: "activity_metrics_raw",
+                churn: "risk_assessment_field"
+            },
+            {
+                name: "FutureTech Solutions",
+                renewal: "contract_renewal_ts",
+                usage: "engagement_level_data",
+                churn: "churn_score_undefined"
+            },
+            {
+                name: "ProBusiness Group",
+                renewal: "renewal_datetime_utc",
+                usage: "product_usage_stats",
+                churn: "retention_flag_missing"
+            },
+            {
+                name: "ModernSoft LLC",
+                renewal: "contract_end_timestamp",
+                usage: "user_engagement_field",
+                churn: "at_risk_indicator_raw"
+            }
+        ];
+
+        // Auto-start demo interaction
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                startInteractiveDemo();
+            }, 2000);
+        });
+
+        function startInteractiveDemo() {
+            const chatPanel = document.querySelector('.ai-chat-panel');
+            const aiGreeting = document.getElementById('aiGreeting');
+            
+            // Show greeting with typing effect
+            typeResponse(
+                "👋 Hi! I'm your AI sales assistant. I can analyze customer data, predict churn risks, and identify renewal opportunities.\n\nClick me to get started!",
+                aiGreeting,
+                () => {
+                    // Make chat panel clickable
+                    chatPanel.style.cursor = 'pointer';
+                    chatPanel.addEventListener('click', expandChatAndStartDemo);
+                }
+            );
+        }
+
+        function expandChatAndStartDemo() {
+            const chatPanel = document.querySelector('.ai-chat-panel');
+            const aiGreeting = document.getElementById('aiGreeting');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Remove click listener and cursor
+            chatPanel.style.cursor = 'default';
+            chatPanel.removeEventListener('click', expandChatAndStartDemo);
+            
+            // Expand the chat panel
+            expandChatPanel();
+            
+            // Start the conversation after expansion
+            setTimeout(() => {
+                aiGreeting.style.display = 'none';
+                chatMessages.style.display = 'block';
+                
+                // Show user message
+                const userQuery = document.getElementById('userQuery');
+                userQuery.textContent = "Can you give me a summary of the top 15 accounts coming up for renewal in the next 6 months that are at risk to churn due to low product usage?";
+                
+                // Start AI response after a delay
+                setTimeout(() => {
+                    simulateAIResponse();
+                }, 1000);
+            }, 500);
+        }
+
+        function simulateAIResponse() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            const aiResponse = document.getElementById('aiResponse');
+            const reportContent = document.getElementById('reportContent');
+            
+            // Show typing indicator
+            typingIndicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                
+                // Type the AI response
+                typeResponse(
+                    "Perfect! I've located 15 customer records with renewal dates and usage fields. However, I can only surface the raw field names from our CRM - no contextual analysis or actionable insights available.\n\nHere's what I found in the database fields:",
+                    aiResponse,
+                    () => {
+                        // Show the broken report after response
+                        setTimeout(() => {
+                            reportContent.style.display = 'block';
+                            populateReportTable();
+                        }, 1500);
+                    }
+                );
+            }, 2000);
+        }
+
+        // Live chat responses
+        const chatResponses = [
+            "Great! I've retrieved 0.3% of your requested data. The remaining 99.7% is distributed across 47 different legacy systems that haven't talked to each other since 2019. Would you like me to create a Jira ticket? 🎫",
+            "Perfect! I found some customers... well, I found their names at least. The churn prediction model is currently experiencing what I like to call 'existential uncertainty.' It keeps asking 'What is churn, really?' 🤔",
+            "Analysis complete! I successfully identified customers who might be at risk, assuming 'risk' means 'existing in our database.' The ML algorithm crashed after processing 3 records, but those 3 were very thoroughly analyzed! ✨",
+            "Excellent news! I've cross-referenced your customer data with... actually, I just realized our systems don't cross-reference. They barely reference themselves. But I made a pretty graph showing 42% of something! �",
+            "Query processed successfully! I found several customers with renewal dates ranging from 'soon-ish' to '¯\\_(ツ)_/¯'. Our predictive analytics team suggests consulting a Magic 8-Ball for more accurate forecasting. 🎱",
+            "Data retrieval complete! I've identified high-risk accounts using our advanced 'alphabetical order' algorithm. Customers starting with 'A' are definitely at risk of being first in lists. Revolutionary insights! 🚀"
+        ];
+
+        let currentResponseIndex = 0;
+
+        function typeResponse(text, element, callback) {
+            if (isTyping) return;
+            isTyping = true;
+            
+            element.innerHTML = '';
+            element.style.borderRight = '2px solid #6366f1';
+            
+            let index = 0;
+            const typingSpeed = 40;
+            
+            function typeChar() {
+                if (index < text.length) {
+                    if (text.charAt(index) === '\n') {
+                        element.innerHTML += '<br>';
+                    } else {
+                        element.innerHTML += text.charAt(index);
+                    }
+                    index++;
+                    setTimeout(typeChar, typingSpeed);
+                } else {
+                    element.style.borderRight = 'none';
+                    isTyping = false;
+                    if (callback) callback();
+                }
+            }
+            
+            typeChar();
+        }
+
+        let isTyping = false;
+
+        function expandChatPanel() {
+            const chatPanel = document.querySelector('.ai-chat-panel');
+            const reportContent = document.getElementById('reportContent');
+            const reportTableBody = document.getElementById('reportTableBody');
+            
+            // Expand the panel
+            chatPanel.classList.add('expanded');
+            
+            // Show report content
+            setTimeout(() => {
+                reportContent.style.display = 'block';
+                
+                // Populate the report table gradually
+                populateReportTable(reportTableBody);
+            }, 500);
+        }
+
+        function collapseChat() {
+            const chatPanel = document.querySelector('.ai-chat-panel');
+            const reportContent = document.getElementById('reportContent');
+            
+            chatPanel.classList.remove('expanded');
+            reportContent.style.display = 'none';
+        }
+
+        function populateReportTable() {
+            const tableBody = document.getElementById('reportTableBody');
+            tableBody.innerHTML = '';
+            
+            let currentRow = 0;
+            const addReportRow = () => {
+                if (currentRow < brokenData.length) {
+                    const data = brokenData[currentRow];
+                    const row = document.createElement('tr');
+                    row.classList.add('slide-in');
+                    
+                    row.innerHTML = `
+                        <td>${data.name}</td>
+                        <td><span class="broken-data">${data.renewal}</span></td>
+                        <td><span class="confused-data">${data.usage}</span></td>
+                        <td><span class="broken-data">${data.churn}</span></td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                    currentRow++;
+                    
+                    setTimeout(addReportRow, 400);
+                } else {
+                    // Report complete - show final message
+                    setTimeout(() => {
+                        const finalMessage = document.createElement('div');
+                        finalMessage.style.cssText = 'margin-top: 20px; padding: 16px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; font-size: 13px; color: #0369a1;';
+                        finalMessage.innerHTML = '<strong>🎉 Field Retrieval Complete!</strong><br>Located 15 customer records with static field references. No contextual analysis possible - agent limited to database field mapping. For actionable insights connecting usage patterns to churn risk, a different architectural approach would be required.';
+                        document.getElementById('reportContent').appendChild(finalMessage);
+                    }, 1000);
+                }
+            };
+            
+            addReportRow();
+        }
+
+        function collapseChat() {
+            const chatPanel = document.querySelector('.ai-chat-panel');
+            const reportContent = document.getElementById('reportContent');
+            
+            chatPanel.classList.remove('expanded');
+            reportContent.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "version": "2.0",
+  "industry": "ecommerce",
+  "context": {
+    "team_size": 15,
+    "tools": ["Shopify", "Klaviyo", "Google Analytics", "Zendesk"],
+    "kpis": ["Conversion Rate", "Customer LTV", "Cart Abandonment", "Support Response Time"],
+    "constraints": ["Must integrate with existing Shopify setup", "Budget under $50k"]
+  },
+  "fit_score": {
+    "data_readiness": 8,
+    "governance_complexity": 6,
+    "workflow_repeatability": 9,
+    "connector_availability": 9,
+    "change_appetite": 7,
+    "industry_factor": 1.2,
+    "rationale": {
+      "data_readiness": "Strong e-commerce data streams from Shopify and analytics",
+      "governance_complexity": "Moderate complexity with customer data privacy requirements",
+      "workflow_repeatability": "Highly repeatable order processing and customer service workflows",
+      "connector_availability": "Excellent connector ecosystem for e-commerce tools",
+      "change_appetite": "Good willingness to adopt new tools for growth"
+    },
+    "overall": 8.4
+  },
+  "roi": {
+    "team_size": 15,
+    "avg_hourly_rate": 75,
+    "hours_saved_per_week": 25,
+    "implementation_cost": 45000,
+    "monthly_stack_savings": 2400,
+    "annual_stack_savings": 28800,
+    "annual_savings": 126300,
+    "payback_months": 4.3,
+    "efficiency_gain_pct": 22
+  },
+  "databases": [
+    {
+      "key": "customers",
+      "title": "Customer Database",
+      "description": "Centralized customer profiles with purchase history and segmentation",
+      "properties": [
+        {"name": "Customer Name", "type": "title"},
+        {"name": "Email", "type": "rich_text"},
+        {"name": "Segment", "type": "select", "options": ["VIP", "Regular", "New", "At Risk"]},
+        {"name": "Total Orders", "type": "number"},
+        {"name": "Lifetime Value", "type": "number"},
+        {"name": "Last Purchase", "type": "date"},
+        {"name": "Support Tickets", "type": "relation", "relation": {"database": "support", "synced": true}}
+      ],
+      "default_views": [
+        {"name": "All Customers", "filter": {}},
+        {"name": "VIP Customers", "filter": {"Segment": "VIP"}},
+        {"name": "At Risk", "filter": {"Segment": "At Risk"}}
+      ]
+    }
+  ],
+  "workflows": [
+    {"name": "Order Processing", "steps": ["Order received", "Inventory check", "Payment processing", "Fulfillment", "Shipping notification"]},
+    {"name": "Customer Support", "steps": ["Ticket creation", "Initial response", "Investigation", "Resolution", "Follow-up"]}
+  ],
+  "governance": {
+    "roles": ["Admin", "Sales Manager", "Support Agent", "Analyst"],
+    "rules": ["Customer data access on need-to-know basis", "Monthly data quality reviews", "Automated backup daily"]
+  },
+  "portals": [
+    {"name": "Customer Dashboard", "audience": "client"},
+    {"name": "Internal Analytics", "audience": "internal"}
+  ],
+  "risks": [
+    {"risk": "Data migration complexity", "mitigation": "Phased migration with thorough testing"},
+    {"risk": "User adoption resistance", "mitigation": "Comprehensive training and change management"}
+  ],
+  "exports": {
+    "sow_markdown": "# Statement of Work - E-commerce Notion Implementation\n\n## Project Overview\nImplement comprehensive Notion workspace for e-commerce operations...",
+    "pilot_scorecard_markdown": "# Pilot Scorecard - E-commerce Implementation\n\n## Success Metrics\n- Data accuracy: >95%\n- User adoption: >80%...",
+    "notion_template_json": {"template": "ecommerce_starter"}
+  }
+}

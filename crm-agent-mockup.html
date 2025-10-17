@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise CRM - AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main CRM Layout */
+        .crm-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Side Navigation */
+        .sidebar {
+            width: 200px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #34495e;
+        }
+
+        .nav-item.active {
+            background-color: #3498db;
+            border-left-color: #2980b9;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header Bar */
+        .header-bar {
+            background-color: #ecf0f1;
+            padding: 15px 20px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: normal;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Agent Card */
+        .agent-card {
+            background: white;
+            border: 2px solid #95a5a6;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .agent-header {
+            background-color: #ecf0f1;
+            padding: 12px 15px;
+            border-bottom: 1px solid #bdc3c7;
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .agent-query {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .query-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .query-text {
+            font-size: 14px;
+            color: #2c3e50;
+            font-style: italic;
+            padding: 8px;
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 15px;
+        }
+
+        .results-header {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        /* Broken Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 1px solid #dee2e6;
+        }
+
+        .results-table th {
+            background-color: #e9ecef;
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid #adb5bd;
+            font-weight: normal;
+            color: #495057;
+        }
+
+        .results-table td {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        /* Broken data styling */
+        .broken-data {
+            color: #dc3545;
+            font-style: italic;
+        }
+
+        .missing-data {
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .confused-data {
+            color: #fd7e14;
+        }
+
+        /* Footer Warning */
+        .results-footer {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        /* AI Assistant Bubble */
+        .ai-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .ai-bubble::before {
+            content: '🤖';
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .ai-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-top-color: #007bff;
+        }
+
+        /* Loading animation for extra frustration */
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body>
+    <div class="crm-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>EnterpriseCRM</h3>
+            </div>
+            <div class="nav-item">Dashboard</div>
+            <div class="nav-item">Contacts</div>
+            <div class="nav-item active">Customers</div>
+            <div class="nav-item">Opportunities</div>
+            <div class="nav-item">Reports</div>
+            <div class="nav-item">Settings</div>
+            <div class="nav-item">AI Assistant</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Bar -->
+            <div class="header-bar">
+                <div class="header-title">Customer Management - AI Assistant</div>
+                <div class="user-info">Welcome back, John Smith | Last login: 2 hours ago</div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Agent Card -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        🤖 AI Assistant - Customer Analysis
+                    </div>
+                    
+                    <div class="agent-query">
+                        <div class="query-label">Your Query:</div>
+                        <div class="query-text">
+                            Show me all my customers up for renewal over the next 6 months that have low usage and are potentially churn risks
+                        </div>
+                    </div>
+
+                    <div class="results-section">
+                        <div class="results-header">
+                            <strong>Results:</strong> Found 3 records <span class="loading-dots"></span>
+                        </div>
+
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Renewal Date</th>
+                                    <th>Usage %</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Acme Corp</td>
+                                    <td class="broken-data">field_10982_rvnl_dt</td>
+                                    <td class="confused-data">Low?</td>
+                                    <td class="missing-data">N/A</td>
+                                </tr>
+                                <tr>
+                                    <td>Globex LLC</td>
+                                    <td class="broken-data">Not Synced</td>
+                                    <td class="confused-data">¯\_(ツ)_/¯</td>
+                                    <td class="missing-data">Unknown</td>
+                                </tr>
+                                <tr>
+                                    <td>Initech</td>
+                                    <td class="broken-data">See Attachment PDF</td>
+                                    <td class="missing-data">—</td>
+                                    <td class="missing-data">—</td>
+                                </tr>
+                                <tr>
+                                    <td>Wayne Enterprises</td>
+                                    <td class="broken-data">ERROR_NULL_POINTER</td>
+                                    <td class="confused-data">Maybe 42%?</td>
+                                    <td class="broken-data">SYSTEM_TIMEOUT</td>
+                                </tr>
+                                <tr>
+                                    <td>Stark Industries</td>
+                                    <td class="broken-data">LEGACY_SYSTEM_REF_001</td>
+                                    <td class="missing-data">Contact Admin</td>
+                                    <td class="confused-data">High/Low/Medium</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="results-footer">
+                            ⚠️ <strong>Warning:</strong> The following columns could not be retrieved: Renewal Date, Usage %. 
+                            Data may be incomplete due to system integration issues. Please contact your system administrator 
+                            or check the legacy CRM module for complete information.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional placeholder content -->
+                <div style="background: white; border: 1px solid #dee2e6; padding: 20px; margin-top: 20px;">
+                    <h4 style="color: #6c757d; margin-bottom: 10px;">Additional Tools</h4>
+                    <div style="display: flex; gap: 10px;">
+                        <button style="padding: 8px 16px; background: #6c757d; color: white; border: none; cursor: not-allowed;">Export Data</button>
+                        <button style="padding: 8px 16px; background: #6c757d; color: white; border: none; cursor: not-allowed;">Generate Report</button>
+                        <button style="padding: 8px 16px; background: #6c757d; color: white; border: none; cursor: not-allowed;">Schedule Follow-up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Bubble -->
+    <div class="ai-bubble">
+        I've returned 0.1% of the data you asked for. The rest is in another module! Would you like me to create a ticket for IT support? 😅
+    </div>
+
+    <script>
+        // Add some dynamic "loading" behavior for extra frustration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading delays
+            setTimeout(function() {
+                const loadingElement = document.querySelector('.loading-dots');
+                if (loadingElement) {
+                    loadingElement.textContent = ' (Processing complete)';
+                }
+            }, 3000);
+
+            // Make the AI bubble occasionally change message
+            const messages = [
+                "I've returned 0.1% of the data you asked for. The rest is in another module! Would you like me to create a ticket for IT support? 😅",
+                "Oops! It looks like some fields are missing. Have you tried turning the CRM off and on again? 🔄",
+                "Good news! I found your data. Bad news: it's in 17 different systems. Should I start a 3-hour sync process? ⏰",
+                "Your request has been processed successfully*! (*Terms and conditions apply. Results may vary. Contact administrator for details.) 📋"
+            ];
+
+            let messageIndex = 0;
+            setInterval(function() {
+                const bubble = document.querySelector('.ai-bubble');
+                if (bubble) {
+                    messageIndex = (messageIndex + 1) % messages.length;
+                    bubble.innerHTML = '🤖 ' + messages[messageIndex];
+                }
+            }, 8000);
+
+            // Add click handlers to simulate broken functionality
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('Feature not available. Please upgrade to Enterprise Plus or contact your system administrator.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

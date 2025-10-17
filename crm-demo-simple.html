@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise CRM AI Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .demo-banner {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 24px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .chat-area {
+            padding: 32px;
+            min-height: 400px;
+        }
+        
+        .message {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-message {
+            align-items: flex-end;
+        }
+        
+        .ai-message {
+            align-items: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .user-message .message-bubble {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+        
+        .ai-message .message-bubble {
+            background: #f8fafc;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 6px;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .results-table th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .results-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+        }
+        
+        .results-table td:first-child {
+            font-family: inherit;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .broken-data {
+            color: #dc2626;
+            background: #fef2f2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+            font-style: italic;
+        }
+        
+        .confused-data {
+            color: #d97706;
+            background: #fffbeb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fed7aa;
+        }
+        
+        .missing-data {
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .error-box {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            color: #92400e;
+            font-size: 14px;
+        }
+        
+        .input-area {
+            background: #f8fafc;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .input-box {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .input-field {
+            flex: 1;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 15px;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        🚨 ENTERPRISE CRM AI DEMO - Watch Data Integration Failures In Real Time
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤖 SalesFlow AI Assistant</h1>
+            <p>Enterprise-Grade Customer Intelligence Platform</p>
+        </div>
+
+        <div class="chat-area" id="chat-area">
+            <div class="message ai-message">
+                <div class="message-bubble">
+                    👋 Hello! I'm your AI sales assistant. I can analyze customer data, predict churn, and identify opportunities. What would you like to know?
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-box">
+                <input type="text" class="input-field" id="user-input" placeholder="Ask about your customers..." readonly>
+                <button class="send-btn" onclick="startDemo()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let demoStarted = false;
+        
+        function addMessage(content, isUser = false) {
+            const chatArea = document.getElementById('chat-area');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            if (typeof content === 'string') {
+                bubble.innerHTML = content;
+            } else {
+                bubble.appendChild(content);
+            }
+            
+            messageDiv.appendChild(bubble);
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function createBrokenTable() {
+            const table = document.createElement('table');
+            table.className = 'results-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Contract Renewal</th>
+                        <th>Usage Analytics</th>
+                        <th>Churn Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Acme Corporation</td>
+                        <td><span class="broken-data">cstm_field_10982_rvnl_dt_v2</span></td>
+                        <td><span class="confused-data">usage_calc_err: NaN%</span></td>
+                        <td><span class="missing-data">null_reference</span></td>
+                    </tr>
+                    <tr>
+                        <td>Globodyne Systems</td>
+                        <td><span class="broken-data">legacy_db_sync_failed</span></td>
+                        <td><span class="confused-data">¯\\_(ツ)_/¯ maybe_low?</span></td>
+                        <td><span class="missing-data">data_not_migrated</span></td>
+                    </tr>
+                    <tr>
+                        <td>Wayne Enterprises</td>
+                        <td><span class="broken-data">ERROR_TABLE_LOCK_TIMEOUT</span></td>
+                        <td><span class="confused-data">somewhere_between_0_100</span></td>
+                        <td><span class="broken-data">ML_MODEL_CRASHED</span></td>
+                    </tr>
+                    <tr>
+                        <td>Stark Industries</td>
+                        <td><span class="broken-data">ref_id_legacy_crm_v1_backup</span></td>
+                        <td><span class="missing-data">ask_sarah_from_IT</span></td>
+                        <td><span class="confused-data">high_medium_or_low_idk</span></td>
+                    </tr>
+                </tbody>
+            `;
+            
+            const container = document.createElement('div');
+            container.appendChild(table);
+            
+            const errorBox = document.createElement('div');
+            errorBox.className = 'error-box';
+            errorBox.innerHTML = `
+                <strong>⚠️ Data Integration Issues:</strong><br>
+                Unable to retrieve Contract Renewal (legacy field mapping), Usage Analytics (database timeout), 
+                and Churn Probability (ML model offline). Consider upgrading to Enterprise++ plan for "better" data consistency.
+            `;
+            container.appendChild(errorBox);
+            
+            return container;
+        }
+        
+        function startDemo() {
+            if (demoStarted) return;
+            demoStarted = true;
+            
+            const input = document.getElementById('user-input');
+            const query = "Show me all my customers up for renewal over the next 6 months that have low usage and are potentially churn risks";
+            
+            // Type out the query
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                input.value += query[i];
+                i++;
+                if (i >= query.length) {
+                    clearInterval(typeInterval);
+                    
+                    setTimeout(() => {
+                        addMessage(query, true);
+                        input.value = '';
+                        
+                        setTimeout(() => {
+                            addMessage("Perfect! Let me analyze your customer data and identify renewal risks. Searching across all integrated systems...");
+                            
+                            setTimeout(() => {
+                                const results = createBrokenTable();
+                                addMessage(results);
+                                
+                                setTimeout(() => {
+                                    addMessage("Great news! I successfully retrieved 0.02% of your requested data! 🎉<br><br>The remaining 99.98% is currently distributed across 47 different legacy systems that haven't synchronized since the Y2K update. Would you like me to create a Jira ticket? It should only take 6-8 months to resolve! 🎫");
+                                }, 2000);
+                            }, 3000);
+                        }, 1000);
+                    }, 1000);
+                }
+            }, 50);
+        }
+        
+        // Auto-start demo
+        setTimeout(startDemo, 2000);
+        
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startDemo();
+            }
+        });
+    </script>
+</body>
+</html>

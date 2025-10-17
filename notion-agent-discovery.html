@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion Agent Discovery Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafafa;
+            padding: 20px;
+        }
+
+        .agent-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .agent-header {
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .agent-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .agent-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .avatar.bot {
+            background: #000;
+            color: white;
+        }
+
+        .avatar.user {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message.user .message-content {
+            background: #000;
+            color: white;
+        }
+
+        /* Vertical Cards */
+        .vertical-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .vertical-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .vertical-card:hover {
+            background: #000;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .vertical-card .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .vertical-card .title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Opportunity Details */
+        .opportunity-detail {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .opportunity-title {
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 8px;
+        }
+
+        .opportunity-description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        .agent-capabilities {
+            background: #f0fdf4;
+            border: 1px solid #16a34a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .agent-capabilities-title {
+            font-weight: 600;
+            color: #166534;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .agent-capabilities-list {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        /* Input Area */
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input-field:focus {
+            border-color: #000;
+        }
+
+        .send-button {
+            padding: 12px 20px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .send-button:hover {
+            background: #333;
+        }
+
+        .send-button:disabled {
+            background: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action:hover {
+            background: #000;
+            color: white;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .vertical-cards { grid-template-columns: 1fr 1fr; }
+            .message-content { max-width: 85%; }
+            .quick-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="agent-container">
+        <div class="agent-header">
+            <div class="agent-title">🤖 Notion Agent Discovery</div>
+            <div class="agent-subtitle">Explore automation opportunities for agencies across verticals</div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <div class="chat-input">
+                <div class="quick-actions" id="quickActions">
+                    <div class="quick-action" onclick="sendQuickMessage('What industries do you cover?')">What industries do you cover?</div>
+                    <div class="quick-action" onclick="sendQuickMessage('How do agents help?')">How do agents help?</div>
+                    <div class="quick-action" onclick="sendQuickMessage('Show me ecommerce opportunities')">Ecommerce use cases</div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    Agent is thinking
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <input type="text" class="chat-input-field" id="chatInput" placeholder="Ask me about Notion automation opportunities..." onkeypress="handleKeyPress(event)">
+                    <button class="send-button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const verticals = {
+            ecommerce: {
+                icon: '🛒',
+                title: 'Ecommerce',
+                opportunity: 'Unify Shopify, Recharge, Attentive or Klaviyo, Gorgias, Loop, and 3PL data into one GTM hub. Link merchandising calendars, campaigns, CX tickets, and supplier portals in a single workspace.',
+                agents: 'Forecast stockouts, auto generate campaign retros, surface SKU anomalies, draft supplier comms.'
+            },
+            b2bsaas: {
+                icon: '💼',
+                title: 'B2B SaaS',
+                opportunity: 'Build operating systems that unify Jira or Linear, Productboard, Salesforce or HubSpot, Gong, and feedback tools. Map onboarding, adoption, roadmap progress, and customer health in one workspace.',
+                agents: 'Generate onboarding health scores, recommend next steps, summarize feedback into themes, flag churn risk early.'
+            },
+            legal: {
+                icon: '⚖️',
+                title: 'Legal & Professional',
+                opportunity: 'Connect Clio, QuickBooks or Xero, DocuSign, and precedent libraries into Notion. Centralize matters, filings, billing, and compliance.',
+                agents: 'Draft filings, check citations, flag compliance gaps, generate client ready summaries and billing statements.'
+            },
+            realestate: {
+                icon: '🏠',
+                title: 'Real Estate',
+                opportunity: 'Build broker workspaces that connect MLS feeds, Dotloop, DocuSign, and commission trackers. Link listings, deals, contracts, and commissions in one CRM.',
+                agents: 'Enrich buyer and seller records, generate showing recaps, forecast commissions, flag stalled deals.'
+            },
+            manufacturing: {
+                icon: '🏭',
+                title: 'Manufacturing & Ops',
+                opportunity: 'Consolidate ERP exports, QA logs, supplier portals, and SOPs into Notion. Link production dashboards, QA checklists, and supply chain trackers.',
+                agents: 'Monitor production inputs, detect anomalies, generate QA reports, simulate supplier or logistics adjustments.'
+            }
+        };
+
+        let messageId = 0;
+
+        function addMessage(content, isUser = false, isHTML = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `
+                <div class="avatar ${isUser ? 'user' : 'bot'}">${isUser ? 'U' : '🤖'}</div>
+                <div class="message-content">${isHTML ? content : escapeHtml(content)}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return messageDiv;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function createVerticalCards() {
+            const cards = Object.entries(verticals).map(([key, vertical]) => 
+                `<div class="vertical-card" onclick="exploreVertical('${key}')">
+                    <div class="icon">${vertical.icon}</div>
+                    <div class="title">${vertical.title}</div>
+                </div>`
+            ).join('');
+
+            return `<div class="vertical-cards">${cards}</div>`;
+        }
+
+        function createOpportunityDetail(vertical) {
+            return `
+                <div class="opportunity-detail">
+                    <div class="opportunity-title">${vertical.icon} ${vertical.title} Opportunities</div>
+                    <div class="opportunity-description">${vertical.opportunity}</div>
+                    <div class="agent-capabilities">
+                        <div class="agent-capabilities-title">🤖 What Agents Can Do</div>
+                        <div class="agent-capabilities-list">${vertical.agents}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exploreVertical(verticalKey) {
+            const vertical = verticals[verticalKey];
+            addMessage(`Tell me about ${vertical.title} opportunities`, true);
+            
+            setTimeout(() => {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const response = `Here's how Notion + AI agents can transform ${vertical.title}:` + createOpportunityDetail(vertical);
+                    addMessage(response, false, true);
+                    
+                    setTimeout(() => {
+                        addMessage("Would you like to explore another vertical or learn more about implementation?", false);
+                        updateQuickActions(['Show all verticals', 'How do I get started?', 'What tools integrate?']);
+                    }, 1000);
+                }, 1500);
+            }, 500);
+        }
+
+        function updateQuickActions(actions) {
+            const quickActionsContainer = document.getElementById('quickActions');
+            quickActionsContainer.innerHTML = actions.map(action => 
+                `<div class="quick-action" onclick="sendQuickMessage('${action}')">${action}</div>`
+            ).join('');
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            // Process the message
+            setTimeout(() => {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    processMessage(message);
+                }, Math.random() * 1000 + 1000);
+            }, 300);
+        }
+
+        function processMessage(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('industries') || lower.includes('verticals') || lower.includes('what') && lower.includes('cover')) {
+                const response = "I help agencies discover automation opportunities across 5 key verticals:" + createVerticalCards() + "Click any vertical above to explore specific opportunities!";
+                addMessage(response, false, true);
+                updateQuickActions(['Tell me about agents', 'How much does this cost?', 'Show implementation timeline']);
+                
+            } else if (lower.includes('ecommerce') || lower.includes('shopify') || lower.includes('e-commerce')) {
+                exploreVertical('ecommerce');
+                
+            } else if (lower.includes('b2b') || lower.includes('saas') || lower.includes('software')) {
+                exploreVertical('b2bsaas');
+                
+            } else if (lower.includes('legal') || lower.includes('law') || lower.includes('professional')) {
+                exploreVertical('legal');
+                
+            } else if (lower.includes('real estate') || lower.includes('broker') || lower.includes('mls')) {
+                exploreVertical('realestate');
+                
+            } else if (lower.includes('manufacturing') || lower.includes('ops') || lower.includes('production')) {
+                exploreVertical('manufacturing');
+                
+            } else if (lower.includes('agents') || lower.includes('ai') || lower.includes('help')) {
+                addMessage("AI agents in Notion act as intelligent assistants that can:\n\n• 🔍 Monitor data across all your integrated tools\n• 📊 Generate reports and insights automatically\n• ⚠️ Flag issues and anomalies before they become problems\n• 📝 Draft documents, summaries, and communications\n• 🎯 Recommend next steps based on patterns\n\nThey work 24/7 to keep your operations running smoothly while you focus on strategy and growth.", false);
+                updateQuickActions(['Show all verticals', 'What tools integrate?', 'Pricing information']);
+                
+            } else if (lower.includes('cost') || lower.includes('price') || lower.includes('pricing')) {
+                addMessage("Investment typically ranges based on complexity:\n\n💡 **Starter Package** (1-2 integrations): $15k-25k setup + $3k/month\n🚀 **Growth Package** (3-5 integrations): $25k-45k setup + $8k/month\n⭐ **Enterprise Package** (Full ecosystem): $45k-75k setup + $15k/month\n\nROI typically achieved within 3-6 months through operational efficiency and reduced manual work.", false);
+                updateQuickActions(['Show implementation timeline', 'What tools integrate?', 'Book a consultation']);
+                
+            } else if (lower.includes('tools') || lower.includes('integrate') || lower.includes('connect')) {
+                addMessage("Popular integrations include:\n\n🛒 **Ecommerce**: Shopify, Klaviyo, Gorgias, Recharge, Loop\n💼 **SaaS**: Salesforce, HubSpot, Jira, Linear, Productboard\n⚖️ **Legal**: Clio, DocuSign, QuickBooks, Xero\n🏠 **Real Estate**: MLS, Dotloop, commission trackers\n🏭 **Manufacturing**: ERP systems, QA tools, supplier portals\n\nPlus 200+ other tools via API and webhook connections.", false);
+                updateQuickActions(['Show all verticals', 'Implementation timeline', 'Book a consultation']);
+                
+            } else if (lower.includes('started') || lower.includes('timeline') || lower.includes('implementation')) {
+                addMessage("**Typical Implementation Timeline:**\n\n📋 **Week 1-2**: Discovery & mapping current systems\n🔧 **Week 3-6**: Build core workspace & initial integrations\n🤖 **Week 7-10**: Configure AI agents & automation rules\n📊 **Week 11-12**: Testing, training & launch\n\n**Ongoing**: Monthly optimization & new agent development\n\nMost clients see immediate value by Week 6!", false);
+                updateQuickActions(['What tools integrate?', 'Pricing information', 'Book a consultation']);
+                
+            } else if (lower.includes('book') || lower.includes('consultation') || lower.includes('demo') || lower.includes('contact')) {
+                addMessage("Ready to explore how Notion + AI agents can transform your operations?\n\n📅 **Next Steps:**\n• Book a 30-minute discovery call\n• We'll audit your current tool stack\n• Identify 3-5 high-impact automation opportunities\n• Build a custom ROI projection\n\n🔗 **Schedule here**: [calendly.com/notion-agency-discovery](https://calendly.com/notion-agency-discovery)\n\nOr email: oliver@homeops.ai", false);
+                updateQuickActions(['Show all verticals', 'What industries do you cover?', 'How do agents help?']);
+                
+            } else {
+                // Default response
+                addMessage("I can help you discover automation opportunities across different verticals! Try asking about:\n\n• Specific industries (ecommerce, B2B SaaS, legal, real estate, manufacturing)\n• How AI agents work\n• Integration capabilities\n• Pricing and implementation\n\nWhat would you like to explore?", false);
+                updateQuickActions(['Show all verticals', 'How do agents help?', 'What tools integrate?']);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initialize the chat
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                addMessage("👋 Hi! I'm your Notion Agent Discovery assistant. I help agencies and consultants identify automation opportunities across different verticals.\n\nReady to explore how Notion + AI agents can transform operations for your clients?", false);
+                
+                setTimeout(() => {
+                    const response = "Here are the verticals I can help you explore:" + createVerticalCards();
+                    addMessage(response, false, true);
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

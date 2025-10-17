@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynergyFlow CRM - Interactive AI Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .crm-container {
+            display: flex;
+            height: calc(100vh - 48px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-section {
+            padding: 16px 0;
+        }
+
+        .nav-title {
+            padding: 8px 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: white;
+            border-right: 3px solid #3b82f6;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        .header-bar {
+            background-color: #ffffff;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 300px;
+            background-color: #f8fafc;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            background-color: #f8fafc;
+        }
+
+        .agent-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .agent-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 20px 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agent-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .agent-status {
+            margin-left: auto;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .agent-query {
+            padding: 24px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .query-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .query-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .query-input {
+            flex: 1;
+            min-height: 80px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .query-submit {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .query-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .demo-suggestion {
+            padding: 16px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .demo-suggestion span {
+            color: #0369a1;
+            font-size: 14px;
+        }
+
+        .use-suggestion {
+            padding: 8px 16px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .results-section {
+            padding: 24px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: #6b7280;
+            margin-left: 8px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            border-top-color: #6366f1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .typed-query {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table th {
+            background-color: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .results-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #6b7280;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 13px;
+        }
+
+        .results-table tr {
+            background-color: white;
+        }
+
+        .results-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .broken-data {
+            color: #ef4444;
+            font-style: italic;
+            background-color: #fef2f2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+        }
+
+        .missing-data {
+            color: #9ca3af;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .confused-data {
+            color: #f59e0b;
+            background-color: #fffbeb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fed7aa;
+        }
+
+        .results-footer {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-chat-panel {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 380px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .ai-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .ai-chat-body {
+            padding: 20px;
+            height: 180px;
+            overflow-y: auto;
+            min-height: 120px;
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 12px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .crm-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 48px);
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+                min-height: 60vh;
+            }
+            
+            .content-area {
+                padding: 12px;
+            }
+            
+            .ai-chat-panel {
+                width: calc(100vw - 32px);
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+            }
+            
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        SynergyFlow CRM - Interactive AI Customer Intelligence Demo
+    </div>
+
+    <div class="crm-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">SF</div>
+                    <div class="logo-text">SynergyFlow</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Main</div>
+                <div class="nav-item">
+                    <span>📊</span>
+                    Dashboard
+                </div>
+                <div class="nav-item active">
+                    <span>👥</span>
+                    Customers
+                </div>
+                <div class="nav-item">
+                    <span>🎯</span>
+                    Deals
+                </div>
+                <div class="nav-item">
+                    <span>📞</span>
+                    Contacts
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Tools</div>
+                <div class="nav-item">
+                    <span>📈</span>
+                    Analytics
+                </div>
+                <div class="nav-item">
+                    <span>⚡</span>
+                    Automation
+                </div>
+                <div class="nav-item">
+                    <span>🤖</span>
+                    AI Assistant
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header-bar">
+                <div class="header-left">
+                    <div class="header-title">Customers</div>
+                    <div class="breadcrumb">
+                        <span>SynergyFlow</span>
+                        <span>/</span>
+                        <span>Customer Intelligence</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search customers, deals, contacts..." disabled>
+                    </div>
+                    <button class="header-btn">+ New Customer</button>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🤖</div>
+                        <div class="agent-title">AI Customer Intelligence</div>
+                        <div class="agent-status">Ready</div>
+                    </div>
+                    
+                    <div class="agent-query">
+                        <div class="query-label">Ask the AI Assistant:</div>
+                        <div class="query-input-container">
+                            <textarea class="query-input" placeholder="Type your customer intelligence question..." id="queryInput"></textarea>
+                            <button class="query-submit" onclick="submitQuery()">Ask AI</button>
+                        </div>
+                        <div class="demo-suggestion">
+                            <span>💡 Try asking: "Which customers are at risk of churning this quarter that have low usage and a renewal date in the next five months?"</span>
+                            <button class="use-suggestion" onclick="useSuggestion()">Use this question</button>
+                        </div>
+                    </div>
+
+                    <div class="results-section" id="resultsSection" style="display: none;">
+                        <div class="results-header">
+                            <div>
+                                <span class="results-title">AI Processing...</span>
+                                <span class="results-count" id="resultsCount"></span>
+                            </div>
+                            <div class="loading-spinner" id="loadingSpinner"></div>
+                        </div>
+
+                        <div class="typed-query" id="typedQuery" style="display: none;">
+                            <strong>Your Question:</strong> <span id="displayQuery"></span>
+                        </div>
+
+                        <table class="results-table" id="resultsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Contract Renewal</th>
+                                    <th>Usage Analytics</th>
+                                    <th>Churn Probability</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Results populated by JavaScript -->
+                            </tbody>
+                        </table>
+
+                        <div class="results-footer" id="resultsFooter" style="display: none;">
+                            <span>⚠️</span>
+                            <div>
+                                <strong>Results Retrieved:</strong> Contract End Date, Usage Metric, Company Name, and Renewal Owner fields located. 
+                                Data integration limitations prevent contextual analysis or actionable insights. 
+                                Legacy system architecture restricts agent capabilities to static field retrieval.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <div class="ai-avatar">🤖</div>
+            <div class="ai-info">
+                <h4>SynergyFlow Assistant</h4>
+                <div class="ai-status">Online • Powered by AI</div>
+            </div>
+        </div>
+        <div class="ai-chat-body">
+            <div class="ai-message">
+                Hi! I'm your AI customer intelligence assistant. Ask me about your customers and I'll retrieve the relevant data fields for you.
+            </div>
+            <div class="typing-indicator">
+                <span>AI is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const suggestionText = "Which customers are at risk of churning this quarter that have low usage and a renewal date in the next five months?";
+        
+        const brokenData = [
+            {
+                name: "Acme Corporation",
+                renewal: "cstm_field_10982_rvnl_dt_v2",
+                usage: "usage_calc_err: NaN%",
+                churn: "null_reference"
+            },
+            {
+                name: "Globodyne Systems", 
+                renewal: "legacy_db_sync_failed",
+                usage: "¯\\_(ツ)_/¯ maybe_low?",
+                churn: "data_not_migrated"
+            },
+            {
+                name: "Initech Solutions",
+                renewal: "see_salesforce_backup.xlsx",
+                usage: "contact_billing_dept",
+                churn: "tbd_pending_review"
+            },
+            {
+                name: "Wayne Enterprises",
+                renewal: "ERROR_TABLE_LOCK_TIMEOUT",
+                usage: "somewhere_between_0_100",
+                churn: "ML_MODEL_CRASHED"
+            },
+            {
+                name: "Stark Industries",
+                renewal: "ref_id_legacy_crm_v1_backup",
+                usage: "ask_sarah_from_IT",
+                churn: "high_medium_or_low_idk"
+            }
+        ];
+
+        function useSuggestion() {
+            document.getElementById('queryInput').value = suggestionText;
+        }
+
+        function submitQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) return;
+
+            // Reset table
+            document.getElementById('tableBody').innerHTML = '';
+
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('typedQuery').style.display = 'block';
+            document.getElementById('displayQuery').textContent = query;
+            document.getElementById('resultsTable').style.display = 'none';
+            document.getElementById('resultsFooter').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'inline-block';
+
+            // Update AI assistant
+            document.querySelector('.ai-message').textContent = "Processing your customer intelligence query...";
+            document.querySelector('.agent-status').textContent = 'Processing';
+
+            // Simulate processing
+            setTimeout(() => {
+                document.getElementById('resultsCount').textContent = 'Found ' + brokenData.length + ' records';
+                document.querySelector('.results-title').textContent = 'Query Results';
+                
+                // Populate table gradually
+                populateTableGradually();
+            }, 2000);
+        }
+
+        function populateTableGradually() {
+            const tableBody = document.getElementById('tableBody');
+            const table = document.getElementById('resultsTable');
+            const footer = document.getElementById('resultsFooter');
+            
+            table.style.display = 'table';
+            
+            brokenData.forEach((row, index) => {
+                setTimeout(() => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.name}</td>
+                        <td class="broken-data">${row.renewal}</td>
+                        <td class="confused-data">${row.usage}</td>
+                        <td class="missing-data">${row.churn}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                    
+                    if (index === brokenData.length - 1) {
+                        setTimeout(() => {
+                            footer.style.display = 'flex';
+                            document.getElementById('loadingSpinner').style.display = 'none';
+                            document.querySelector('.agent-status').textContent = 'Complete';
+                            
+                            // Update AI assistant with sarcastic message
+                            document.querySelector('.ai-message').textContent = "Perfect! I found all your customers at risk of churning. They're displayed as cryptic error codes and database references. You're welcome! 🎫";
+                        }, 500);
+                    }
+                }, index * 400);
+            });
+        }
+
+        // Disable search for demo
+        document.querySelector('.search-input').addEventListener('focus', function() {
+            this.blur();
+            document.querySelector('.ai-message').textContent = "Search disabled. Please use the AI assistant above for customer queries.";
+        });
+    </script>
+</body>
+</html>

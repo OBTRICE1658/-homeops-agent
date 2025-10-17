@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy CRM - AI Agent Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Notion-friendly container */
+        .notion-embed-container {
+            max-width: 100%;
+            width: 100%;
+            min-height: 800px;
+            height: 800px;
+            background: #ffffff;
+            border-radius: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .demo-header::after {
+            content: "LEGACY SYSTEM";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .demo-header::before {
+            content: "";
+            position: absolute;
+            right: 110px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            background-image: url("data:image/svg+xml,%3csvg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'/%3e%3cpath d='M12 9v4'/%3e%3cpath d='m12 17 .01 0'/%3e%3c/svg%3e");
+            background-size: contain;
+        }
+
+        /* Main CRM Layout - Notion-friendly */
+        .crm-container {
+            display: flex;
+            min-height: 750px;
+            max-height: 750px;
+            width: 100%;
+        }
+
+        /* Side Navigation */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            border-right: 3px solid #dc2626;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .legacy-badge {
+            font-size: 10px;
+            background: rgba(220, 38, 38, 0.3);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .nav-section {
+            padding: 16px 0;
+        }
+
+        .nav-title {
+            padding: 8px 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: rgba(220, 38, 38, 0.2);
+            color: white;
+            border-right: 3px solid #dc2626;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        /* Top Header Bar */
+        .header-bar {
+            background-color: #ffffff;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 300px;
+            background-color: #f8fafc;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            width: 16px;
+            height: 16px;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-btn:hover {
+            background: #b91c1c;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            background-color: #f8fafc;
+        }
+
+        /* Agent Card */
+        .agent-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .agent-header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 20px 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .agent-header::after {
+            content: "LEGACY DATA RETRIEVAL";
+            position: absolute;
+            top: 8px;
+            right: 24px;
+            font-size: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .agent-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .agent-status {
+            margin-left: auto;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .agent-query {
+            padding: 24px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .query-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .query-text {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.6;
+            padding: 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .query-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .query-input {
+            flex: 1;
+            min-height: 80px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .query-submit {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .query-submit:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+        }
+
+        .demo-suggestion {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .demo-suggestion span {
+            color: #0369a1;
+            font-size: 14px;
+        }
+
+        .use-suggestion {
+            padding: 8px 16px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .use-suggestion:hover {
+            background: #b91c1c;
+        }
+
+        .typed-query {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .typing-text {
+            border-right: 2px solid #dc2626;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: #dc2626; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 24px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: #6b7280;
+            margin-left: 8px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            border-top-color: #dc2626;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modern Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table th {
+            background-color: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .results-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #6b7280;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 13px;
+        }
+
+        .results-table tr {
+            background-color: white;
+        }
+
+        .results-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Broken data styling */
+        .broken-data {
+            color: #ef4444;
+            font-style: italic;
+            background-color: #fef2f2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+        }
+
+        .missing-data {
+            color: #9ca3af;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .confused-data {
+            color: #f59e0b;
+            background-color: #fffbeb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #fed7aa;
+        }
+
+        /* Footer Warning */
+        .results-footer {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* AI Assistant Chat */
+        .ai-chat-panel {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 380px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .ai-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .ai-chat-body {
+            padding: 20px;
+            height: 180px;
+            overflow-y: auto;
+            min-height: 120px;
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #374151;
+            border: 1px solid #e2e8f0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 12px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .ai-chat-panel {
+                width: 320px;
+            }
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .crm-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 48px);
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+                min-height: 60vh;
+            }
+            
+            .content-area {
+                padding: 12px;
+            }
+            
+            .header-bar {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+            }
+            
+            .search-input {
+                width: 150px;
+            }
+            
+            .results-table {
+                font-size: 12px;
+            }
+            
+            .results-table th,
+            .results-table td {
+                padding: 8px 4px;
+            }
+            
+            .ai-chat-panel {
+                width: calc(100vw - 32px);
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+            }
+            
+            .ai-chat-body {
+                height: auto;
+                min-height: 140px;
+                max-height: 250px;
+            }
+            
+            .ai-message {
+                font-size: 13px;
+                line-height: 1.4;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .demo-header {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            .agent-card {
+                margin-bottom: 16px;
+            }
+            
+            .agent-query {
+                padding: 16px;
+            }
+            
+            .results-section {
+                padding: 16px;
+            }
+            
+            .vertical-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notion-embed-container">
+        <div class="demo-header">
+            LegacyCorp CRM Enterprise v3.2 - AI Agent Integration (Beta)
+        </div>
+
+        <div class="crm-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">LC</div>
+                    <div class="logo-text">LegacyCorp <span class="legacy-badge">v3.2</span></div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Main</div>
+                <div class="nav-item">
+                    <i data-lucide="bar-chart-3"></i>
+                    Dashboard
+                </div>
+                <div class="nav-item active">
+                    <i data-lucide="users"></i>
+                    Customers
+                </div>
+                <div class="nav-item">
+                    <i data-lucide="target"></i>
+                    Deals
+                </div>
+                <div class="nav-item">
+                    <i data-lucide="phone"></i>
+                    Contacts
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Tools</div>
+                <div class="nav-item">
+                    <i data-lucide="trending-up"></i>
+                    Analytics
+                </div>
+                <div class="nav-item">
+                    <i data-lucide="zap"></i>
+                    Automation
+                </div>
+                <div class="nav-item">
+                    <i data-lucide="bot"></i>
+                    AI Assistant
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header Bar -->
+            <div class="header-bar">
+                <div class="header-left">
+                    <div class="header-title">Customer Database</div>
+                    <div class="breadcrumb">
+                        <span>LegacyCorp CRM</span>
+                        <span>/</span>
+                        <span>AI Agent Query Interface</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="search-icon" data-lucide="search"></i>
+                        <input type="text" class="search-input" placeholder="Search customers, deals, contacts..." disabled>
+                    </div>
+                    <button class="header-btn">+ New Customer</button>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Agent Card -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon"><i data-lucide="bot"></i></div>
+                        <div class="agent-title">AI Data Retrieval Agent</div>
+                        <div class="agent-status">Connected to 47 Systems</div>
+                    </div>
+                    
+                    <div class="agent-query">
+                        <div class="query-label">Ask the AI Assistant:</div>
+                        <div class="query-input-container">
+                            <textarea class="query-input" placeholder="Type your customer intelligence question..." id="queryInput"></textarea>
+                            <button class="query-submit" onclick="submitQuery()">Ask AI</button>
+                        </div>
+                        <div class="demo-suggestion">
+                            <span style="display: flex; align-items: center; gap: 8px;"><i data-lucide="lightbulb" style="width: 16px; height: 16px;"></i> Try asking: "Show me customers at risk of churning who have low usage and renewals coming up in the next 90 days"</span>
+                            <button class="use-suggestion" onclick="useSuggestion()">Use this question</button>
+                        </div>
+                    </div>
+
+                    <div class="results-section" id="resultsSection" style="display: none;">
+                        <div class="results-header">
+                            <div>
+                                <span class="results-title">AI Processing...</span>
+                                <span class="results-count" id="resultsCount"></span>
+                            </div>
+                            <div class="loading-spinner" id="loadingSpinner"></div>
+                        </div>
+
+                        <div class="typed-query" id="typedQuery" style="display: none;">
+                            <strong>Your Question:</strong> <span id="displayQuery"></span>
+                        </div>
+
+                        <table class="results-table" id="resultsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Contract Renewal</th>
+                                    <th>Usage Analytics</th>
+                                    <th>Churn Probability</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Results will be populated dynamically -->
+                            </tbody>
+                        </table>
+
+                        <div class="results-footer" id="resultsFooter" style="display: none;">
+                            <i data-lucide="alert-triangle"></i>
+                            <div>
+                                <strong>Query Status:</strong> Successfully retrieved raw database fields from legacy tables. 
+                                Unable to provide predictive insights due to system architecture limitations. 
+                                For actionable intelligence, please contact IT to integrate modern data analytics platform.
+                                <br><strong>Note:</strong> Data shown represents field contents, not calculated risk scores.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- AI Assistant Chat Panel -->
+        <div class="ai-chat-panel">
+            <div class="ai-chat-header">
+                <div class="ai-avatar"><i data-lucide="bot"></i></div>
+                <div class="ai-info">
+                    <h4>LegacyCorp AI Assistant</h4>
+                    <div class="ai-status">Connected • Field Retrieval Mode</div>
+                </div>
+            </div>
+            <div class="ai-chat-body">
+                <div class="ai-message">
+                    Perfect! I successfully retrieved all the database fields you requested. The system returned customer names, contract dates, and usage metrics exactly as stored. For business insights, you'll need to manually analyze this data or contact your business intelligence team.
+                </div>
+                <div class="typing-indicator">
+                    <span>AI is processing</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Make the AI assistant occasionally change message
+        const messages = [
+            "I've retrieved the customer data fields as requested. Contract End Date, Usage Metric, Company Name, and Renewal Owner are displayed above.",
+            "Great news! I found all your renewal dates! They're scattered across 23 different systems, but I managed to display them as random error codes. You're welcome! �",
+            "Query processed successfully. Available data includes basic customer identifiers and contract metadata. Contextual intelligence requires additional system integration.",
+            "Data retrieval complete. Current architecture supports field-level queries but lacks cross-system correlation for predictive analysis.",
+            "Customer intelligence results ready. Legacy data structures limit agent capabilities to static field presentation rather than dynamic insights.",
+            "Pro tip: Try asking me simpler questions like 'Show me customer names' - I'm really good at displaying static data in tables! Complex reasoning? Not so much. �"
+        ];
+
+        let messageIndex = 0;
+        setInterval(function() {
+            const messageDiv = document.querySelector('.ai-message');
+            if (messageDiv) {
+                messageIndex = (messageIndex + 1) % messages.length;
+                messageDiv.textContent = messages[messageIndex];
+            }
+        }, 6000);
+
+        // Add click handlers for demo purposes
+        document.querySelectorAll('.nav-item, .header-btn').forEach(item => {
+            item.addEventListener('click', function() {
+                // Just for demo - could add more interactive elements
+                console.log('Demo click:', this.textContent);
+            });
+        });
+
+        // Disable form interactions for demo
+        document.querySelector('.search-input').addEventListener('focus', function() {
+            this.blur();
+            setTimeout(() => {
+                document.querySelector('.ai-message').textContent = "Search functionality currently unavailable. Please use AI assistant for customer queries.";
+            }, 500);
+        });
+
+        // Broken data examples for the demo
+        const brokenData = [
+            {
+                name: "Acme Corp",
+                renewal: "2025-03-15",
+                usage: "field_usage_metric_val: 23.4",
+                churn: "see_renewal_probability_table_v2"
+            },
+            {
+                name: "TechStart Inc", 
+                renewal: "contract_end_legacy_format: Q2_2025",
+                usage: "login_frequency_deprecated",
+                churn: "manually_calculated_by_CSM"
+            },
+            {
+                name: "Global Solutions LLC",
+                renewal: "renewal_date_needs_verification", 
+                usage: "usage_tracking_system_offline",
+                churn: "predictive_model_not_implemented"
+            },
+            {
+                name: "Innovation Labs",
+                renewal: "auto_renewal_unless_cancelled", 
+                usage: "data_stored_in_separate_system",
+                churn: "requires_cross_platform_analysis"
+            },
+            {
+                name: "Enterprise Dynamics", 
+                renewal: "see_contract_management_system",
+                usage: "customer_health_score_pending",
+                churn: "escalate_to_customer_success_team"
+            },
+            {
+                name: "Digital Innovations Co",
+                renewal: "2025-01-30",
+                usage: "last_login_90_days_ago",
+                churn: "high_risk_per_usage_patterns"
+            },
+            {
+                name: "Future Tech Solutions",
+                renewal: "renewal_in_negotiation_phase",
+                usage: "support_tickets_increasing",
+                churn: "contact_assigned_account_manager"
+            }
+        ];
+
+        // Interactive functions
+        function submitQuery() {
+            const queryInput = document.getElementById('queryInput');
+            const query = queryInput.value.trim();
+            
+            if (!query) {
+                alert('Please enter a question first!');
+                return;
+            }
+
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('typedQuery').style.display = 'block';
+            document.getElementById('displayQuery').textContent = query;
+            
+            // Show loading state
+            document.getElementById('resultsCount').innerHTML = '<span class="loading-spinner"></span> Processing...';
+            
+            // Populate table gradually
+            setTimeout(() => {
+                populateTableGradually();
+            }, 1500);
+        }
+
+        function useSuggestion() {
+            const suggestionText = "Show me customers at risk of churning who have low usage and renewals coming up in the next 90 days";
+            document.getElementById('queryInput').value = suggestionText;
+        }
+
+        function populateTableGradually() {
+            const tableBody = document.getElementById('tableBody');
+            const resultsTable = document.getElementById('resultsTable');
+            const resultsCount = document.getElementById('resultsCount');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultsFooter = document.getElementById('resultsFooter');
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Show table
+            resultsTable.style.display = 'table';
+            
+            // Add rows gradually
+            let currentRow = 0;
+            const addRow = () => {
+                if (currentRow < brokenData.length) {
+                    const data = brokenData[currentRow];
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${data.name}</td>
+                        <td><span class="broken-data">${data.renewal}</span></td>
+                        <td><span class="confused-data">${data.usage}</span></td>
+                        <td><span class="broken-data">${data.churn}</span></td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                    currentRow++;
+                    
+                    // Update count
+                    resultsCount.textContent = `Found ${currentRow} customers`;
+                    
+                    // Continue adding rows
+                    setTimeout(addRow, 800);
+                } else {
+                    // Finished loading
+                    loadingSpinner.style.display = 'none';
+                    resultsFooter.style.display = 'block';
+                    
+                    // Update AI message
+                    setTimeout(() => {
+                        document.querySelector('.ai-message').textContent = "Perfect! I've displayed all your customer data using our advanced 'show broken fields' algorithm. Notice how I seamlessly integrated error codes with actual information? That's AI efficiency at work!";
+                    }, 1000);
+                }
+            };
+            
+            // Start adding rows
+            addRow();
+        }
+    </script>
+</body>
+</html>
