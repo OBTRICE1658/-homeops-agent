@@ -84,12 +84,37 @@ const HomeOpsLanding = () => {
           </div>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight px-4">
-            The family operations platform that thinks ahead
+            The AI-powered family operating system that eliminates mental load
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-10 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
-            HomeOps organizes the mental load from school emails to weekend logistics into one intelligent system that keeps life moving forward effortlessly.
+          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-8 sm:mb-10 max-w-4xl mx-auto leading-relaxed px-4">
+            HomeOps transforms chaotic family logistics into intelligent clarity. Our AI agents automatically decode emails, surface high-priority events, manage your family calendar, and learn your unique patterns to make smarter recommendations every day.
           </p>
+          
+          {/* Key Features Summary */}
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mb-10 sm:mb-12 px-4">
+            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 mb-3 mx-auto flex items-center justify-center">
+                <Brain size={16} className="text-white" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Email Intelligence</h3>
+              <p className="text-sm text-slate-600">AI instantly decodes family emails, extracting deadlines, events, and action items</p>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 mb-3 mx-auto flex items-center justify-center">
+                <LayoutDashboard size={16} className="text-white" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Intelligent Calendar</h3>
+              <p className="text-sm text-slate-600">Surfaces upcoming high-signal events and manages family schedules automatically</p>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 mb-3 mx-auto flex items-center justify-center">
+                <Users size={16} className="text-white" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Family Profile Engine</h3>
+              <p className="text-sm text-slate-600">Learns your family's patterns and preferences to make personalized recommendations</p>
+            </div>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 sm:mb-16 px-4">
             <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-base sm:text-lg hover:shadow-2xl transition flex items-center justify-center gap-2">
@@ -108,12 +133,144 @@ const HomeOpsLanding = () => {
                 <div className="ml-auto text-xs sm:text-sm text-slate-500 font-medium">HomeOps Dashboard</div>
               </div>
               
-              {/* Iframe for screenshots */}
-              <div className="w-full bg-gradient-to-br from-slate-100 to-slate-50" style={{ height: '400px', minHeight: '300px' }}>
-                <div className="flex items-center justify-center h-full p-4">
-                  <div className="text-center">
-                    <HomeOpsLogo size={100} stroke="#94a3b8" />
-                    <p className="text-slate-400 mt-6 text-base sm:text-lg">Product screenshots coming soon</p>
+              {/* HomeOps Dashboard Screenshot */}
+              <div className="w-full bg-gradient-to-br from-slate-50 to-white" style={{ minHeight: '520px' }}>
+                {/* Clean Modern Dashboard UI */}
+                <div className="flex flex-col h-full">
+                  {/* Top Navigation Bar */}
+                  <div className="bg-white/90 backdrop-blur-md border-b border-slate-200/50 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <HomeOpsLogo size={36} stroke="#2563eb" />
+                        <div>
+                          <div className="font-bold text-lg text-slate-900">HomeOps</div>
+                          <div className="text-xs text-slate-500">Jones Family</div>
+                        </div>
+                      </div>
+                      <div className="hidden sm:flex items-center gap-6">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-sm font-medium">
+                          <div className="w-2 h-2 rounded-full bg-white/80"></div>
+                          Home
+                        </button>
+                        <button className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 rounded-full text-sm">
+                          <Users size={16} />
+                          Family
+                        </button>
+                        <button className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 rounded-full text-sm">
+                          <Brain size={16} />
+                          Memory
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Main Content Area */}
+                  <div className="flex-1 p-6 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+                    <div className="max-w-4xl mx-auto h-full">
+                      {/* AI Chat Header */}
+                      <div className="text-center mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full mb-4">
+                          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse"></div>
+                          <span className="text-sm font-medium text-slate-700">AI Agent Active</span>
+                        </div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">HomeOps AI</h3>
+                        <p className="text-slate-600">What's going on this week?</p>
+                      </div>
+                      
+                      {/* Weekly Overview Card */}
+                      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50 mb-6">
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <LayoutDashboard size={20} className="text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-slate-900">This Week's Focus</h4>
+                            <p className="text-sm text-slate-600">Mon Oct 13 - Sun Oct 19, 2025</p>
+                          </div>
+                        </div>
+                        
+                        {/* Priority Events */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-2xl border-l-4 border-blue-500">
+                            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-slate-900">5 Priority Events Detected</div>
+                              <div className="text-sm text-slate-600">AI has organized your family's schedule</div>
+                            </div>
+                            <div className="text-xs text-blue-600 font-medium">High Priority</div>
+                          </div>
+                          
+                          <div className="grid gap-3 pl-4">
+                            <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200 hover:shadow-md transition">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full bg-white/90"></div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold text-slate-900">Mommy and Me!</div>
+                                <div className="text-sm text-slate-600 flex items-center gap-2">
+                                  <span>📅 Monday, Oct 13</span>
+                                  <span>•</span>
+                                  <span>⏰ 10:00 - 11:00 AM</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200 hover:shadow-md transition">
+                              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full bg-white/90"></div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold text-slate-900">Pick up kids</div>
+                                <div className="text-sm text-slate-600 flex items-center gap-2">
+                                  <span>📅 Tuesday, Oct 14</span>
+                                  <span>•</span>
+                                  <span>⏰ 4:30 - 5:00 PM</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-200 hover:shadow-md transition">
+                              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full bg-white/90"></div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold text-slate-900">Date Night!</div>
+                                <div className="text-sm text-slate-600 flex items-center gap-2">
+                                  <span>📅 Friday, Oct 17</span>
+                                  <span>•</span>
+                                  <span>⏰ 4:00 - 7:00 PM</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* AI Chat Input */}
+                      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50">
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 relative">
+                            <input 
+                              type="text" 
+                              placeholder="Ask HomeOps AI anything about your family's schedule..." 
+                              className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400"
+                              readOnly
+                            />
+                          </div>
+                          <button className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center hover:shadow-lg transition group">
+                            <ArrowRight size={20} className="text-white group-hover:translate-x-0.5 transition-transform" />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-4 px-2">
+                          <div className="text-xs text-slate-500">
+                            Press Enter to send • Shift+Enter for new line
+                          </div>
+                          <div className="text-xs text-slate-400">
+                            AI can make mistakes. Verify important info.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -262,37 +419,37 @@ const HomeOpsLanding = () => {
               {
                 icon: Brain,
                 title: "Email Intelligence Engine",
-                description: "Advanced AI instantly decodes your family's email stream, identifying what needs action versus what can wait—no more inbox overwhelm.",
+                description: "Our AI agents continuously scan your family's email streams from schools, activities, and services. They automatically extract deadlines, permission slips, schedule changes, and important announcements—turning email chaos into organized, actionable insights.",
                 gradient: "from-blue-500 to-cyan-500"
               },
               {
-                icon: Zap,
-                title: "Instant Priority Scoring",
-                description: "Every email gets an intelligent priority score based on urgency, importance, and your family's unique patterns and preferences.",
+                icon: LayoutDashboard,
+                title: "Intelligent Calendar Agent",
+                description: "The calendar agent surfaces high-priority upcoming events, detects scheduling conflicts, and automatically adds extracted events from emails. It learns your family's patterns to predict which events matter most and when you need reminders.",
                 gradient: "from-purple-500 to-pink-500"
               },
               {
                 icon: Users,
-                title: "Smart Task Extraction",
-                description: "Automatically surfaces deadlines, appointments, and action items from school communications, activities, and household logistics.",
+                title: "Family Profile Engine",
+                description: "Builds comprehensive profiles of your family members, their activities, preferences, and schedules. The engine learns from your interactions to make increasingly personalized recommendations about priorities, scheduling, and family logistics.",
                 gradient: "from-green-500 to-emerald-500"
               },
               {
-                icon: LayoutDashboard,
-                title: "Unified Family Command Center",
-                description: "One dashboard showing your family's real priorities: upcoming deadlines, important communications, and what actually needs your time.",
+                icon: Zap,
+                title: "Priority Scoring System",
+                description: "Every piece of information gets an intelligent priority score based on deadlines, your family's history, and urgency indicators. The system learns what's actually important to your family versus what can wait.",
                 gradient: "from-orange-500 to-red-500"
               },
               {
                 icon: MessageSquare,
-                title: "Parent Built Security",
-                description: "Built by parents, for parents. We use military-grade encryption, read-only Gmail access with zero data storage of personal content, and complete transparency about what we access and why. Your family's privacy is sacred.",
+                title: "Conversational AI Assistant",
+                description: "Chat with HomeOps AI to get instant insights about your week, ask about upcoming events, or get help prioritizing tasks. The assistant understands your family context and provides personalized recommendations and scheduling help.",
                 gradient: "from-indigo-500 to-blue-500"
               },
               {
                 icon: Repeat,
-                title: "Gets Smarter Over Time",
-                description: "Our AI learns your family's unique patterns, what's relevant to schedule, and what's unsolicited, and helps optimize high-emotion messages.",
+                title: "Adaptive Learning System",
+                description: "HomeOps continuously learns your family's unique patterns, communication styles, and preferences. It identifies recurring events, understands your scheduling preferences, and gets better at filtering signal from noise over time.",
                 gradient: "from-violet-500 to-purple-500"
               }
             ].map((feature, i) => (
@@ -308,18 +465,55 @@ const HomeOpsLanding = () => {
         </div>
       </section>
 
-      {/* Stop Drowning Section */}
+      {/* How It Works Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-            Stop drowning in family logistics
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Transform your family's email chaos into clear priorities and actionable insights. Join families who've reclaimed their time and mental energy with HomeOps AI.
-          </p>
-          <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg hover:shadow-lg transition">
-            In Closed Beta • Coming Soon
-          </button>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+              How HomeOps eliminates your mental load
+            </h2>
+            <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Our AI agents work 24/7 to transform chaotic family communications into organized, actionable insights—so you can focus on what matters most.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">1</span>
+              </div>
+              <h3 className="text-xl font-bold mb-4">AI Agents Scan Your Emails</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Our intelligent agents continuously monitor your family's email accounts, automatically identifying school communications, activity updates, appointment reminders, and important deadlines from the noise.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">2</span>
+              </div>
+              <h3 className="text-xl font-bold mb-4">Extract & Organize Information</h3>
+              <p className="text-slate-600 leading-relaxed">
+                HomeOps extracts key information—dates, times, locations, requirements—and organizes everything by priority. Calendar events are automatically surfaced, conflicts detected, and action items highlighted.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">3</span>
+              </div>
+              <h3 className="text-xl font-bold mb-4">Learn & Adapt to Your Family</h3>
+              <p className="text-slate-600 leading-relaxed">
+                The system learns your family's unique patterns, preferences, and priorities. Over time, it gets better at understanding what's important, when you need reminders, and how to help you stay organized.
+              </p>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg hover:shadow-lg transition">
+              Join the Closed Beta
+            </button>
+          </div>
         </div>
       </section>
 
