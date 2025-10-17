@@ -48,7 +48,6 @@ const HomeOpsLanding = () => {
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-slate-600 hover:text-slate-900 transition">Features</a>
               <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 transition">How It Works</a>
-              <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition">Pricing</a>
               <button className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-medium hover:shadow-lg transition">
                 Get Started
               </button>
@@ -70,7 +69,6 @@ const HomeOpsLanding = () => {
           <div className="flex flex-col gap-6">
             <a href="#features" className="text-xl text-slate-600" onClick={() => setMobileMenuOpen(false)}>Features</a>
             <a href="#how-it-works" className="text-xl text-slate-600" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-            <a href="#pricing" className="text-xl text-slate-600" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
             <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-medium">
               Get Started
             </button>
@@ -81,25 +79,21 @@ const HomeOpsLanding = () => {
       {/* Hero Section */}
       <section className="pt-32 sm:pt-40 pb-16 sm:pb-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-4 text-sm font-medium text-slate-500 uppercase tracking-wide">
+            Mental Load Operating System™
+          </div>
+          
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight px-4">
-            Run your family like
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              the high-performer you are
-            </span>
+            The family operations platform that thinks ahead
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
-            HomeOps is your AI agent that reads your emails, schedules your calendar, and handles the invisible work of family coordination. Finally, an end to being the family project manager.
+          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-10 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
+            HomeOps organizes the mental load from school emails to weekend logistics into one intelligent system that keeps life moving forward effortlessly.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 sm:mb-16 px-4">
             <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-base sm:text-lg hover:shadow-2xl transition flex items-center justify-center gap-2">
-              Start Free Trial
-              <ArrowRight size={20} />
-            </button>
-            <button className="px-8 py-4 bg-white text-slate-700 rounded-full font-semibold text-base sm:text-lg border-2 border-slate-200 hover:border-slate-300 transition">
-              Watch Demo
+              In Closed Beta • Coming Soon
             </button>
           </div>
 
@@ -128,106 +122,177 @@ const HomeOpsLanding = () => {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-12 px-4 sm:px-6 bg-white/50">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-slate-500 text-xs sm:text-sm font-medium mb-6 sm:mb-8">Trusted by high-performing families</p>
-          <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 md:gap-12 opacity-60">
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-slate-400">FAMILY+</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-slate-400">MODERN PARENTS</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-slate-400">BALANCED</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-slate-400">THRIVING</div>
-          </div>
-        </div>
-      </section>
 
-      {/* Value Proposition */}
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
+
+      {/* Built for High Performing Families */}
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 px-4">
-              Stop juggling.
-              <br />
-              Start <span className="text-blue-600">orchestrating</span>.
+              Built for High Performing Families
             </h2>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto px-4">
-              The mental load isn't just about remembering tasks. It's about processing endless emails, coordinating schedules, and ensuring nothing falls through the cracks. Let AI handle it.
+              Every feature designed to reduce mental load and increase family efficiency through intelligent automation.
             </p>
+            
+            {/* Family illustration */}
+            <div className="flex justify-center mt-8 mb-8">
+              <svg viewBox="0 0 400 280" className="w-80 h-56 max-w-full">
+                <defs>
+                  <linearGradient id="familyGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6"/>
+                    <stop offset="100%" stopColor="#6366f1"/>
+                  </linearGradient>
+                  <linearGradient id="familyGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#8b5cf6"/>
+                    <stop offset="100%" stopColor="#a855f7"/>
+                  </linearGradient>
+                </defs>
+                
+                {/* HomeOps organizing circle */}
+                <circle cx="200" cy="140" r="120" fill="none" stroke="#e2e8f0" strokeWidth="2" strokeDasharray="8,4" opacity="0.5"/>
+                
+                {/* Parents */}
+                <g>
+                  {/* Mom */}
+                  <g transform="translate(140, 80)">
+                    {/* Head */}
+                    <circle cx="0" cy="0" r="18" fill="#fef3c7" stroke="#3b82f6" strokeWidth="2"/>
+                    {/* Hair */}
+                    <path d="M -16 -8 Q -18 -22 0 -18 Q 18 -22 16 -8" fill="url(#familyGradient2)"/>
+                    {/* Eyes */}
+                    <circle cx="-5" cy="-3" r="1.5" fill="#1f2937"/>
+                    <circle cx="5" cy="-3" r="1.5" fill="#1f2937"/>
+                    {/* Smile */}
+                    <path d="M -7 4 Q 0 10 7 4" stroke="#1f2937" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                    {/* Body */}
+                    <rect x="-10" y="18" width="20" height="35" rx="10" fill="url(#familyGradient1)"/>
+                    {/* Arms */}
+                    <circle cx="-16" cy="30" r="6" fill="#fef3c7" stroke="#3b82f6" strokeWidth="1.5"/>
+                    <circle cx="16" cy="30" r="6" fill="#fef3c7" stroke="#3b82f6" strokeWidth="1.5"/>
+                    {/* Legs */}
+                    <rect x="-6" y="53" width="5" height="22" rx="2.5" fill="#3b82f6"/>
+                    <rect x="1" y="53" width="5" height="22" rx="2.5" fill="#3b82f6"/>
+                  </g>
+                  
+                  {/* Dad */}
+                  <g transform="translate(260, 80)">
+                    {/* Head */}
+                    <circle cx="0" cy="0" r="20" fill="#fef3c7" stroke="#8b5cf6" strokeWidth="2"/>
+                    {/* Hair */}
+                    <path d="M -18 -12 Q 0 -22 18 -12" fill="#374151"/>
+                    {/* Eyes */}
+                    <circle cx="-6" cy="-3" r="1.5" fill="#1f2937"/>
+                    <circle cx="6" cy="-3" r="1.5" fill="#1f2937"/>
+                    {/* Smile */}
+                    <path d="M -8 5 Q 0 12 8 5" stroke="#1f2937" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                    {/* Body */}
+                    <rect x="-12" y="20" width="24" height="40" rx="12" fill="url(#familyGradient2)"/>
+                    {/* Arms */}
+                    <circle cx="-18" cy="35" r="7" fill="#fef3c7" stroke="#8b5cf6" strokeWidth="1.5"/>
+                    <circle cx="18" cy="35" r="7" fill="#fef3c7" stroke="#8b5cf6" strokeWidth="1.5"/>
+                    {/* Legs */}
+                    <rect x="-7" y="60" width="6" height="25" rx="3" fill="#8b5cf6"/>
+                    <rect x="1" y="60" width="6" height="25" rx="3" fill="#8b5cf6"/>
+                  </g>
+                </g>
+                
+                {/* Kids */}
+                <g>
+                  {/* Kid 1 */}
+                  <g transform="translate(170, 180)">
+                    {/* Head */}
+                    <circle cx="0" cy="0" r="14" fill="#fef3c7" stroke="#10b981" strokeWidth="2"/>
+                    {/* Hair */}
+                    <path d="M -12 -6 Q 0 -16 12 -6" fill="#f59e0b"/>
+                    {/* Eyes */}
+                    <circle cx="-4" cy="-2" r="1" fill="#1f2937"/>
+                    <circle cx="4" cy="-2" r="1" fill="#1f2937"/>
+                    {/* Smile */}
+                    <path d="M -5 3 Q 0 7 5 3" stroke="#1f2937" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                    {/* Body */}
+                    <rect x="-7" y="14" width="14" height="22" rx="7" fill="#10b981"/>
+                    {/* Arms */}
+                    <circle cx="-10" cy="22" r="4" fill="#fef3c7" stroke="#10b981" strokeWidth="1"/>
+                    <circle cx="10" cy="22" r="4" fill="#fef3c7" stroke="#10b981" strokeWidth="1"/>
+                    {/* Legs */}
+                    <rect x="-4" y="36" width="3" height="16" rx="1.5" fill="#10b981"/>
+                    <rect x="1" y="36" width="3" height="16" rx="1.5" fill="#10b981"/>
+                  </g>
+                  
+                  {/* Kid 2 */}
+                  <g transform="translate(230, 180)">
+                    {/* Head */}
+                    <circle cx="0" cy="0" r="14" fill="#fef3c7" stroke="#f59e0b" strokeWidth="2"/>
+                    {/* Hair */}
+                    <path d="M -11 -8 Q -13 -18 0 -16 Q 13 -18 11 -8" fill="#ec4899"/>
+                    {/* Eyes */}
+                    <circle cx="-4" cy="-2" r="1" fill="#1f2937"/>
+                    <circle cx="4" cy="-2" r="1" fill="#1f2937"/>
+                    {/* Smile */}
+                    <path d="M -5 3 Q 0 7 5 3" stroke="#1f2937" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                    {/* Body */}
+                    <rect x="-7" y="14" width="14" height="22" rx="7" fill="#f59e0b"/>
+                    {/* Arms */}
+                    <circle cx="-10" cy="22" r="4" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1"/>
+                    <circle cx="10" cy="22" r="4" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1"/>
+                    {/* Legs */}
+                    <rect x="-4" y="36" width="3" height="16" rx="1.5" fill="#f59e0b"/>
+                    <rect x="1" y="36" width="3" height="16" rx="1.5" fill="#f59e0b"/>
+                  </g>
+                </g>
+                
+                {/* Connection lines showing family unity */}
+                <g stroke="#cbd5e1" strokeWidth="2" opacity="0.6" fill="none">
+                  <path d="M 160 110 Q 200 90 240 110" strokeDasharray="4,4"/>
+                  <path d="M 150 160 Q 180 140 200 160" strokeDasharray="4,4"/>
+                  <path d="M 200 160 Q 220 140 250 160" strokeDasharray="4,4"/>
+                </g>
+                
+                {/* HomeOps label */}
+                <text x="200" y="260" textAnchor="middle" fill="#6366f1" fontSize="14" fontWeight="600" fontFamily="system-ui">
+                  HomeOps
+                </text>
+              </svg>
+            </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 px-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4">
             {[
               {
                 icon: Brain,
-                title: "Email Intelligence Agent",
-                description: "AI automatically reads and summarizes important emails from schools, sports teams, doctors, and activities - surfacing only what matters."
-              },
-              {
-                icon: Users,
-                title: "Smart Calendar Scheduling",
-                description: "Your agent intelligently schedules events, appointments, and activities directly on your family calendar without you lifting a finger."
-              },
-              {
-                icon: Zap,
-                title: "Mental Load Elimination",
-                description: "Stop being the family project manager. Our AI handles the invisible work of coordination, reminders, and follow-ups."
-              }
-            ].map((feature, i) => (
-              <div key={i} className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 hover:shadow-xl transition">
-                <feature.icon size={48} className="text-blue-600 mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section id="features" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 sm:mb-16 px-4">
-            Everything you need.
-            <br />
-            <span className="text-slate-500">Nothing you don't.</span>
-          </h2>
-
-          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 px-4">
-            {[
-              {
-                icon: MessageSquare,
-                title: "Inbox Intelligence",
-                description: "AI reads through all your emails and extracts important information from schools, sports, activities, and appointments.",
+                title: "Email Intelligence Engine",
+                description: "Advanced AI instantly decodes your family's email stream, identifying what needs action versus what can wait—no more inbox overwhelm.",
                 gradient: "from-blue-500 to-cyan-500"
               },
               {
-                icon: Sparkles,
-                title: "Smart Email Summaries",
-                description: "Get daily digests of what actually matters - permission slips, schedule changes, important announcements.",
+                icon: Zap,
+                title: "Instant Priority Scoring",
+                description: "Every email gets an intelligent priority score based on urgency, importance, and your family's unique patterns and preferences.",
                 gradient: "from-purple-500 to-pink-500"
               },
               {
-                icon: LayoutDashboard,
-                title: "Automatic Calendar Scheduling",
-                description: "Your AI agent automatically adds events, games, practices, and appointments to your family calendar.",
+                icon: Users,
+                title: "Smart Task Extraction",
+                description: "Automatically surfaces deadlines, appointments, and action items from school communications, activities, and household logistics.",
                 gradient: "from-green-500 to-emerald-500"
               },
               {
-                icon: Brain,
-                title: "Mental Load Assistant",
-                description: "AI handles follow-ups, reminders, and coordination so you can stop being the family project manager.",
+                icon: LayoutDashboard,
+                title: "Unified Family Command Center",
+                description: "One dashboard showing your family's real priorities: upcoming deadlines, important communications, and what actually needs your time.",
                 gradient: "from-orange-500 to-red-500"
               },
               {
-                icon: Zap,
-                title: "Proactive Notifications",
-                description: "Get alerts about upcoming deadlines, required actions, and important family events before they slip through the cracks.",
+                icon: MessageSquare,
+                title: "Parent Built Security",
+                description: "Built by parents, for parents. We use military-grade encryption, read-only Gmail access with zero data storage of personal content, and complete transparency about what we access and why. Your family's privacy is sacred.",
                 gradient: "from-indigo-500 to-blue-500"
               },
               {
                 icon: Repeat,
-                title: "Smart Prioritization",
-                description: "AI learns what's truly urgent vs. routine, ensuring you focus on what actually needs your attention.",
+                title: "Gets Smarter Over Time",
+                description: "Our AI learns your family's unique patterns, what's relevant to schedule, and what's unsolicited, and helps optimize high-emotion messages.",
                 gradient: "from-violet-500 to-purple-500"
               }
             ].map((feature, i) => (
@@ -243,217 +308,24 @@ const HomeOpsLanding = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 px-4">
-              Simple, transparent pricing
-            </h2>
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto px-4">
-              Start free and scale as your family grows. No hidden fees, cancel anytime.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 px-4 max-w-6xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition relative">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
-                <div className="mb-4">
-                  <span className="text-4xl sm:text-5xl font-bold text-slate-900">$0</span>
-                  <span className="text-slate-600 ml-2">forever</span>
-                </div>
-                <p className="text-slate-600">Perfect for getting started</p>
-              </div>
-              
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">50 AI chats per month</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Basic email intelligence</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Calendar scheduling</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Email summaries</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Up to 4 family members</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Email support</span>
-                </li>
-              </ul>
-              
-              <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-full font-semibold hover:bg-slate-800 transition">
-                Get Started Free
-              </button>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-blue-500 hover:border-blue-600 transition relative transform md:scale-105">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                  <Star size={16} />
-                  Most Popular
-                </div>
-              </div>
-              
-              <div className="text-center mb-6 mt-4">
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Pro</h3>
-                <div className="mb-4">
-                  <span className="text-4xl sm:text-5xl font-bold text-slate-900">$15</span>
-                  <span className="text-slate-600 ml-2">/month</span>
-                </div>
-                <p className="text-slate-600">For growing families</p>
-              </div>
-              
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">500 AI chats per month</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Advanced email intelligence</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Smart calendar automation</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Proactive notifications</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Mental load insights</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Up to 6 family members</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Priority support</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Mobile apps</span>
-                </li>
-              </ul>
-              
-              <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg transition">
-                Start 14-Day Trial
-              </button>
-            </div>
-
-            {/* Enterprise Plan */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition relative">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Family+</h3>
-                <div className="mb-4">
-                  <span className="text-4xl sm:text-5xl font-bold text-slate-900">$30</span>
-                  <span className="text-slate-600 ml-2">/month</span>
-                </div>
-                <p className="text-slate-600">For large families</p>
-              </div>
-              
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Unlimited AI chats</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Full email automation</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Custom agent workflows</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Advanced analytics</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Priority email processing</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">Unlimited family members</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">White-glove setup</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check size={20} className="text-green-500 flex-shrink-0" />
-                  <span className="text-slate-700">24/7 phone support</span>
-                </li>
-              </ul>
-              
-              <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-full font-semibold hover:bg-slate-800 transition">
-                Contact Sales
-              </button>
-            </div>
-          </div>
-
-          {/* Pricing FAQ */}
-          <div className="mt-16 sm:mt-20 max-w-4xl mx-auto">
-            <h3 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Frequently asked questions</h3>
-            <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200">
-                <h4 className="font-semibold text-slate-900 mb-2">What counts as an AI chat?</h4>
-                <p className="text-slate-600 text-sm">Each conversation thread with our AI assistant counts as one chat. Follow-up questions in the same conversation don't count separately.</p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200">
-                <h4 className="font-semibold text-slate-900 mb-2">Can I change plans anytime?</h4>
-                <p className="text-slate-600 text-sm">Yes! Upgrade or downgrade your plan at any time. Changes take effect at your next billing cycle.</p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200">
-                <h4 className="font-semibold text-slate-900 mb-2">Is there a free trial?</h4>
-                <p className="text-slate-600 text-sm">Yes! All paid plans come with a 14-day free trial. No credit card required to start.</p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200">
-                <h4 className="font-semibold text-slate-900 mb-2">What if I go over my chat limit?</h4>
-                <p className="text-slate-600 text-sm">We'll send you a notification when you're near your limit. You can upgrade anytime or wait for your limit to reset next month.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Stop Drowning Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16 text-white">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
-              Ready to lighten your load?
-            </h2>
-            <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-blue-100">
-              Join thousands of families who've transformed chaos into clarity.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-white text-blue-600 rounded-full font-semibold text-base sm:text-lg hover:shadow-2xl transition">
-                Start Free 14-Day Trial
-              </button>
-              <button className="px-8 py-4 bg-transparent text-white rounded-full font-semibold text-base sm:text-lg border-2 border-white hover:bg-white/10 transition">
-                Schedule Demo
-              </button>
-            </div>
-            <p className="text-xs sm:text-sm text-blue-100 mt-6">No credit card required • Cancel anytime</p>
-          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+            Stop drowning in family logistics
+          </h2>
+          <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Transform your family's email chaos into clear priorities and actionable insights. Join families who've reclaimed their time and mental energy with HomeOps AI.
+          </p>
+          <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg hover:shadow-lg transition">
+            In Closed Beta • Coming Soon
+          </button>
         </div>
       </section>
+
+
+
+      
 
       {/* CTA Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
@@ -467,13 +339,12 @@ const HomeOpsLanding = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="px-8 py-4 bg-white text-blue-600 rounded-full font-semibold text-base sm:text-lg hover:shadow-2xl transition">
-                Start Free 14-Day Trial
+                Join Waitlist
               </button>
               <button className="px-8 py-4 bg-transparent text-white rounded-full font-semibold text-base sm:text-lg border-2 border-white hover:bg-white/10 transition">
-                Schedule Demo
+                Watch Demo
               </button>
             </div>
-            <p className="text-xs sm:text-sm text-blue-100 mt-6">No credit card required • Cancel anytime</p>
           </div>
         </div>
       </section>
@@ -493,7 +364,6 @@ const HomeOpsLanding = () => {
               <h4 className="font-semibold mb-3">Product</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
                 <li><a href="#" className="hover:text-white transition">Features</a></li>
-                <li><a href="#" className="hover:text-white transition">Pricing</a></li>
                 <li><a href="#" className="hover:text-white transition">Updates</a></li>
               </ul>
             </div>
